@@ -5,6 +5,7 @@
 // The AES round key generator.xs
 //
 //
+// Author: Joachim Strombergson
 // Copyright (c) 2013 Secworks Sweden AB
 // All rights reserved.
 // 
