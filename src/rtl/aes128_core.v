@@ -39,7 +39,7 @@ module aes128_core(
                    input wire            clk,
                    input wire            reset_n,
                    
-                   input wire            enc_dec,
+                   input wire            encdec,
                    input wire            next,
                    output wire           ready,
 
