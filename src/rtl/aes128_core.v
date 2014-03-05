@@ -40,14 +40,16 @@ module aes128_core(
                    input wire            reset_n,
                    
                    input wire            enc_dec,
-                   input wire            init,
                    input wire            next,
+                   output wire           ready,
 
                    input wire [127 : 0]  key,
+                   input wire            load_key,
                    
-                   input wire [127 : 0]  input_block,
-                   output wire [127 : 0] output_block
-                   );
+                   input wire [127 : 0]  block,
+                   output wire [127 : 0] result,
+                   output wire           result_valid
+                  );
 
 
   //----------------------------------------------------------------
