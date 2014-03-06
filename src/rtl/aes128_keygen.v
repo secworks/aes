@@ -37,6 +37,9 @@
 //======================================================================
 
 module aes_keygen(
+                  input wire            clk,
+                  input wire            reset_n,
+                  
                   input wire [127 : 0]  key,
                   input wire            encdec,
                   input wire            init,
@@ -62,6 +65,7 @@ module aes_keygen(
   // Registers.
   //----------------------------------------------------------------
   reg [127 : 0] key_mem [0 : 9];
+  reg [127 : 0] key_mem_new;
   reg           key_mem_we;
 
   reg [3 : 0] round_ctr_reg;
@@ -72,7 +76,7 @@ module aes_keygen(
   reg         round_ctr_we;
   
   reg [2 : 0] keygen_ctrl_reg;
-  reg [2 : 0] keygen_ctrl_reg;
+  reg [2 : 0] keygen_ctrl_new;
   reg         keygen_ctrl_we;
 
 
@@ -86,8 +90,8 @@ module aes_keygen(
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
-  round_key = tmp_round_key;
-  ready     = tmp_ready;
+  assign round_key = tmp_round_key;
+  assign ready     = tmp_ready;
   
     
   //----------------------------------------------------------------
