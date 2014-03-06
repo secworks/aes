@@ -38,17 +38,18 @@
 
 module aes_keygen(
                   input wire [127 : 0]  key,
-                  input wire            enc_dec,
+                  input wire            encdec,
                   input wire            init,
-                  input wire            next,
-                  output wire [127 : 0] round_key
+                  input wire [3 : 0]    addr,
+
+                  output wire [127 : 0] round_key,
+                  output wire           ready
                  );
 
   
   //----------------------------------------------------------------
   // Parameters.
   //----------------------------------------------------------------
-  
   parameter NUM_ROUNDS = 10;
   
   parameter CTRL_IDLE = 0;
@@ -70,20 +71,23 @@ module aes_keygen(
   reg         round_ctr_inc;
   reg         round_ctr_we;
   
-  reg [2 : 0] round_ctrl_reg;
-  reg [2 : 0] round_ctrl_reg;
-  reg         round_ctrl_we;
-  
+  reg [2 : 0] keygen_ctrl_reg;
+  reg [2 : 0] keygen_ctrl_reg;
+  reg         keygen_ctrl_we;
+
 
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-
+  reg [127 : 0] tmp_round_key;
+  reg           tmp_ready;
+  
 
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
-  assign data = tmp_data;
+  round_key = tmp_round_key;
+  ready     = tmp_ready;
   
     
   //----------------------------------------------------------------
@@ -97,15 +101,25 @@ module aes_keygen(
     begin: reg_update
       if (!reset_n)
         begin
-          
-          round_ctr_reg <= 4'h0;
+          key_mem [0]     <= 128'h00000000000000000000000000000000;
+          key_mem [1]     <= 128'h00000000000000000000000000000000;
+          key_mem [2]     <= 128'h00000000000000000000000000000000;
+          key_mem [3]     <= 128'h00000000000000000000000000000000;
+          key_mem [4]     <= 128'h00000000000000000000000000000000;
+          key_mem [5]     <= 128'h00000000000000000000000000000000;
+          key_mem [6]     <= 128'h00000000000000000000000000000000;
+          key_mem [7]     <= 128'h00000000000000000000000000000000;
+          key_mem [8]     <= 128'h00000000000000000000000000000000;
+          key_mem [9]     <= 128'h00000000000000000000000000000000;
+          round_ctr_reg   <= 4'h0;
+          keygen_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
           if (round_ctr_we)
             begin
               round_ctr_reg <= round_ctr_new;
-            end
+                  end
           
           if (key_mem_we)
             begin
@@ -119,6 +133,84 @@ module aes_keygen(
         end
     end // reg_update
 
+                  
+  //----------------------------------------------------------------
+  // round_key_mux
+  //
+  // Read access mux to the round keys.
+  //----------------------------------------------------------------
+  always @*
+    begin: round_key_mux
+      case(addr)
+        0:       tmp_round_key = key_mem[0];
+        1:       tmp_round_key = key_mem[1];
+        2:       tmp_round_key = key_mem[2];
+        3:       tmp_round_key = key_mem[3];
+        4:       tmp_round_key = key_mem[4];
+        5:       tmp_round_key = key_mem[5];
+        6:       tmp_round_key = key_mem[6];
+        7:       tmp_round_key = key_mem[7];
+        8:       tmp_round_key = key_mem[8];
+        9:       tmp_round_key = key_mem[9];
+        default: tmp_round_key = 128'h00000000000000000000000000000000;
+      endcase // case (addr)
+    end // round_key_mux
+
+  
+  //----------------------------------------------------------------
+  // round_key_gen
+  //
+  //
+  // The round key generator logic
+  //----------------------------------------------------------------
+  always @*
+    begin: round_key_gen
+      // Default assignments.
+      key_mem_we  = 0;
+      key_mem_new = 128'h00000000000000000000000000000000;
+
+      
+    end // round_key_gen
+
+  
+  //----------------------------------------------------------------
+  // keygen_ctrl
+  //
+  //
+  // The FSM that controls the round key generation.
+  //----------------------------------------------------------------
+  always @*
+    begin: keygen_ctrl
+      // Default assignments.
+      tmp_ready   = 0;
+      keygen_ctrl_new = CTRL_IDLE;
+      keygen_ctrl_we  = 0;
+
+      case(keygen_ctrl_reg)
+        CTRL_IDLE:
+          begin
+            tmp_ready = 1;
+
+            if (init)
+              begin
+                keygen_ctrl_new = CTRL_INIT;
+                keygen_ctrl_we  = 1;
+              end
+          end
+
+        CTRL_INIT:
+          begin
+            // NOTE: TEMPORARY JUMPBACK!
+            keygen_ctrl_new = CTRL_IDLE;
+            keygen_ctrl_we  = 1;
+          end
+      
+        default:
+          begin
+          end
+      endcase // case (keygen_ctrl_reg)
+
+    end // keygen_ctrl
 endmodule // aes_keygen
 
 //======================================================================
