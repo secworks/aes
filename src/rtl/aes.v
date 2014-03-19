@@ -1,12 +1,12 @@
 //======================================================================
 //
-// aes128.v
+// aes.v
 // --------
-// Top level wrapper for the AES-128 block cipher core.
+// Top level wrapper for the AES block cipher core.
 //
 //
 // Author: Joachim Strombergson
-// Copyright (c) 2014  Secworks Sweden AB
+// Copyright (c) 2013, 2014 Secworks Sweden AB
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or 
@@ -36,21 +36,21 @@
 //
 //======================================================================
 
-module aes128(
-              // Clock and reset.
-              input wire           clk,
-              input wire           reset_n,
-            
-              // Control.
-              input wire           cs,
-              input wire           write_read,
+module aes(
+           // Clock and reset.
+           input wire           clk,
+           input wire           reset_n,
+           
+           // Control.
+           input wire           cs,
+           input wire           we,
               
-              // Data ports.
-              input wire  [7 : 0]  address,
-              input wire  [31 : 0] data_in,
-              output wire [31 : 0] data_out,
-              output wire          error
-             );
+           // Data ports.
+           input wire  [7 : 0]  address,
+           input wire  [31 : 0] write_data,
+           output wire [31 : 0] read_data,
+           output wire          error
+          );
 
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
@@ -123,7 +123,7 @@ module aes128(
   wire           core_encdec;
   wire           core_next;
   wire           core_ready;
-  wire [127 : 0] core_key;
+  wire [255 : 0] core_key;
   wire           core_load_key;
   wire [127 : 0] core_block;
   wire [127 : 0] core_results;
@@ -142,7 +142,7 @@ module aes128(
   //----------------------------------------------------------------
   // core instantiation.
   //----------------------------------------------------------------
-  aes128_core core(
+  aes_core core(
                    .clk(clk),
                    .reset_n(reset_n),
                    
@@ -231,8 +231,8 @@ module aes128(
             end
         end
     end // addr_decoder
-endmodule // aes128
+endmodule // aes
 
 //======================================================================
-// EOF aes128.v
+// EOF aes.v
 //======================================================================
