@@ -1,11 +1,12 @@
 //======================================================================
 //
-// aes128_core.v
-// -------------
-// The AES-128 core.
+// aes.core.v
+// ----------
+// The AES core. This core supports key size of 128, 192 and 256 bits.
 //
 //
-// Copyright (c) 2013 Secworks Sweden AB
+// Author: Joachim Strombergson
+// Copyright (c) 2013, 2014, Secworks Sweden AB
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or 
@@ -35,28 +36,30 @@
 //
 //======================================================================
 
-module aes128_core(
-                   input wire            clk,
-                   input wire            reset_n,
+module aes_core(
+                input wire            clk,
+                input wire            reset_n,
                    
-                   input wire            encdec,
-                   input wire            next,
-                   output wire           ready,
-
-                   input wire [255 : 0]  key,
-                   input wire [1 : 0]    key_length,
-                   input wire            load_key,
+                input wire            encdec,
+                input wire            next,
+                output wire           ready,
+                
+                input wire [255 : 0]  key,
+                input wire [1 : 0]    key_length,
+                input wire            load_key,
                    
-                   input wire [127 : 0]  block,
-                   output wire [127 : 0] result,
-                   output wire           result_valid
-                  );
+                input wire [127 : 0]  block,
+                output wire [127 : 0] result,
+                output wire           result_valid
+               );
 
 
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
   parameter AES128_ROUNDS = 10;
+  parameter AES192_ROUNDS = 12;
+  parameter AES256_ROUNDS = 14;
   
   parameter CTRL_IDLE   = 0;
   parameter CTRL_INIT   = 1;
@@ -67,15 +70,15 @@ module aes128_core(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg [127 : 0] key_reg;
+  reg [255 : 0] key_reg;
   reg           key_we;
 
   reg [127 : 0] block_reg;
   reg           block_we;
   
-  reg [2 : 0]   aes128_ctrl_reg;
-  reg [2 : 0]   aes128_ctrl_new;
-  reg           aes128_ctrl_we;
+  reg [2 : 0]   aes_ctrl_reg;
+  reg [2 : 0]   aes_ctrl_new;
+  reg           aes_ctrl_we;
   
   
   //----------------------------------------------------------------
@@ -104,9 +107,9 @@ module aes128_core(
     begin: reg_update
       if (!reset_n)
         begin
-          key_reg         <= 128'h00000000000000000000000000000000;
-          block_reg       <= 128'h00000000000000000000000000000000;
-          aes128_ctrl_reg <= CTRL_IDLE;
+          key_reg      <= 128'h00000000000000000000000000000000;
+          block_reg    <= 128'h00000000000000000000000000000000;
+          aes_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
@@ -120,9 +123,9 @@ module aes128_core(
               block_reg <= block_new;
             end
 
-          if (aes128_ctrl_we)
+          if (aes_ctrl_we)
             begin
-              aes128_ctrl_reg <= aes128_ctrl_new;
+              aes_ctrl_reg <= aes_ctrl_new;
             end
         end
     end // reg_update
@@ -152,46 +155,46 @@ module aes128_core(
 
   
   //----------------------------------------------------------------
-  // aes128_ctrl_fsm
+  // aes_ctrl_fsm
   //
   // The control FSM that runs the core.
   //----------------------------------------------------------------
   always @*
-    begin : aes128_ctrl_fsm
+    begin : aes_ctrl_fsm
       key_we          = 0;
       block_init      = 0;
       block_update    = 0;
-      aes128_ctrl_new = CTRL_IDLE;
-      aes128_ctrl_we  = 0;
+      aes_ctrl_new = CTRL_IDLE;
+      aes_ctrl_we  = 0;
       
-      case (aes128_ctrl_reg)
+      case (aes_ctrl_reg)
         CTRL_IDLE:
           begin
             if (init)
               begin
-                key_we          = 1;
-                aes128_ctrl_new = CTRL_INIT;
-                aes128_ctrl_we  = 1;
+                key_we       = 1;
+                aes_ctrl_new = CTRL_INIT;
+                aes_ctrl_we  = 1;
               end
           end
 
         CTRL_INIT:
           begin
-            aes128_ctrl_new = CTRL_ROUNDS;
-            aes128_ctrl_we  = 1;
+            aes_ctrl_new = CTRL_ROUNDS;
+            aes_ctrl_we  = 1;
           end
 
         CTRL_ROUNDS:
           begin
-            aes128_ctrl_new = CTRL_DONE;
-            aes128_ctrl_we  = 1;
+            aes_ctrl_new = CTRL_DONE;
+            aes_ctrl_we  = 1;
           end
           
 
         CTRL_DONE:
           begin
-            aes128_ctrl_new = CTRL_IDLE;
-            aes128_ctrl_we  = 1;
+            aes_ctrl_new = CTRL_IDLE;
+            aes_ctrl_we  = 1;
           end
 
         
@@ -199,11 +202,11 @@ module aes128_core(
           begin
 
           end
-      endcase // case (aes128_ctrl_reg)
-    end // aes128_ctrl_fsm
+      endcase // case (aes_ctrl_reg)
+    end // aes_ctrl_fsm
     
-endmodule // aes128_core
+endmodule // aes_core
 
 //======================================================================
-// EOF aes128_core.v
+// EOF aes_core.v
 //======================================================================
