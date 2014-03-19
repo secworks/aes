@@ -43,7 +43,8 @@ module aes128_core(
                    input wire            next,
                    output wire           ready,
 
-                   input wire [127 : 0]  key,
+                   input wire [255 : 0]  key,
+                   input wire [1 : 0]    key_length,
                    input wire            load_key,
                    
                    input wire [127 : 0]  block,
