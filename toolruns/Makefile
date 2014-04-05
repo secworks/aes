@@ -2,7 +2,7 @@
 #
 # Makefile
 # --------
-# Makefile for building the aes128 simulations.
+# Makefile for building the aes keygen, core and top simulations.
 #
 #
 # Author: Joachim Strombergson
@@ -36,11 +36,10 @@
 #
 #===================================================================
 
-WMEM_SRC=../src/rtl/sha256_w_mem.v
-WMEM_TB_SRC=../src/tb/tb_sha256_w_mem.v
-
-KEYGEN_SRC=../src/rtl/aes128_core.v ../src/rtl/aes128_keygen.v ../src/rtl/aes_sbox.v
-CORE_SRC=../src/rtl/aes128_core.v ../src/rtl/aes128_keygen.v ../src/rtl/aes_sbox.v
+SBOX_SRC=../src/rtl/aes_sbox.v
+KEYGEN_SRC=../src/rtl/aes_keygen.v ../src/rtl/aes_sbox.v
+CORE_SRC=../src/rtl/aes_core.v
+TOP_SRC=../src/rtl/aes.v
 
 
 CC=iverilog
@@ -49,11 +48,11 @@ CC=iverilog
 all: core keygen
 
 
-keygen: $(KEYGEN_SRC)
-	$(CC) -o keygen.sim $(KEYGEN_SRC)
+keygen: $(KEYGEN_SRC) $(SBOX_SRC)
+	$(CC) -o keygen.sim $(KEYGEN_SRC) $(SBOX_SRC)
 
 
-core: $(CORE_SRC)
+core: $(CORE_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
 	$(CC) -o core.sim $(CORE_SRC)
 
 
@@ -63,10 +62,6 @@ sim-keygen: keygen.sim
 
 sim-core: core.sim
 	./core.sim
-
-
-debug:
-	@echo "No debug available."
 
 
 clean:
@@ -81,10 +76,8 @@ help:
 	@echo "core:       Build the core simulation target."
 	@echo "sim-core:   Run core level simulation."
 	@echo "sim-keygen: Run core level simulation."
-	@echo "debug:      Print the internal varibles."
 	@echo "clean:      Delete all built files."
 
 #===================================================================
 # EOF Makefile
 #===================================================================
-
