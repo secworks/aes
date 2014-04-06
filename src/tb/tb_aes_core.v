@@ -405,7 +405,7 @@ module tb_aes_core();
 
 
       $display("ECB 128 bit key tests");
-      $display("-------------");
+      $display("---------------------");
       ecb_mode_single_block_test(8'h01 AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY, 
                                  nist_plaintext0, nist_ecb_128_enc_expected0);
 
