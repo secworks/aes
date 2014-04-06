@@ -76,6 +76,14 @@ module aes_core(
   reg [127 : 0] block_reg;
   reg [127 : 0] block_new;
   reg           block_we;
+
+  reg           ready_reg;
+  reg           ready_new;
+  reg           ready_we;
+
+  reg           result_valid_reg;
+  reg           result_valid_new;
+  reg           result_valid_we;
   
   reg [2 : 0]   aes_ctrl_reg;
   reg [2 : 0]   aes_ctrl_new;
@@ -94,7 +102,9 @@ module aes_core(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign result = block_reg;
+  assign ready        = ready_reg;
+  assign result       = block_reg;
+  assign result_valid = result_valid_reg;
   
   
   //----------------------------------------------------------------
@@ -108,12 +118,24 @@ module aes_core(
     begin: reg_update
       if (!reset_n)
         begin
-          key_reg      <= 128'h00000000000000000000000000000000;
-          block_reg    <= 128'h00000000000000000000000000000000;
-          aes_ctrl_reg <= CTRL_IDLE;
+          ready_reg        <= 1'b0;
+          result_valid_reg <= 1'b0;
+          key_reg          <= 128'h00000000000000000000000000000000;
+          block_reg        <= 128'h00000000000000000000000000000000;
+          aes_ctrl_reg     <= CTRL_IDLE;
         end
       else
         begin
+          if (ready_we)
+            begin
+              ready_reg <= ready_new;
+            end
+
+          if (result_valid_we)
+            begin
+              result_valid_reg <= result_valid_new;
+            end
+          
           if (key_we)
             begin
               key_reg <= key;
@@ -162,11 +184,15 @@ module aes_core(
   //----------------------------------------------------------------
   always @*
     begin : aes_ctrl_fsm
-      key_we       = 0;
-      init_block   = 0;
-      update_block = 0;
-      aes_ctrl_new = CTRL_IDLE;
-      aes_ctrl_we  = 0;
+      ready_new        = 0;
+      ready_we         = 0;
+      result_valid_new = 0;
+      result_valid_we  = 0;
+      key_we           = 0;
+      init_block       = 0;
+      update_block     = 0;
+      aes_ctrl_new     = CTRL_IDLE;
+      aes_ctrl_we      = 0;
       
       case (aes_ctrl_reg)
         CTRL_IDLE:
