@@ -49,8 +49,8 @@ CC=iverilog
 all: core.sim core keygen
 
 
-keygen: $(KEYGEN_SRC) $(SBOX_SRC)
-	$(CC) -o keygen.sim $(KEYGEN_SRC) $(SBOX_SRC)
+keygen: $(KEYGEN_SRC)
+	$(CC) -o keygen.sim $(KEYGEN_SRC)
 
 
 core: $(CORE_SRC)
@@ -72,6 +72,7 @@ sim-core: core.sim
 clean:
 	rm -f keygen.sim
 	rm -f core.sim
+	rm -f core
 
 
 help:
@@ -79,8 +80,8 @@ help:
 	@echo "------------------"
 	@echo "all:        Build all simulation targets."
 	@echo "core:       Build the core simulation target."
-	@echo "sim-core:   Run core level simulation."
-	@echo "sim-keygen: Run core level simulation."
+	@echo "core.sim:   Run core level simulation."
+	@echo "keygen.sim: Run core level simulation."
 	@echo "clean:      Delete all built files."
 
 #===================================================================
