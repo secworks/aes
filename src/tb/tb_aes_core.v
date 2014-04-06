@@ -326,8 +326,8 @@ module tb_aes_core();
      else
        begin
          $display("*** ERROR: TC %0d NOT successful.", tc_number);
-         $display("Expected: 0x%064x", expected);
-         $display("Got:      0x%064x", tb_result);
+         $display("Expected: 0x%032x", expected);
+         $display("Got:      0x%032x", tb_result);
          $display("");
 
          error_ctr = error_ctr + 1;
