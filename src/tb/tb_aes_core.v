@@ -143,48 +143,16 @@ module tb_aes_core();
     begin
       $display("State of DUT");
       $display("------------");
-//      $display("Inputs and outputs:");
-//      $display("init   = 0x%01x, next  = 0x%01x", 
-//               dut.init, dut.next);
-//      $display("block  = 0x%0128x", dut.block);
-//
-//      $display("ready  = 0x%01x, valid = 0x%01x", 
-//               dut.ready, dut.digest_valid);
-//      $display("digest = 0x%064x", dut.digest);
-//      $display("H0_reg = 0x%08x, H1_reg = 0x%08x, H2_reg = 0x%08x, H3_reg = 0x%08x", 
-//               dut.H0_reg, dut.H1_reg, dut.H2_reg, dut.H3_reg);
-//      $display("H4_reg = 0x%08x, H5_reg = 0x%08x, H6_reg = 0x%08x, H7_reg = 0x%08x", 
-//               dut.H4_reg, dut.H5_reg, dut.H6_reg, dut.H7_reg);
-//      $display("");
-//      
-//      $display("Control signals and counter:");
-//      $display("aes_ctrl_reg = 0x%02x", dut.aes_ctrl_reg);
-//      $display("digest_init     = 0x%01x, digest_update = 0x%01x", 
-//               dut.digest_init, dut.digest_update);
-//      $display("state_init      = 0x%01x, state_update  = 0x%01x", 
-//               dut.state_init, dut.state_update);
-//      $display("first_block     = 0x%01x, ready_flag    = 0x%01x, w_init    = 0x%01x", 
-//               dut.first_block, dut.ready_flag, dut.w_init);
-//      $display("t_ctr_inc       = 0x%01x, t_ctr_rst     = 0x%01x, t_ctr_reg = 0x%02x", 
-//               dut.t_ctr_inc, dut.t_ctr_rst, dut.t_ctr_reg);
-//      $display("");
-//
-//      $display("State registers:");
-//      $display("a_reg = 0x%08x, b_reg = 0x%08x, c_reg = 0x%08x, d_reg = 0x%08x", 
-//               dut.a_reg, dut.b_reg, dut.c_reg, dut.d_reg);
-//      $display("e_reg = 0x%08x, f_reg = 0x%08x, g_reg = 0x%08x, h_reg = 0x%08x", 
-//               dut.e_reg, dut.f_reg, dut.g_reg, dut.h_reg);
-//      $display("");
-//      $display("a_new = 0x%08x, b_new = 0x%08x, c_new = 0x%08x, d_new = 0x%08x", 
-//               dut.a_new, dut.b_new, dut.c_new, dut.d_new);
-//      $display("e_new = 0x%08x, f_new = 0x%08x, g_new = 0x%08x, h_new = 0x%08x", 
-//               dut.e_new, dut.f_new, dut.g_new, dut.h_new);
-//      $display("");
-//
-//      $display("State update values:");
-//      $display("w  = 0x%08x, k  = 0x%08x", dut.w_data, dut.k_data);
-//      $display("t1 = 0x%08x, t2 = 0x%08x", dut.t1, dut.t2);
-//      $display("");
+      $display("Inputs and outputs:");
+      $display("encdec = 0x%01x, init = 0x%01x, next = 0x%01x", 
+               dut.encdec, dut.init, dut.next);
+      $display("keylen = 0x%01x, key  = 0x%032x ", dut.keylen, dut.key);
+      $display("block  = 0x%032x", dut.block);
+      $display("");
+      $display("ready        = 0x%01x", dut.ready);
+      $display("result_valid = 0x%01x, result = 0x%032x",
+               dut.result_valid, dut.result);
+      $display("");
     end
   endtask // dump_dut_state
   
