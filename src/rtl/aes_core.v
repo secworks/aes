@@ -74,6 +74,7 @@ module aes_core(
   reg           key_we;
 
   reg [127 : 0] block_reg;
+  reg [127 : 0] block_new;
   reg           block_we;
   
   reg [2 : 0]   aes_ctrl_reg;
@@ -142,12 +143,12 @@ module aes_core(
       block_new = 128'h00000000000000000000000000000000;
       block_we  = 0;
       
-      if (block_init)
+      if (init_block)
         begin
-          block_new = input_block;
+          block_new = block;
           block_we  = 1;
         end
-      else if (block_update)
+      else if (update_block)
         begin
 
         end
@@ -161,9 +162,9 @@ module aes_core(
   //----------------------------------------------------------------
   always @*
     begin : aes_ctrl_fsm
-      key_we          = 0;
-      block_init      = 0;
-      block_update    = 0;
+      key_we       = 0;
+      init_block   = 0;
+      update_block = 0;
       aes_ctrl_new = CTRL_IDLE;
       aes_ctrl_we  = 0;
       
