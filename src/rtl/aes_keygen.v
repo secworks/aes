@@ -167,14 +167,14 @@ module aes_keygen(
   //
   // The round key generator logic
   //----------------------------------------------------------------
-  always @*
-    begin: round_key_gen
-      // Default assignments.
-      key_mem_we  = 0;
-      key_mem_new = 128'h00000000000000000000000000000000;
-
-      
-    end // round_key_gen
+//  always @*
+//    begin: round_key_gen
+//      // Default assignments.
+//      key_mem_we  = 0;
+//      key_mem_new = 128'h00000000000000000000000000000000;
+//
+//      
+//    end // round_key_gen
 
   
   //----------------------------------------------------------------
