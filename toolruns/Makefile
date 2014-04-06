@@ -41,11 +41,12 @@ KEYGEN_SRC=../src/rtl/aes_keygen.v ../src/rtl/aes_sbox.v
 CORE_SRC=../src/rtl/aes_core.v
 TOP_SRC=../src/rtl/aes.v
 
+TB_CORE_SRC =../src/tb/tb_aes_core.v
 
 CC=iverilog
 
 
-all: core keygen
+all: core.sim core keygen
 
 
 keygen: $(KEYGEN_SRC) $(SBOX_SRC)
@@ -53,7 +54,11 @@ keygen: $(KEYGEN_SRC) $(SBOX_SRC)
 
 
 core: $(CORE_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
-	$(CC) -o core.sim $(CORE_SRC)
+	$(CC) -o core $(CORE_SRC)
+
+
+core.sim: $(TB_CORE_SRC) core
+	$(CC) -o core.sim $(TB_CORE_SRC)
 
 
 sim-keygen: keygen.sim
