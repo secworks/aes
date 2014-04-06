@@ -41,12 +41,12 @@ module aes_core(
                 input wire            reset_n,
                    
                 input wire            encdec,
+                input wire            init,
                 input wire            next,
                 output wire           ready,
                 
                 input wire [255 : 0]  key,
-                input wire [1 : 0]    key_length,
-                input wire            load_key,
+                input wire [1 : 0]    keylen,
                    
                 input wire [127 : 0]  block,
                 output wire [127 : 0] result,
