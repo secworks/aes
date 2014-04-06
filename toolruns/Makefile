@@ -37,9 +37,9 @@
 #===================================================================
 
 SBOX_SRC=../src/rtl/aes_sbox.v
-KEYGEN_SRC=../src/rtl/aes_keygen.v ../src/rtl/aes_sbox.v
-CORE_SRC=../src/rtl/aes_core.v
-TOP_SRC=../src/rtl/aes.v
+KEYGEN_SRC=../src/rtl/aes_keygen.v
+CORE_SRC=../src/rtl/aes_core.v $(KEYGEN_SRC) $(SBOX_SRC)
+TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
 TB_CORE_SRC =../src/tb/tb_aes_core.v
 
@@ -53,12 +53,12 @@ keygen: $(KEYGEN_SRC) $(SBOX_SRC)
 	$(CC) -o keygen.sim $(KEYGEN_SRC) $(SBOX_SRC)
 
 
-core: $(CORE_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
+core: $(CORE_SRC)
 	$(CC) -o core $(CORE_SRC)
 
 
 core.sim: $(TB_CORE_SRC) core
-	$(CC) -o core.sim $(TB_CORE_SRC)
+	$(CC) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
 
 
 sim-keygen: keygen.sim
