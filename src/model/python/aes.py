@@ -50,8 +50,8 @@ import sys
 # Constants.
 #-------------------------------------------------------------------
 AES_128_ROUNDS = 10
-AES_128_ROUNDS = 12
-AES_128_ROUNDS = 14
+AES_192_ROUNDS = 12
+AES_256_ROUNDS = 14
 
 AES_ENCIPHER = 1
 AES_DECIPHER = 0
@@ -98,9 +98,10 @@ class AES():
             0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68,
             0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16]
 
+
     def __init__(self, verbose = 0):
         self.verbose = verbose
-        self.NUM_ROUNDS = 80
+        self.round_keys = [0] * AES_256_ROUNDS
 
         
     def init(self, key, keylen):
