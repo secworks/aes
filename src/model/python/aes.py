@@ -65,6 +65,8 @@ AES_256_BIT_KEY = 2
 # ChaCha()
 #-------------------------------------------------------------------
 class AES():
+    rounds = [10, 12, 14]
+
     sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
             0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76,
             0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
@@ -105,7 +107,9 @@ class AES():
 
         
     def init(self, key, keylen):
-        pass
+        self.key = key
+        self.keylen = keylen
+        _gen_roundkeys()
         
 
     def next(self, block):
@@ -122,9 +126,8 @@ class AES():
     def _final_round(self):
         pass
     
-    
     def _gen_roundkeys(self):
-        pass
+        self.roundkeys = [0] * rounds[self.keylen]
 
 
     def _print_state(self, round):
