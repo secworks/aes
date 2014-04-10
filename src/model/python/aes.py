@@ -127,7 +127,13 @@ class AES():
         pass
     
     def _gen_roundkeys(self):
-        self.roundkeys = [0] * rounds[self.keylen]
+        self.rcon = 0x8d
+
+        for i in range(256):
+            print("rcon[0x%02x] = 0x%02x" % (i, self.rcon))
+            self.rcon = ((self.rcon << 1) ^ (0x11b & -(self.rcon >> 7))) & 0xff
+
+            #self.roundkeys = [0] * rounds[self.keylen]
 
 
     def _print_state(self, round):
@@ -162,6 +168,11 @@ def test_nist_ecb_single_block(tc, encdec, key, keylen, plaintext, expected):
     my_aes = AES()
     pass
         
+
+def test_key_expansion():
+    my_aes = AES()
+    my_aes._gen_roundkeys()
+
     
 #-------------------------------------------------------------------
 # main()
@@ -172,6 +183,9 @@ def main():
     print("Testing the AES Python model started")
     print("====================================")
     print
+
+    # Test the key expansion.
+    test_key_expansion()
 
     nist_aes128_key = 0x2b7e151628aed2a6abf7158809cf4f3c
     nist_aes192_key = 0x8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b
