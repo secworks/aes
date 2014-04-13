@@ -106,9 +106,8 @@ class AES():
         self.round_keys = [0] * AES_256_ROUNDS
 
         
-    def init(self, key, keylen):
+    def init(self, key):
         self.key = key
-        self.keylen = keylen
         _gen_roundkeys()
         
 
@@ -127,6 +126,8 @@ class AES():
         pass
     
     def _gen_roundkeys(self):
+        self.round_keys = [[0x00] * 16] * 14]
+
         self.rcon = 0x8d
 
         if keylen != AES_128_BIT_KEY:
@@ -175,6 +176,12 @@ def test_nist_ecb_single_block(tc, encdec, key, keylen, plaintext, expected):
     pass
         
 
+#-------------------------------------------------------------------
+# test_key_expansion()
+#
+# Perform testing of round key generation/key expansion for
+# 128, 192 and 256 bit keys.
+#-------------------------------------------------------------------
 def test_key_expansion():
     key128_1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
 
@@ -349,11 +356,17 @@ def test_key_expansion():
                    [0x4e, 0x5a, 0x66, 0x99, 0xa9, 0xf2, 0x4f, 0xe0, 0x7e, 0x57, 0x2b, 0xaa, 0xcd, 0xf8, 0xcd, 0xea],
                    [0x24, 0xfc, 0x79, 0xcc, 0xbf, 0x09, 0x79, 0xe9, 0x37, 0x1a, 0xc2, 0x3c, 0x6d, 0x68, 0xde, 0x36]]
 
+    key_expansion_testcases = [(key128_1, expect128_1), (key128_2, expect128_2), (key128_3, expect128_3),
+                               (key192_1, expect192_1), (key192_2, expect192_2), (key192_3, expect192_3),
+                               (key256_1, expect256_1), (key256_2, expect256_2), (key256_3, expect256_3)]
 
-    # Draft of code. Create object. For each key do init and then compare
-    # Internal key expansion in onbject with the expected round keys for the given key.
     my_aes = AES()
-    my_aes.init(key128_4, AES_128_BIT_KEY)
+    for (key, expect) in key_expansion_testcases:
+        my_aes.init(key)
+        if my_aes.round_keys == expect:
+            print("Correct round keys generated.")
+        else:
+            print("Error! Not correct round keys generated.")
 
     
 #-------------------------------------------------------------------
