@@ -132,7 +132,67 @@ module aes_core(
 
   reg init_state;
   reg update_state;
+
+  reg [7 : 0]  sbox00_addr;
+  wire [7 : 0] sbox00_data;
+  reg [7 : 0]  sbox01_addr;
+  wire [7 : 0] sbox01_data;
+  reg [7 : 0]  sbox02_addr;
+  wire [7 : 0] sbox02_data;
+  reg [7 : 0]  sbox03_addr;
+  wire [7 : 0] sbox03_data;
+
+  reg [7 : 0]  sbox10_addr;
+  wire [7 : 0] sbox10_data;
+  reg [7 : 0]  sbox11_addr;
+  wire [7 : 0] sbox11_data;
+  reg [7 : 0]  sbox12_addr;
+  wire [7 : 0] sbox12_data;
+  reg [7 : 0]  sbox13_addr;
+  wire [7 : 0] sbox13_data;
+
+  reg [7 : 0]  sbox20_addr;
+  wire [7 : 0] sbox20_data;
+  reg [7 : 0]  sbox21_addr;
+  wire [7 : 0] sbox21_data;
+  reg [7 : 0]  sbox22_addr;
+  wire [7 : 0] sbox22_data;
+  reg [7 : 0]  sbox23_addr;
+  wire [7 : 0] sbox23_data;
+
+  reg [7 : 0]  sbox30_addr;
+  wire [7 : 0] sbox30_data;
+  reg [7 : 0]  sbox31_addr;
+  wire [7 : 0] sbox31_data;
+  reg [7 : 0]  sbox32_addr;
+  wire [7 : 0] sbox32_data;
+  reg [7 : 0]  sbox33_addr;
+  wire [7 : 0] sbox33_data;
+
   
+  //----------------------------------------------------------------
+  // Instantiations.
+  //----------------------------------------------------------------
+  aes_sbox sbox00(sbox00_adddr, sbox00_data);
+  aes_sbox sbox01(sbox01_adddr, sbox01_data);
+  aes_sbox sbox02(sbox02_adddr, sbox02_data);
+  aes_sbox sbox03(sbox03_adddr, sbox03_data);
+
+  aes_sbox sbox10(sbox10_adddr, sbox10_data);
+  aes_sbox sbox11(sbox11_adddr, sbox11_data);
+  aes_sbox sbox12(sbox12_adddr, sbox12_data);
+  aes_sbox sbox13(sbox13_adddr, sbox13_data);
+
+  aes_sbox sbox20(sbox20_adddr, sbox20_data);
+  aes_sbox sbox21(sbox21_adddr, sbox21_data);
+  aes_sbox sbox22(sbox22_adddr, sbox22_data);
+  aes_sbox sbox23(sbox23_adddr, sbox23_data);
+
+  aes_sbox sbox30(sbox30_adddr, sbox30_data);
+  aes_sbox sbox31(sbox31_adddr, sbox31_data);
+  aes_sbox sbox32(sbox32_adddr, sbox32_data);
+  aes_sbox sbox33(sbox33_adddr, sbox33_data);
+
 
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
