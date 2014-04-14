@@ -73,10 +73,45 @@ module aes_core(
   reg [255 : 0] key_reg;
   reg           key_we;
 
-  reg [127 : 0] block_reg;
-  reg [127 : 0] block_new;
-  reg           block_we;
+  reg [7 : 0]   s00_reg;
+  reg [7 : 0]   s00_new;
+  reg [7 : 0]   s01_reg;
+  reg [7 : 0]   s01_new;
+  reg [7 : 0]   s02_reg;
+  reg [7 : 0]   s02_new;
+  reg [7 : 0]   s03_reg;
+  reg [7 : 0]   s03_new;
 
+  reg [7 : 0]   s10_reg;
+  reg [7 : 0]   s10_new;
+  reg [7 : 0]   s11_reg;
+  reg [7 : 0]   s11_new;
+  reg [7 : 0]   s12_reg;
+  reg [7 : 0]   s12_new;
+  reg [7 : 0]   s13_reg;
+  reg [7 : 0]   s13_new;
+
+  reg [7 : 0]   s20_reg;
+  reg [7 : 0]   s20_new;
+  reg [7 : 0]   s21_reg;
+  reg [7 : 0]   s21_new;
+  reg [7 : 0]   s22_reg;
+  reg [7 : 0]   s22_new;
+  reg [7 : 0]   s23_reg;
+  reg [7 : 0]   s23_new;
+
+  reg [7 : 0]   s30_reg;
+  reg [7 : 0]   s30_new;
+  reg [7 : 0]   s31_reg;
+  reg [7 : 0]   s31_new;
+  reg [7 : 0]   s32_reg;
+  reg [7 : 0]   s32_new;
+  reg [7 : 0]   s33_reg;
+  reg [7 : 0]   s33_new;
+  
+  reg           s_we;
+  
+  
   reg           ready_reg;
   reg           ready_new;
   reg           ready_we;
@@ -95,8 +130,8 @@ module aes_core(
   //----------------------------------------------------------------
   reg [7 : 0] tmp_data;
 
-  reg init_block;
-  reg update_block;
+  reg init_state;
+  reg update_state;
   
 
   //----------------------------------------------------------------
@@ -121,7 +156,23 @@ module aes_core(
           ready_reg        <= 1'b0;
           result_valid_reg <= 1'b0;
           key_reg          <= 128'h00000000000000000000000000000000;
-          block_reg        <= 128'h00000000000000000000000000000000;
+          s00_reg          <= 8'h00;
+          s01_reg          <= 8'h00;
+          s02_reg          <= 8'h00;
+          s03_reg          <= 8'h00;
+          s10_reg          <= 8'h00;
+          s11_reg          <= 8'h00;
+          s12_reg          <= 8'h00;
+          s13_reg          <= 8'h00;
+          s20_reg          <= 8'h00;
+          s21_reg          <= 8'h00;
+          s22_reg          <= 8'h00;
+          s23_reg          <= 8'h00;
+          s30_reg          <= 8'h00;
+          s31_reg          <= 8'h00;
+          s32_reg          <= 8'h00;
+          s33_reg          <= 8'h00;
+          
           aes_ctrl_reg     <= CTRL_IDLE;
         end
       else
@@ -140,12 +191,30 @@ module aes_core(
             begin
               key_reg <= key;
             end
-          
-          if (block_we)
-            begin
-              block_reg <= block_new;
-            end
 
+          if (s_we)
+            begin
+              s00_reg <= s00_new;
+              s01_reg <= s01_new;
+              s02_reg <= s02_new;
+              s03_reg <= s03_new;
+
+              s10_reg <= s10_new;
+              s11_reg <= s11_new;
+              s12_reg <= s12_new;
+              s13_reg <= s13_new;
+
+              s20_reg <= s20_new;
+              s21_reg <= s21_new;
+              s22_reg <= s22_new;
+              s23_reg <= s23_new;
+
+              s30_reg <= s30_new;
+              s31_reg <= s31_new;
+              s32_reg <= s32_new;
+              s33_reg <= s33_new;
+            end
+          
           if (aes_ctrl_we)
             begin
               aes_ctrl_reg <= aes_ctrl_new;
@@ -155,26 +224,57 @@ module aes_core(
   
 
   //----------------------------------------------------------------
-  // block_logic
+  // state_update_logic
   //
-  // The logic needed to initalize as well as update the block
-  // during round processing.
+  // The logic needed to initalize as well as update the internal
+  // state during round processing.
   //----------------------------------------------------------------
   always @*
     begin : block_logic
-      block_new = 128'h00000000000000000000000000000000;
-      block_we  = 0;
+      s00_new = 8'h00;
+      s01_new = 8'h00;
+      s02_new = 8'h00;
+      s03_new = 8'h00;
+      s10_new = 8'h00;
+      s11_new = 8'h00;
+      s12_new = 8'h00;
+      s13_new = 8'h00;
+      s20_new = 8'h00;
+      s21_new = 8'h00;
+      s22_new = 8'h00;
+      s23_new = 8'h00;
+      s30_new = 8'h00;
+      s31_new = 8'h00;
+      s32_new = 8'h00;
+      s33_new = 8'h00;
+      s_we    = 0;
       
-      if (init_block)
+      if (init_state)
         begin
-          block_new = block;
-          block_we  = 1;
+          s00_new = block[127 : 124];
+          s01_new = block[123 : 120];
+          swe     = 1;
         end
-      else if (update_block)
+      else if (update_state)
         begin
 
+          // Shiftrows
+          s10_new = s11_reg;
+          s11_new = s12_reg;
+          s12_new = s13_reg;
+          s13_new = s10_reg;
+
+          s20_new = s22_reg;
+          s21_new = s23_reg;
+          s22_new = s20_reg;
+          s23_new = s21_reg;
+
+          s30_new = s33_reg;
+          s31_new = s30_reg;
+          s32_new = s31_reg;
+          s33_new = s32_reg;
         end
-    end // block_logic
+    end // state_update_logic
 
   
   //----------------------------------------------------------------
@@ -189,8 +289,8 @@ module aes_core(
       result_valid_new = 0;
       result_valid_we  = 0;
       key_we           = 0;
-      init_block       = 0;
-      update_block     = 0;
+      init_state       = 0;
+      update_state     = 0;
       aes_ctrl_new     = CTRL_IDLE;
       aes_ctrl_we      = 0;
       
