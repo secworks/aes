@@ -136,6 +136,7 @@ class AES():
 
     def __init__(self, verbose = 0):
         self.verbose = verbose
+        self.S = [[0] * 4 for i in range(4)]
 
         
     def init(self, key):
@@ -148,22 +149,33 @@ class AES():
         if self.verbose:
             print("Key length: %d bits" % self.keylen)
         self._gen_roundkeys()
-        
+        self.S = [[0] * 4 for i in range(4)]
+        if self.verbose:
+            print("State size: %d bits" % len(self.S))
 
-    def next(self, block):
-        result = [8] * 16
-        return result
+
+    def next(self, encdec, block):
+        self.S = [0][0 : 3] = block[0  :  3]
+        self.S = [1][0 : 3] = block[4  :  7]
+        self.S = [2][0 : 3] = block[8  : 11]
+        self.S = [3][0 : 3] = block[12 : 15]
+        if self.verbose:
+            print(self.S)
+        return self.S
 
 
     def _initial_round(self):
         pass
 
+
     def _aes_round(self):
         pass
 
+
     def _final_round(self):
         pass
-    
+
+
     def _gen_roundkeys(self):
         self.round_keys = [[0x00] * 16] * 14
 
@@ -175,6 +187,10 @@ class AES():
 
             #self.roundkeys = [0] * rounds[self.keylen]
 
+
+    def _subbytes(self):
+        pass
+            
 
     def _print_state(self, round):
         print("State at round 0x%02x:" % round)
@@ -206,7 +222,8 @@ def compare_blocks(block, expected):
 #-------------------------------------------------------------------
 def test_nist_ecb_single_block(tc, encdec, key, plaintext, expected):
     my_aes = AES()
-    pass
+    my_aes.init(key)
+    my_aes.next(encdec, plaintext)
         
 
 #-------------------------------------------------------------------
@@ -417,14 +434,14 @@ def main():
     # Test the key expansion.
     test_key_expansion()
 
-    nist_aes128_key = 0x2b7e151628aed2a6abf7158809cf4f3c
+    nist_aes128_key = [0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c]
     nist_aes192_key = 0x8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b
     nist_aes256_key = 0x603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4
     
-    nist_plaintext0 = 0x6bc1bee22e409f96e93d7e117393172a
-    nist_plaintext1 = 0xae2d8a571e03ac9c9eb76fac45af8e51
-    nist_plaintext2 = 0x30c81c46a35ce411e5fbc1191a0a52ef
-    nist_plaintext3 = 0xf69f2445df4f9b17ad2b417be66c3710
+    nist_plaintext0 = [0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a]
+    nist_plaintext1 = [0xae, 0x2d, 0x8a, 0x57, 0x1e, 0x03, 0xac, 0x9c, 0x9e, 0xb7, 0x6f, 0xac, 0x45, 0xaf, 0x8e, 0x51]
+    nist_plaintext2 = [0x30, 0xc8, 0x1c, 0x46, 0xa3, 0x5c, 0xe4, 0x11, 0xe5, 0xfb, 0xc1, 0x19, 0x1a, 0x0a, 0x52, 0xef]
+    nist_plaintext3 = [0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10]
 
     nist_ecb_128_enc_expected0 = 0x3ad77bb40d7a3660a89ecaf32466ef97
     nist_ecb_128_enc_expected1 = 0xf5d3d58503b9699de785895a96fdbaaf
