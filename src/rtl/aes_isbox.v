@@ -1,7 +1,7 @@
 //======================================================================
 //
-// aes_isbox.v
-// ----------
+// aes_inv_sbox.v
+// --------------
 // The inverse AES S-box. Basically a 256 Byte ROM.
 //
 //
@@ -35,10 +35,10 @@
 //
 //======================================================================
 
-module aes_isbox(
-                 input wire [7 : 0]  addr,
-                 output wire [7 : 0] data
-                );
+module aes_inv_sbox(
+                    input wire [7 : 0]
+                    addr, output wire [7 : 0] data
+                   );
 
   
   //----------------------------------------------------------------
@@ -54,12 +54,12 @@ module aes_isbox(
   
   
   //----------------------------------------------------------------
-  // isbox_rom
+  // inv_sbox_rom
   //
   // The logic implemeting the ROM with mux.
   //----------------------------------------------------------------
   always @*
-    begin : isbox_rom
+    begin : inv_sbox_rom
       case(addr)
         8'h00: tmp_data = 8'h52;
 	8'h01: tmp_data = 8'h09;
@@ -318,9 +318,9 @@ module aes_isbox(
 	8'hfe: tmp_data = 8'h0c;
 	8'hff: tmp_data = 8'h7d;
       endcase // case (addr)
-    end // isbox_rom
-endmodule // aes_isbox
+    end // inv_sbox_rom
+endmodule // aes_inv_sbox
 
 //======================================================================
-// EOF aes_isbox.v
+// EOF aes_inv_sbox.v
 //======================================================================
