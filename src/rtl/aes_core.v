@@ -141,7 +141,6 @@ module aes_core(
   wire [7 : 0] sbox02_data;
   reg [7 : 0]  sbox03_addr;
   wire [7 : 0] sbox03_data;
-
   reg [7 : 0]  sbox10_addr;
   wire [7 : 0] sbox10_data;
   reg [7 : 0]  sbox11_addr;
@@ -150,7 +149,6 @@ module aes_core(
   wire [7 : 0] sbox12_data;
   reg [7 : 0]  sbox13_addr;
   wire [7 : 0] sbox13_data;
-
   reg [7 : 0]  sbox20_addr;
   wire [7 : 0] sbox20_data;
   reg [7 : 0]  sbox21_addr;
@@ -159,7 +157,6 @@ module aes_core(
   wire [7 : 0] sbox22_data;
   reg [7 : 0]  sbox23_addr;
   wire [7 : 0] sbox23_data;
-
   reg [7 : 0]  sbox30_addr;
   wire [7 : 0] sbox30_data;
   reg [7 : 0]  sbox31_addr;
@@ -168,6 +165,39 @@ module aes_core(
   wire [7 : 0] sbox32_data;
   reg [7 : 0]  sbox33_addr;
   wire [7 : 0] sbox33_data;
+
+  reg [7 : 0]  inv_sbox00_addr;
+  wire [7 : 0] inv_sbox00_data;
+  reg [7 : 0]  inv_sbox01_addr;
+  wire [7 : 0] inv_sbox01_data;
+  reg [7 : 0]  inv_sbox02_addr;
+  wire [7 : 0] inv_sbox02_data;
+  reg [7 : 0]  inv_sbox03_addr;
+  wire [7 : 0] inv_sbox03_data;
+  reg [7 : 0]  inv_sbox10_addr;
+  wire [7 : 0] inv_sbox10_data;
+  reg [7 : 0]  inv_sbox11_addr;
+  wire [7 : 0] inv_sbox11_data;
+  reg [7 : 0]  inv_sbox12_addr;
+  wire [7 : 0] inv_sbox12_data;
+  reg [7 : 0]  inv_sbox13_addr;
+  wire [7 : 0] inv_sbox13_data;
+  reg [7 : 0]  inv_sbox20_addr;
+  wire [7 : 0] inv_sbox20_data;
+  reg [7 : 0]  inv_sbox21_addr;
+  wire [7 : 0] inv_sbox21_data;
+  reg [7 : 0]  inv_sbox22_addr;
+  wire [7 : 0] inv_sbox22_data;
+  reg [7 : 0]  inv_sbox23_addr;
+  wire [7 : 0] inv_sbox23_data;
+  reg [7 : 0]  inv_sbox30_addr;
+  wire [7 : 0] inv_sbox30_data;
+  reg [7 : 0]  inv_sbox31_addr;
+  wire [7 : 0] inv_sbox31_data;
+  reg [7 : 0]  inv_sbox32_addr;
+  wire [7 : 0] inv_sbox32_data;
+  reg [7 : 0]  inv_sbox33_addr;
+  wire [7 : 0] inv_sbox33_data;
 
   
   //----------------------------------------------------------------
@@ -189,6 +219,23 @@ module aes_core(
   aes_sbox sbox31(.addr(sbox31_adddr), .data(sbox31_data));
   aes_sbox sbox32(.addr(sbox32_adddr), .data(sbox32_data));
   aes_sbox sbox33(.addr(sbox33_adddr), .data(sbox33_data));
+
+  aes_inv_sbox inv_sbox00(.addr(inv_sbox00_adddr), .data(inv_sbox00_data));
+  aes_inv_sbox inv_sbox01(.addr(inv_sbox01_adddr), .data(inv_sbox01_data));
+  aes_inv_sbox inv_sbox02(.addr(inv_sbox02_adddr), .data(inv_sbox02_data));
+  aes_inv_sbox inv_sbox03(.addr(inv_sbox03_adddr), .data(inv_sbox03_data));
+  aes_inv_sbox inv_sbox10(.addr(inv_sbox10_adddr), .data(inv_sbox10_data));
+  aes_inv_sbox inv_sbox11(.addr(inv_sbox11_adddr), .data(inv_sbox11_data));
+  aes_inv_sbox inv_sbox12(.addr(inv_sbox12_adddr), .data(inv_sbox12_data));
+  aes_inv_sbox inv_sbox13(.addr(inv_sbox13_adddr), .data(inv_sbox13_data));
+  aes_inv_sbox inv_sbox20(.addr(inv_sbox20_adddr), .data(inv_sbox20_data));
+  aes_inv_sbox inv_sbox21(.addr(inv_sbox21_adddr), .data(inv_sbox21_data));
+  aes_inv_sbox inv_sbox22(.addr(inv_sbox22_adddr), .data(inv_sbox22_data));
+  aes_inv_sbox inv_sbox23(.addr(inv_sbox23_adddr), .data(inv_sbox23_data));
+  aes_inv_sbox inv_sbox30(.addr(inv_sbox30_adddr), .data(inv_sbox30_data));
+  aes_inv_sbox inv_sbox31(.addr(inv_sbox31_adddr), .data(inv_sbox31_data));
+  aes_inv_sbox inv_sbox32(.addr(inv_sbox32_adddr), .data(inv_sbox32_data));
+  aes_inv_sbox inv_sbox33(.addr(inv_sbox33_adddr), .data(inv_sbox33_data));
 
 
   //----------------------------------------------------------------
