@@ -173,25 +173,22 @@ module aes_core(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox00(sbox00_adddr, sbox00_data);
-  aes_sbox sbox01(sbox01_adddr, sbox01_data);
-  aes_sbox sbox02(sbox02_adddr, sbox02_data);
-  aes_sbox sbox03(sbox03_adddr, sbox03_data);
-
-  aes_sbox sbox10(sbox10_adddr, sbox10_data);
-  aes_sbox sbox11(sbox11_adddr, sbox11_data);
-  aes_sbox sbox12(sbox12_adddr, sbox12_data);
-  aes_sbox sbox13(sbox13_adddr, sbox13_data);
-
-  aes_sbox sbox20(sbox20_adddr, sbox20_data);
-  aes_sbox sbox21(sbox21_adddr, sbox21_data);
-  aes_sbox sbox22(sbox22_adddr, sbox22_data);
-  aes_sbox sbox23(sbox23_adddr, sbox23_data);
-
-  aes_sbox sbox30(sbox30_adddr, sbox30_data);
-  aes_sbox sbox31(sbox31_adddr, sbox31_data);
-  aes_sbox sbox32(sbox32_adddr, sbox32_data);
-  aes_sbox sbox33(sbox33_adddr, sbox33_data);
+  aes_sbox sbox00(.addr(sbox00_adddr), .data(sbox00_data));
+  aes_sbox sbox01(.addr(sbox01_adddr), .data(sbox01_data));
+  aes_sbox sbox02(.addr(sbox02_adddr), .data(sbox02_data));
+  aes_sbox sbox03(.addr(sbox03_adddr), .data(sbox03_data));
+  aes_sbox sbox10(.addr(sbox10_adddr), .data(sbox10_data));
+  aes_sbox sbox11(.addr(sbox11_adddr), .data(sbox11_data));
+  aes_sbox sbox12(.addr(sbox12_adddr), .data(sbox12_data));
+  aes_sbox sbox13(.addr(sbox13_adddr), .data(sbox13_data));
+  aes_sbox sbox20(.addr(sbox20_adddr), .data(sbox20_data));
+  aes_sbox sbox21(.addr(sbox21_adddr), .data(sbox21_data));
+  aes_sbox sbox22(.addr(sbox22_adddr), .data(sbox22_data));
+  aes_sbox sbox23(.addr(sbox23_adddr), .data(sbox23_data));
+  aes_sbox sbox30(.addr(sbox30_adddr), .data(sbox30_data));
+  aes_sbox sbox31(.addr(sbox31_adddr), .data(sbox31_data));
+  aes_sbox sbox32(.addr(sbox32_adddr), .data(sbox32_data));
+  aes_sbox sbox33(.addr(sbox33_adddr), .data(sbox33_data));
 
 
   //----------------------------------------------------------------
