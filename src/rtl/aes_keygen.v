@@ -41,6 +41,7 @@ module aes_keygen(
                   input wire            reset_n,
                   
                   input wire [127 : 0]  key,
+                  input wire [1   : 0]  keylen,
                   input wire            encdec,
                   input wire            init,
                   input wire [3 : 0]    addr,

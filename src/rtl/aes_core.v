@@ -242,8 +242,9 @@ module aes_core(
                     .clk(clk),
                     .reset_n(reset_n),
                     .key(key),
-                    .encdec(encdec_reg),
-                    .init(key_init),
+                    .keylen(keylen),
+                    .encdec(encdec),
+                    .init(init),
                     .addr(key_number),
 
                     .round_key(round_key),
