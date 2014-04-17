@@ -88,6 +88,15 @@ module aes_keygen(
   
 
   //----------------------------------------------------------------
+  // Instantiations.
+  //----------------------------------------------------------------
+  aes_sbox sbox0(.addr(sbox0_adddr), .data(sbox0_data));
+  aes_sbox sbox1(.addr(sbox1_adddr), .data(sbox1_data));
+  aes_sbox sbox2(.addr(sbox2_adddr), .data(sbox2_data));
+  aes_sbox sbox3(.addr(sbox3_adddr), .data(sbox3_data));
+
+  
+  //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
   assign round_key = tmp_round_key;
