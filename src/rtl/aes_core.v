@@ -71,7 +71,9 @@ module aes_core(
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
   reg [255 : 0] key_reg;
-  reg           key_we;
+  reg [1 : 0]   keylen_reg;
+  reg           encdec_reg;
+  reg           init_we;
 
   reg [7 : 0]   s00_reg;
   reg [7 : 0]   s00_new;
@@ -110,7 +112,6 @@ module aes_core(
   reg [7 : 0]   s33_new;
   
   reg           s_we;
-  
   
   reg           ready_reg;
   reg           ready_new;
@@ -260,6 +261,8 @@ module aes_core(
           ready_reg        <= 1'b0;
           result_valid_reg <= 1'b0;
           key_reg          <= 128'h00000000000000000000000000000000;
+          keylen_reg       <= 2'h0;
+          encdec_reg       <= 1'b0;
           s00_reg          <= 8'h00;
           s01_reg          <= 8'h00;
           s02_reg          <= 8'h00;
@@ -291,9 +294,11 @@ module aes_core(
               result_valid_reg <= result_valid_new;
             end
           
-          if (key_we)
+          if (init_we)
             begin
-              key_reg <= key;
+              key_reg    <= key;
+              keylen_reg <= keylen;
+              encdec_reg <= encdec;
             end
 
           if (s_we)
@@ -392,7 +397,7 @@ module aes_core(
       ready_we         = 0;
       result_valid_new = 0;
       result_valid_we  = 0;
-      key_we           = 0;
+      init_we          = 0;
       init_state       = 0;
       update_state     = 0;
       aes_ctrl_new     = CTRL_IDLE;
@@ -403,7 +408,7 @@ module aes_core(
           begin
             if (init)
               begin
-                key_we       = 1;
+                init_we      = 1;
                 aes_ctrl_new = CTRL_INIT;
                 aes_ctrl_we  = 1;
               end
