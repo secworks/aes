@@ -126,6 +126,12 @@ module aes_core(
   reg           result_valid_we;
 
   reg [3 : 0]   num_rounds;
+
+  reg [3 : 0]   round_ctr_reg;
+  reg [3 : 0]   round_ctr_new;
+  reg           round_ctr_we;
+  reg           round_ctr_rst;
+  reg           round_ctr_inc;
   
   reg [2 : 0]   aes_ctrl_reg;
   reg [2 : 0]   aes_ctrl_new;
@@ -298,6 +304,8 @@ module aes_core(
           s31_reg          <= 8'h00;
           s32_reg          <= 8'h00;
           s33_reg          <= 8'h00;
+
+          round_ctr_reg    <= 4'h0;
           
           aes_ctrl_reg     <= CTRL_IDLE;
         end
@@ -342,6 +350,11 @@ module aes_core(
               s32_reg <= s32_new;
               s33_reg <= s33_new;
             end
+
+          if (round_ctr_we)
+            begin
+              round_ctr_reg <= round_ctr_new;
+            end
           
           if (aes_ctrl_we)
             begin
@@ -352,24 +365,24 @@ module aes_core(
 
 
   //----------------------------------------------------------------
-  // rounds_select_logic
+  // rounds_select
   //
   // Simple logic that selects number of rounds based on the given
   // key length.
   //----------------------------------------------------------------
   always @*
-    begin : rounds_select_logic
+    begin : rounds_select
       case (keylen_reg)
         AES_128_BIT_KEY: num_rounds = AES128_ROUNDS;
         AES_192_BIT_KEY: num_rounds = AES192_ROUNDS;
         AES_256_BIT_KEY: num_rounds = AES256_ROUNDS;
         default:         num_rounds = 4'h0;
       endcase // case (keylen_reg)
-    end // rounds_select_logic
+    end // rounds_select
 
 
   //----------------------------------------------------------------
-  // state_update_logic
+  // state_logic
   //
   // The logic needed to initalize as well as update the internal
   // state during round processing.
@@ -419,7 +432,29 @@ module aes_core(
           s32_new = s31_reg;
           s33_new = s32_reg;
         end
-    end // state_update_logic
+    end // state_logic
+
+
+  //----------------------------------------------------------------
+  // round_ctr
+  //
+  // The round counter with reset and increase logic.
+  //----------------------------------------------------------------
+  always @*
+    begin : round_ctr
+      round_ctr_new = 4'h0;
+      round_ctr_we  = 1'b0;
+
+      if (round_ctr_rst)
+        begin
+          round_ctr_we  = 1'b1;
+        end
+      elsif (round_ctr_inc)
+        begin
+          round_ctr_new = round_ctr_reg + 1'b1;
+          round_ctr_we  = 1'b0;
+        end
+    end // round_ctr
 
   
   //----------------------------------------------------------------
@@ -435,6 +470,8 @@ module aes_core(
       result_valid_we  = 0;
       init_we          = 0;
       init_state       = 0;
+      round_ctr_rst    = 0;
+      round_ctr_inc    = 0;
       update_state     = 0;
       aes_ctrl_new     = CTRL_IDLE;
       aes_ctrl_we      = 0;
