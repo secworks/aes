@@ -57,6 +57,10 @@ module aes_core(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
+  parameter AES_128_BIT_KEY = 0;
+  parameter AES_192_BIT_KEY = 1;
+  parameter AES_256_BIT_KEY = 2;
+
   parameter AES128_ROUNDS = 10;
   parameter AES192_ROUNDS = 12;
   parameter AES256_ROUNDS = 14;
@@ -120,6 +124,8 @@ module aes_core(
   reg           result_valid_reg;
   reg           result_valid_new;
   reg           result_valid_we;
+
+  reg [3 : 0]   num_rounds;
   
   reg [2 : 0]   aes_ctrl_reg;
   reg [2 : 0]   aes_ctrl_new;
@@ -343,7 +349,24 @@ module aes_core(
             end
         end
     end // reg_update
-  
+
+
+  //----------------------------------------------------------------
+  // rounds_select_logic
+  //
+  // Simple logic that selects number of rounds based on the given
+  // key length.
+  //----------------------------------------------------------------
+  always @*
+    begin : rounds_select_logic
+      case (keylen_reg)
+        AES_128_BIT_KEY: num_rounds = AES128_ROUNDS;
+        AES_192_BIT_KEY: num_rounds = AES192_ROUNDS;
+        AES_256_BIT_KEY: num_rounds = AES256_ROUNDS;
+        default:         num_rounds = 4'h0;
+      endcase // case (keylen_reg)
+    end // rounds_select_logic
+
 
   //----------------------------------------------------------------
   // state_update_logic
@@ -352,7 +375,7 @@ module aes_core(
   // state during round processing.
   //----------------------------------------------------------------
   always @*
-    begin : block_logic
+    begin : state_update_logic
       s00_new = 8'h00;
       s01_new = 8'h00;
       s02_new = 8'h00;
