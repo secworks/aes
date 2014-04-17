@@ -238,6 +238,18 @@ module aes_core(
   aes_inv_sbox inv_sbox32(.addr(inv_sbox32_adddr), .data(inv_sbox32_data));
   aes_inv_sbox inv_sbox33(.addr(inv_sbox33_adddr), .data(inv_sbox33_data));
 
+  aes_keygen keygen(
+                    .clk(clk),
+                    .reset_n(reset_n),
+                    .key(key),
+                    .encdec(encdec_reg),
+                    .init(key_init),
+                    .addr(key_number),
+
+                    .round_key(round_key),
+                    .ready(key_ready)
+                   );
+
 
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
