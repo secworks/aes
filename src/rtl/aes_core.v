@@ -409,12 +409,30 @@ module aes_core(
       
       if (init_state)
         begin
-          s00_new = block[127 : 124];
-          s01_new = block[123 : 120];
-          swe     = 1;
+          // We tranfer the given block into state and do initial
+          // AddRoundKey. This assumes that all keys start at
+          // key[255] and extend downwards for 128, 192 or 256 bits.
+          sa00 = block[127 : 120] ^ round_key[255 : 248];
+          sa10 = block[119 : 112] ^ round_key[247 : 240];
+          sa20 = block[111 : 104] ^ round_key[239 : 232];
+          sa30 = block[103 : 096] ^ round_key[231 : 224];
+          sa01 = block[095 : 088] ^ round_key[223 : 216];
+          sa11 = block[087 : 080] ^ round_key[215 : 208];
+          sa21 = block[079 : 072] ^ round_key[207 : 200];
+          sa31 = block[071 : 064] ^ round_key[199 : 192];
+          sa02 = block[063 : 056] ^ round_key[191 : 184];
+          sa12 = block[055 : 048] ^ round_key[183 : 176];
+          sa22 = block[047 : 040] ^ round_key[175 : 168];
+          sa32 = block[039 : 032] ^ round_key[167 : 160];
+          sa03 = block[031 : 024] ^ round_key[159 : 152];
+          sa13 = block[023 : 016] ^ round_key[151 : 144];
+          sa23 = block[015 : 008] ^ round_key[143 : 136];
+          sa33 = block[007 : 000] ^ round_key[135 : 128];
+          swe  = 1;
         end
       else if (update_state)
         begin
+          // The rounds with the four steps.
 
           // Shiftrows
           s10_new = s11_reg;
