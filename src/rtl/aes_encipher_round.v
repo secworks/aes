@@ -37,7 +37,7 @@
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
-
+ 
 module aes_encipher_round(
                           input wire [127 : 0]  block,
                           input wire [127 : 0]  round_key,
