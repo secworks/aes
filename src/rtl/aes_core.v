@@ -72,21 +72,48 @@ module aes_core(
 
  
   //----------------------------------------------------------------
-  // Functions.
+  // Gaolis multiplication functions for MixColumn and 
+  // Inverse MixColumn.
   //----------------------------------------------------------------
-  // Galois Multiplication by two.
   function [7 : 0] gmul2(input [7 : 0] op);
     begin
       gmul2 = {s00_0[6 : 0], 1'b0} ^ (8'h1b & {8{b[7]}});
     end
   endfunction // gmul2
 
-  // Galois Multiplication by three.
   function [7 : 0] gmul3(input [7 : 0] op);
     begin
       gmul3 = gmul2(op) ^ op;
     end
-  endfunction // gmul2
+  endfunction // gmul3
+
+  function [7 : 0] gmul9(input [7 : 0] op);
+    begin
+      // TODO: Add correct code.
+      gmul9 = op;
+    end
+  endfunction // gmul9
+
+  function [7 : 0] gmul11(input [7 : 0] op);
+    begin
+      // TODO: Add correct code.
+      gmul11 = op;
+    end
+  endfunction // gmul11
+
+  function [7 : 0] gmul13(input [7 : 0] op);
+    begin
+      // TODO: Add correct code.
+      gmul13 = op;
+    end
+  endfunction // gmul13
+
+  function [7 : 0] gmul14(input [7 : 0] op);
+    begin
+      // TODO: Add correct code.
+      gmul14 = op;
+    end
+  endfunction // gmul14
   
   
   //----------------------------------------------------------------
