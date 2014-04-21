@@ -188,6 +188,45 @@ module aes_core(
                                .s33_new(enc_s33_new)
                               );
 
+
+  aes_decipher_round dec_round(
+                               .block(block),
+                               .round_key(round_key),
+                               .round_type(round_type),
+                               .s00(s00_reg),
+                               .s01(s01_reg),
+                               .s02(s02_reg),
+                               .s03(s03_reg),
+                               .s10(s10_reg),
+                               .s11(s11_reg),
+                               .s12(s12_reg),
+                               .s13(s13_reg),
+                               .s20(s20_reg),
+                               .s21(s21_reg),
+                               .s22(s22_reg),
+                               .s23(s23_reg),
+                               .s30(s30_reg),
+                               .s31(s31_reg),
+                               .s32(s32_reg),
+                               .s33(s33_reg),
+                               .s00_new(dec_s00_new),
+                               .s01_new(dec_s01_new),
+                               .s02_new(dec_s02_new),
+                               .s03_new(dec_s03_new),
+                               .s10_new(dec_s10_new),
+                               .s11_new(dec_s11_new),
+                               .s12_new(dec_s12_new),
+                               .s13_new(dec_s13_new),
+                               .s20_new(dec_s20_new),
+                               .s21_new(dec_s21_new),
+                               .s22_new(dec_s22_new),
+                               .s23_new(dec_s23_new),
+                               .s30_new(dec_s30_new),
+                               .s31_new(dec_s31_new),
+                               .s32_new(dec_s32_new),
+                               .s33_new(dec_s33_new)
+                              );
+  
   
   aes_keygen keygen(
                     .clk(clk),
