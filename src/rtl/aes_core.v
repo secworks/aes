@@ -481,22 +481,22 @@ module aes_core(
           
           // AddRoundKey
           // TODO: Add correct round_key indices.
-          s00_new = s00_1 ^ round_key[];
-          s01_new = s01_1 ^ round_key[];
-          s02_new = s02_1 ^ round_key[];
-          s03_new = s03_1 ^ round_key[];
-          s10_new = s10_1 ^ round_key[];
-          s11_new = s11_1 ^ round_key[];
-          s12_new = s12_1 ^ round_key[];
-          s13_new = s13_1 ^ round_key[];
-          s20_new = s20_1 ^ round_key[];
-          s21_new = s21_1 ^ round_key[];
-          s22_new = s22_1 ^ round_key[];
-          s23_new = s23_1 ^ round_key[];
-          s30_new = s30_1 ^ round_key[];
-          s31_new = s31_1 ^ round_key[];
-          s32_new = s32_1 ^ round_key[];
-          s33_new = s33_1 ^ round_key[];
+          s00_new = s00_1 ^ round_key[127 : 120];
+          s01_new = s01_1 ^ round_key[119 : 112];
+          s02_new = s02_1 ^ round_key[111 : 104];
+          s03_new = s03_1 ^ round_key[103 :  96];
+          s10_new = s10_1 ^ round_key[95  :  88];
+          s11_new = s11_1 ^ round_key[87  :  80];
+          s12_new = s12_1 ^ round_key[79  :  72];
+          s13_new = s13_1 ^ round_key[71  :  64];
+          s20_new = s20_1 ^ round_key[63  :  56];
+          s21_new = s21_1 ^ round_key[55  :  48];
+          s22_new = s22_1 ^ round_key[47  :  40];
+          s23_new = s23_1 ^ round_key[39  :  32];
+          s30_new = s30_1 ^ round_key[31  :  24];
+          s31_new = s31_1 ^ round_key[23  :  16];
+          s32_new = s32_1 ^ round_key[15  :   8];
+          s33_new = s33_1 ^ round_key[7   :   0];
           swe = 1;
         end
     end // state_logic
