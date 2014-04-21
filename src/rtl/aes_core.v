@@ -74,9 +74,17 @@ module aes_core(
   //----------------------------------------------------------------
   // Functions.
   //----------------------------------------------------------------
+  // Galois Multiplication by two.
   function [7 : 0] gmul2(input [7 : 0] op);
     begin
-      
+      gmul2 = {s00_0[6 : 0], 1'b0} ^ (8'h1b & {8{b[7]}});
+    end
+  endfunction // gmul2
+
+  // Galois Multiplication by three.
+  function [7 : 0] gmul3(input [7 : 0] op);
+    begin
+      gmul3 = gmul2(op) ^ op;
     end
   endfunction // gmul2
   
