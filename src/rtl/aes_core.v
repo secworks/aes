@@ -367,86 +367,86 @@ module aes_core(
   //----------------------------------------------------------------
   always @*
     begin : state_logic
-      sa00_new = 8'h00;
-      sa10_new = 8'h00;
-      sa20_new = 8'h00;
-      sa30_new = 8'h00;
-      sa01_new = 8'h00;
-      sa11_new = 8'h00;
-      sa21_new = 8'h00;
-      sa31_new = 8'h00;
-      sa02_new = 8'h00;
-      sa12_new = 8'h00;
-      sa22_new = 8'h00;
-      sa32_new = 8'h00;
-      sa03_new = 8'h00;
-      sa13_new = 8'h00;
-      sa23_new = 8'h00;
-      sa33_new = 8'h00;
-      s_we     = 1'b0;
+      s00_new = 8'h00;
+      s10_new = 8'h00;
+      s20_new = 8'h00;
+      s30_new = 8'h00;
+      s01_new = 8'h00;
+      s11_new = 8'h00;
+      s21_new = 8'h00;
+      s31_new = 8'h00;
+      s02_new = 8'h00;
+      s12_new = 8'h00;
+      s22_new = 8'h00;
+      s32_new = 8'h00;
+      s03_new = 8'h00;
+      s13_new = 8'h00;
+      s23_new = 8'h00;
+      s33_new = 8'h00;
+      s_we    = 1'b0;
 
       if (init_state)
         begin
-          sa00_new = block[127 : 120];
-          sa10_new = block[119 : 112];
-          sa20_new = block[111 : 104];
-          sa30_new = block[103 : 096];
-          sa01_new = block[095 : 088];
-          sa11_new = block[087 : 080];
-          sa21_new = block[079 : 072];
-          sa31_new = block[071 : 064];
-          sa02_new = block[063 : 056];
-          sa12_new = block[055 : 048];
-          sa22_new = block[047 : 040];
-          sa32_new = block[039 : 032];
-          sa03_new = block[031 : 024];
-          sa13_new = block[023 : 016];
-          sa23_new = block[015 : 008];
-          sa33_new = block[007 : 000];
-          s_we     = 1'b1;
+          s00_new = block[127 : 120];
+          s10_new = block[119 : 112];
+          s20_new = block[111 : 104];
+          s30_new = block[103 : 096];
+          s01_new = block[095 : 088];
+          s11_new = block[087 : 080];
+          s21_new = block[079 : 072];
+          s31_new = block[071 : 064];
+          s02_new = block[063 : 056];
+          s12_new = block[055 : 048];
+          s22_new = block[047 : 040];
+          s32_new = block[039 : 032];
+          s03_new = block[031 : 024];
+          s13_new = block[023 : 016];
+          s23_new = block[015 : 008];
+          s33_new = block[007 : 000];
+          s_we    = 1'b1;
         end
 
       else if (update_state)
         begin
           if (encdec_reg)
             begin
-              sa00_new = enc_s00_new;
-              sa10_new = enc_s01_new;
-              sa20_new = enc_s02_new;
-              sa30_new = enc_s03_new;
-              sa01_new = enc_s10_new;
-              sa11_new = enc_s11_new;
-              sa21_new = enc_s12_new;
-              sa31_new = enc_s13_new;
-              sa02_new = enc_s20_new;
-              sa12_new = enc_s21_new;
-              sa22_new = enc_s22_new;
-              sa32_new = enc_s23_new;
-              sa03_new = enc_s30_new;
-              sa13_new = enc_s31_new;
-              sa23_new = enc_s32_new;
-              sa33_new = enc_s33_new;
-              s_we     = 1'b1;
+              s00_new = enc_s00_new;
+              s10_new = enc_s01_new;
+              s20_new = enc_s02_new;
+              s30_new = enc_s03_new;
+              s01_new = enc_s10_new;
+              s11_new = enc_s11_new;
+              s21_new = enc_s12_new;
+              s31_new = enc_s13_new;
+              s02_new = enc_s20_new;
+              s12_new = enc_s21_new;
+              s22_new = enc_s22_new;
+              s32_new = enc_s23_new;
+              s03_new = enc_s30_new;
+              s13_new = enc_s31_new;
+              s23_new = enc_s32_new;
+              s33_new = enc_s33_new;
+              s_we    = 1'b1;
             end
           else
             begin
-              sa00_new = enc_s00_new;
-              sa10_new = enc_s01_new;
-              sa20_new = enc_s02_new;
-              sa30_new = enc_s03_new;
-              sa01_new = enc_s10_new;
-              sa11_new = enc_s11_new;
-              sa21_new = enc_s12_new;
-              sa31_new = enc_s13_new;
-              sa02_new = enc_s20_new;
-              sa12_new = enc_s21_new;
-              sa22_new = enc_s22_new;
-              sa32_new = enc_s23_new;
-              sa03_new = enc_s30_new;
-              sa13_new = enc_s31_new;
-              sa23_new = enc_s32_new;
-              sa33_new = enc_s33_new;
-              s_we     = 1'b1;
+              s00_new = enc_s00_new;
+              s10_new = enc_s01_new;
+              s20_new = enc_s02_new;
+              s30_new = enc_s03_new;
+              s01_new = enc_s10_new;
+              s11_new = enc_s11_new;
+              s21_new = enc_s12_new;
+              s31_new = enc_s13_new;
+              s02_new = enc_s20_new;
+              s12_new = enc_s21_new;
+              s22_new = enc_s22_new;
+              s32_new = enc_s23_new;
+              s03_new = enc_s30_new;
+              s13_new = enc_s31_new;
+              s23_new = enc_s32_new;
+              s33_new = enc_s33_new;
+              s_we    = 1'b1;
             end
         end
     end // state_logic
