@@ -93,20 +93,19 @@ module aes_decipher_round(
 
  
   //----------------------------------------------------------------
-  // Gaolis multiplication functions for MixColumn and 
-  // Inverse MixColumn.
+  // Gaolis multiplication functions for Inverse MixColumn.
   //----------------------------------------------------------------
-  function [7 : 0] gmul2(input [7 : 0] op);
+  function [7 : 0] gm2(input [7 : 0] op);
     begin
-      gmul2 = {s00_0[6 : 0], 1'b0} ^ (8'h1b & {8{b[7]}});
+      gm2 = {op[6 : 0], 1'b0} ^ (8'h1b & {8{op[7]}});
     end
-  endfunction // gmul2
+  endfunction // gm2
 
-  function [7 : 0] gmul3(input [7 : 0] op);
+  function [7 : 0] gm3(input [7 : 0] op);
     begin
-      gmul3 = gmul2(op) ^ op;
+      gm3 = gm2(op) ^ op;
     end
-  endfunction // gmul3
+  endfunction // gm3
   
   
   //----------------------------------------------------------------
