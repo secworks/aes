@@ -145,8 +145,8 @@ module aes_core(
   reg init_state;
   reg update_state;
 
-  reg [1 : 0]   round_type;
-  reg [127 : 0] round_key;
+  reg [1 : 0]    round_type;
+  wire [127 : 0] round_key;
 
   reg           next_key;
 
@@ -282,7 +282,12 @@ module aes_core(
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign ready        = ready_reg;
-  assign result       = block_reg;
+
+  assign result       = {s00_reg, s10_reg, s20_reg, s30_reg,
+                         s01_reg, s11_reg, s21_reg, s31_reg,
+                         s02_reg, s12_reg, s22_reg, s32_reg,
+                         s03_reg, s13_reg, s23_reg, s33_reg};
+
   assign result_valid = result_valid_reg;
   
   
