@@ -93,20 +93,19 @@ module aes_encipher_round(
 
  
   //----------------------------------------------------------------
-  // Gaolis multiplication functions for MixColumn and 
-  // Inverse MixColumn.
+  // Gaolis multiplication functions for MixColumn.
   //----------------------------------------------------------------
-  function [7 : 0] gmul2(input [7 : 0] op);
+  function [7 : 0] gm2(input [7 : 0] op);
     begin
-      gmul2 = {s00_0[6 : 0], 1'b0} ^ (8'h1b & {8{b[7]}});
+      gm2 = {op[6 : 0], 1'b0} ^ (8'h1b & {8{op[7]}});
     end
-  endfunction // gmul2
+  endfunction // gm2
 
-  function [7 : 0] gmul3(input [7 : 0] op);
+  function [7 : 0] gm3(input [7 : 0] op);
     begin
-      gmul3 = gmul2(op) ^ op;
+      gm3 = gm2(op) ^ op;
     end
-  endfunction // gmul3
+  endfunction // gm3
   
   
   //----------------------------------------------------------------
@@ -235,29 +234,29 @@ module aes_encipher_round(
       case (round_type)
         INIT_ROUND:
           begin
-            tmp_sa00_new = s00_1 ^ round_key[127 : 120];
-            tmp_sa10_new = s01_1 ^ round_key[119 : 112];
-            tmp_sa20_new = s02_1 ^ round_key[111 : 104];
-            tmp_sa30_new = s03_1 ^ round_key[103 :  96];
-            tmp_sa01_new = s10_1 ^ round_key[95  :  88];
-            tmp_sa11_new = s11_1 ^ round_key[87  :  80];
-            tmp_sa21_new = s12_1 ^ round_key[79  :  72];
-            tmp_sa31_new = s13_1 ^ round_key[71  :  64];
-            tmp_sa02_new = s20_1 ^ round_key[63  :  56];
-            tmp_sa12_new = s21_1 ^ round_key[55  :  48];
-            tmp_sa22_new = s22_1 ^ round_key[47  :  40];
-            tmp_sa32_new = s23_1 ^ round_key[39  :  32];
-            tmp_sa03_new = s30_1 ^ round_key[31  :  24];
-            tmp_sa13_new = s31_1 ^ round_key[23  :  16];
-            tmp_sa23_new = s32_1 ^ round_key[15  :   8];
-            tmp_sa33_new = s33_1 ^ round_key[7   :   0];
+            tmp_s00_new = s00_1 ^ round_key[127 : 120];
+            tmp_s10_new = s01_1 ^ round_key[119 : 112];
+            tmp_s20_new = s02_1 ^ round_key[111 : 104];
+            tmp_s30_new = s03_1 ^ round_key[103 :  96];
+            tmp_s01_new = s10_1 ^ round_key[95  :  88];
+            tmp_s11_new = s11_1 ^ round_key[87  :  80];
+            tmp_s21_new = s12_1 ^ round_key[79  :  72];
+            tmp_s31_new = s13_1 ^ round_key[71  :  64];
+            tmp_s02_new = s20_1 ^ round_key[63  :  56];
+            tmp_s12_new = s21_1 ^ round_key[55  :  48];
+            tmp_s22_new = s22_1 ^ round_key[47  :  40];
+            tmp_s32_new = s23_1 ^ round_key[39  :  32];
+            tmp_s03_new = s30_1 ^ round_key[31  :  24];
+            tmp_s13_new = s31_1 ^ round_key[23  :  16];
+            tmp_s23_new = s32_1 ^ round_key[15  :   8];
+            tmp_s33_new = s33_1 ^ round_key[7   :   0];
           end
 
 
         MAIN_ROUND:
           begin
             // SubBytes - Done through connectivity of sbox instances.
-            // sbox_data wires contains the substitute values.
+            // sbox_data00-33 wires contains the substitute values.
           
             // Shiftrows
             s00_0 = sbox00_data;
