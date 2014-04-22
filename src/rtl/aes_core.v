@@ -299,7 +299,6 @@ module aes_core(
         begin
           ready_reg        <= 1'b0;
           result_valid_reg <= 1'b0;
-          key_reg          <= 128'h00000000000000000000000000000000;
           keylen_reg       <= 2'h0;
           encdec_reg       <= 1'b0;
           s00_reg          <= 8'h00;
@@ -337,7 +336,6 @@ module aes_core(
           
           if (init_we)
             begin
-              key_reg    <= key;
               keylen_reg <= keylen;
               encdec_reg <= encdec;
             end
