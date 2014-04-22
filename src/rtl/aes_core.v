@@ -466,7 +466,7 @@ module aes_core(
         begin
           round_ctr_we  = 1'b1;
         end
-      elsif (round_ctr_inc)
+      else if (round_ctr_inc)
         begin
           round_ctr_new = round_ctr_reg + 1'b1;
           round_ctr_we  = 1'b0;
