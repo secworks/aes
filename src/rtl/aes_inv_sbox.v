@@ -36,8 +36,8 @@
 //======================================================================
 
 module aes_inv_sbox(
-                    input wire [7 : 0]
-                    addr, output wire [7 : 0] data
+                    input wire [7 : 0] addr, 
+                    output wire [7 : 0] data
                    );
 
   
