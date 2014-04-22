@@ -236,22 +236,22 @@ module aes_encipher_round(
       case (round_type)
         INIT_ROUND:
           begin
-            tmp_sa00_new = block[127 : 120] ^ round_key[255 : 248];
-            tmp_sa10_new = block[119 : 112] ^ round_key[247 : 240];
-            tmp_sa20_new = block[111 : 104] ^ round_key[239 : 232];
-            tmp_sa30_new = block[103 : 096] ^ round_key[231 : 224];
-            tmp_sa01_new = block[095 : 088] ^ round_key[223 : 216];
-            tmp_sa11_new = block[087 : 080] ^ round_key[215 : 208];
-            tmp_sa21_new = block[079 : 072] ^ round_key[207 : 200];
-            tmp_sa31_new = block[071 : 064] ^ round_key[199 : 192];
-            tmp_sa02_new = block[063 : 056] ^ round_key[191 : 184];
-            tmp_sa12_new = block[055 : 048] ^ round_key[183 : 176];
-            tmp_sa22_new = block[047 : 040] ^ round_key[175 : 168];
-            tmp_sa32_new = block[039 : 032] ^ round_key[167 : 160];
-            tmp_sa03_new = block[031 : 024] ^ round_key[159 : 152];
-            tmp_sa13_new = block[023 : 016] ^ round_key[151 : 144];
-            tmp_sa23_new = block[015 : 008] ^ round_key[143 : 136];
-            tmp_sa33_new = block[007 : 000] ^ round_key[135 : 128];
+            tmp_sa00_new = s00_1 ^ round_key[127 : 120];
+            tmp_sa10_new = s01_1 ^ round_key[119 : 112];
+            tmp_sa20_new = s02_1 ^ round_key[111 : 104];
+            tmp_sa30_new = s03_1 ^ round_key[103 :  96];
+            tmp_sa01_new = s10_1 ^ round_key[95  :  88];
+            tmp_sa11_new = s11_1 ^ round_key[87  :  80];
+            tmp_sa21_new = s12_1 ^ round_key[79  :  72];
+            tmp_sa31_new = s13_1 ^ round_key[71  :  64];
+            tmp_sa02_new = s20_1 ^ round_key[63  :  56];
+            tmp_sa12_new = s21_1 ^ round_key[55  :  48];
+            tmp_sa22_new = s22_1 ^ round_key[47  :  40];
+            tmp_sa32_new = s23_1 ^ round_key[39  :  32];
+            tmp_sa03_new = s30_1 ^ round_key[31  :  24];
+            tmp_sa13_new = s31_1 ^ round_key[23  :  16];
+            tmp_sa23_new = s32_1 ^ round_key[15  :   8];
+            tmp_sa33_new = s33_1 ^ round_key[7   :   0];
           end
 
 
