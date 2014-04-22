@@ -40,11 +40,11 @@ module aes_keygen(
                   input wire            clk,
                   input wire            reset_n,
                   
-                  input wire [127 : 0]  key,
+                  input wire [255 : 0]  key,
                   input wire [1   : 0]  keylen,
                   input wire            encdec,
                   input wire            init,
-                  input wire [3 : 0]    addr,
+                  input wire            next,
 
                   output wire [127 : 0] round_key,
                   output wire           ready
@@ -80,6 +80,16 @@ module aes_keygen(
   reg [2 : 0] keygen_ctrl_new;
   reg         keygen_ctrl_we;
 
+  reg [7 : 0] sbox0_addr;
+  reg [7 : 0] sbox1_addr;
+  reg [7 : 0] sbox2_addr;
+  reg [7 : 0] sbox3_addr;
+
+  wire [7 : 0] sbox0_data;
+  wire [7 : 0] sbox1_data;
+  wire [7 : 0] sbox2_data;
+  wire [7 : 0] sbox3_data;
+
 
   //----------------------------------------------------------------
   // Wires.
@@ -91,10 +101,10 @@ module aes_keygen(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox0(.addr(sbox0_adddr), .data(sbox0_data));
-  aes_sbox sbox1(.addr(sbox1_adddr), .data(sbox1_data));
-  aes_sbox sbox2(.addr(sbox2_adddr), .data(sbox2_data));
-  aes_sbox sbox3(.addr(sbox3_adddr), .data(sbox3_data));
+  aes_sbox sbox0(.addr(sbox0_addr), .data(sbox0_data));
+  aes_sbox sbox1(.addr(sbox1_addr), .data(sbox1_data));
+  aes_sbox sbox2(.addr(sbox2_addr), .data(sbox2_data));
+  aes_sbox sbox3(.addr(sbox3_addr), .data(sbox3_data));
 
   
   //----------------------------------------------------------------
@@ -155,7 +165,7 @@ module aes_keygen(
   //----------------------------------------------------------------
   always @*
     begin: round_key_mux
-      case(addr)
+      case(round_ctr_reg)
         0:       tmp_round_key = key_mem[0];
         1:       tmp_round_key = key_mem[1];
         2:       tmp_round_key = key_mem[2];
