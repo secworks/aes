@@ -146,6 +146,9 @@ module aes_core(
   reg init_state;
   reg update_state;
 
+  reg [1 : 0]   round_type;
+  reg [127 : 0] round_key;
+
   wire [7 : 0] enc_s00_new;
   wire [7 : 0] enc_s01_new;
   wire [7 : 0] enc_s02_new;
