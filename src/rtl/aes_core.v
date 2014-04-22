@@ -145,6 +145,40 @@ module aes_core(
   
   reg init_state;
   reg update_state;
+
+  wire [7 : 0] enc_s00_new;
+  wire [7 : 0] enc_s01_new;
+  wire [7 : 0] enc_s02_new;
+  wire [7 : 0] enc_s03_new;
+  wire [7 : 0] enc_s10_new;
+  wire [7 : 0] enc_s11_new;
+  wire [7 : 0] enc_s12_new;
+  wire [7 : 0] enc_s13_new;
+  wire [7 : 0] enc_s20_new;
+  wire [7 : 0] enc_s21_new;
+  wire [7 : 0] enc_s22_new;
+  wire [7 : 0] enc_s23_new;
+  wire [7 : 0] enc_s30_new;
+  wire [7 : 0] enc_s31_new;
+  wire [7 : 0] enc_s32_new;
+  wire [7 : 0] enc_s33_new;
+
+  wire [7 : 0] dec_s00_new;
+  wire [7 : 0] dec_s01_new;
+  wire [7 : 0] dec_s02_new;
+  wire [7 : 0] dec_s03_new;
+  wire [7 : 0] dec_s10_new;
+  wire [7 : 0] dec_s11_new;
+  wire [7 : 0] dec_s12_new;
+  wire [7 : 0] dec_s13_new;
+  wire [7 : 0] dec_s20_new;
+  wire [7 : 0] dec_s21_new;
+  wire [7 : 0] dec_s22_new;
+  wire [7 : 0] dec_s23_new;
+  wire [7 : 0] dec_s30_new;
+  wire [7 : 0] dec_s31_new;
+  wire [7 : 0] dec_s32_new;
+  wire [7 : 0] dec_s33_new;
   
   
   //----------------------------------------------------------------
