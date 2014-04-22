@@ -361,11 +361,94 @@ module aes_core(
   // state_logic
   //
   // The logic needed to initalize as well as update the internal
-  // state during round processing.
+  // state during round processing. Basically either store the
+  // block in the state registers or select the state update
+  // values depending on if we are enciphering or deciphering.
   //----------------------------------------------------------------
   always @*
-    begin : state_update_logic
+    begin : state_logic
+      sa00_new = 8'h00;
+      sa10_new = 8'h00;
+      sa20_new = 8'h00;
+      sa30_new = 8'h00;
+      sa01_new = 8'h00;
+      sa11_new = 8'h00;
+      sa21_new = 8'h00;
+      sa31_new = 8'h00;
+      sa02_new = 8'h00;
+      sa12_new = 8'h00;
+      sa22_new = 8'h00;
+      sa32_new = 8'h00;
+      sa03_new = 8'h00;
+      sa13_new = 8'h00;
+      sa23_new = 8'h00;
+      sa33_new = 8'h00;
+      s_we     = 1'b0;
 
+      if (init_state)
+        begin
+          sa00_new = block[127 : 120];
+          sa10_new = block[119 : 112];
+          sa20_new = block[111 : 104];
+          sa30_new = block[103 : 096];
+          sa01_new = block[095 : 088];
+          sa11_new = block[087 : 080];
+          sa21_new = block[079 : 072];
+          sa31_new = block[071 : 064];
+          sa02_new = block[063 : 056];
+          sa12_new = block[055 : 048];
+          sa22_new = block[047 : 040];
+          sa32_new = block[039 : 032];
+          sa03_new = block[031 : 024];
+          sa13_new = block[023 : 016];
+          sa23_new = block[015 : 008];
+          sa33_new = block[007 : 000];
+          s_we     = 1'b1;
+        end
+
+      else if (update_state)
+        begin
+          if (encdec_reg)
+            begin
+              sa00_new = enc_s00_new;
+              sa10_new = enc_s01_new;
+              sa20_new = enc_s02_new;
+              sa30_new = enc_s03_new;
+              sa01_new = enc_s10_new;
+              sa11_new = enc_s11_new;
+              sa21_new = enc_s12_new;
+              sa31_new = enc_s13_new;
+              sa02_new = enc_s20_new;
+              sa12_new = enc_s21_new;
+              sa22_new = enc_s22_new;
+              sa32_new = enc_s23_new;
+              sa03_new = enc_s30_new;
+              sa13_new = enc_s31_new;
+              sa23_new = enc_s32_new;
+              sa33_new = enc_s33_new;
+              s_we     = 1'b1;
+            end
+          else
+            begin
+              sa00_new = enc_s00_new;
+              sa10_new = enc_s01_new;
+              sa20_new = enc_s02_new;
+              sa30_new = enc_s03_new;
+              sa01_new = enc_s10_new;
+              sa11_new = enc_s11_new;
+              sa21_new = enc_s12_new;
+              sa31_new = enc_s13_new;
+              sa02_new = enc_s20_new;
+              sa12_new = enc_s21_new;
+              sa22_new = enc_s22_new;
+              sa32_new = enc_s23_new;
+              sa03_new = enc_s30_new;
+              sa13_new = enc_s31_new;
+              sa23_new = enc_s32_new;
+              sa33_new = enc_s33_new;
+              s_we     = 1'b1;
+            end
+        end
     end // state_logic
 
 
