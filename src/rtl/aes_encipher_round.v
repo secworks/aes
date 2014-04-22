@@ -39,7 +39,6 @@
 //======================================================================
  
 module aes_encipher_round(
-                          input wire [127 : 0]  block,
                           input wire [127 : 0]  round_key,
                           input wire [1 : 0]    round_type,
 

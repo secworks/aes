@@ -151,9 +151,8 @@ module aes_core(
   // Instantiations.
   //----------------------------------------------------------------
   aes_encipher_round enc_round(
-                               .block(block),
-                               .round_key(round_key),
                                .round_type(round_type),
+                               .round_key(round_key),
                                .s00(s00_reg),
                                .s01(s01_reg),
                                .s02(s02_reg),
@@ -190,9 +189,8 @@ module aes_core(
 
 
   aes_decipher_round dec_round(
-                               .block(block),
-                               .round_key(round_key),
                                .round_type(round_type),
+                               .round_key(round_key),
                                .s00(s00_reg),
                                .s01(s01_reg),
                                .s02(s02_reg),

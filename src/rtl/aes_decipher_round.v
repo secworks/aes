@@ -39,9 +39,8 @@
 //======================================================================
 
 module aes_decipher_round(
-                          input wire [127 : 0]  block,
-                          input wire [127 : 0]  round_key,
                           input wire [1 : 0]    round_type,
+                          input wire [127 : 0]  round_key,
 
                           input wire [7 : 0]    s00,
                           input wire [7 : 0]    s01,
