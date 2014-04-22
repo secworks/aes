@@ -74,7 +74,6 @@ module aes_core(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg [255 : 0] key_reg;
   reg [1 : 0]   keylen_reg;
   reg           encdec_reg;
   reg           init_we;
@@ -148,6 +147,8 @@ module aes_core(
 
   reg [1 : 0]   round_type;
   reg [127 : 0] round_key;
+
+  reg           next_key;
 
   wire [7 : 0] enc_s00_new;
   wire [7 : 0] enc_s01_new;
@@ -270,7 +271,7 @@ module aes_core(
                     .keylen(keylen),
                     .encdec(encdec),
                     .init(init),
-                    .addr(key_number),
+                    .next(next_key),
 
                     .round_key(round_key),
                     .ready(key_ready)
