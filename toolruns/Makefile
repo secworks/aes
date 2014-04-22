@@ -37,10 +37,11 @@
 #===================================================================
 
 SBOX_SRC=../src/rtl/aes_sbox.v
+INV_SBOX_SRC=../src/rtl/aes_inv_sbox.v
 KEYGEN_SRC=../src/rtl/aes_keygen.v
 ENCIPHER_SRC=../src/rtl/aes_encipher_round.v
 DECIPHER_SRC=../src/rtl/aes_decipher_round.v
-CORE_SRC=../src/rtl/aes_core.v $(KEYGEN_SRC) $(SBOX_SRC) $(ENCIPHER_SRC)  $(DECIPHER_SRC)
+CORE_SRC=../src/rtl/aes_core.v $(KEYGEN_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC)  $(DECIPHER_SRC)
 TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
 TB_CORE_SRC =../src/tb/tb_aes_core.v
