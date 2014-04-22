@@ -150,22 +150,22 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox00(.addr(sbox00_reg), .data(sbox00_data));
-  aes_sbox sbox01(.addr(sbox01_reg), .data(sbox01_data));
-  aes_sbox sbox02(.addr(sbox02_reg), .data(sbox02_data));
-  aes_sbox sbox03(.addr(sbox03_reg), .data(sbox03_data));
-  aes_sbox sbox10(.addr(sbox10_reg), .data(sbox10_data));
-  aes_sbox sbox11(.addr(sbox11_reg), .data(sbox11_data));
-  aes_sbox sbox12(.addr(sbox12_reg), .data(sbox12_data));
-  aes_sbox sbox13(.addr(sbox13_reg), .data(sbox13_data));
-  aes_sbox sbox20(.addr(sbox20_reg), .data(sbox20_data));
-  aes_sbox sbox21(.addr(sbox21_reg), .data(sbox21_data));
-  aes_sbox sbox22(.addr(sbox22_reg), .data(sbox22_data));
-  aes_sbox sbox23(.addr(sbox23_reg), .data(sbox23_data));
-  aes_sbox sbox30(.addr(sbox30_reg), .data(sbox30_data));
-  aes_sbox sbox31(.addr(sbox31_reg), .data(sbox31_data));
-  aes_sbox sbox32(.addr(sbox32_reg), .data(sbox32_data));
-  aes_sbox sbox33(.addr(sbox33_reg), .data(sbox33_data));
+  aes_sbox sbox00(.addr(s00), .data(sbox00_data));
+  aes_sbox sbox01(.addr(s01), .data(sbox01_data));
+  aes_sbox sbox02(.addr(s02), .data(sbox02_data));
+  aes_sbox sbox03(.addr(s03), .data(sbox03_data));
+  aes_sbox sbox10(.addr(s10), .data(sbox10_data));
+  aes_sbox sbox11(.addr(s11), .data(sbox11_data));
+  aes_sbox sbox12(.addr(s12), .data(sbox12_data));
+  aes_sbox sbox13(.addr(s13), .data(sbox13_data));
+  aes_sbox sbox20(.addr(s20), .data(sbox20_data));
+  aes_sbox sbox21(.addr(s21), .data(sbox21_data));
+  aes_sbox sbox22(.addr(s22), .data(sbox22_data));
+  aes_sbox sbox23(.addr(s23), .data(sbox23_data));
+  aes_sbox sbox30(.addr(s30), .data(sbox30_data));
+  aes_sbox sbox31(.addr(s31), .data(sbox31_data));
+  aes_sbox sbox32(.addr(s32), .data(sbox32_data));
+  aes_sbox sbox33(.addr(s33), .data(sbox33_data));
 
 
   //----------------------------------------------------------------
