@@ -65,18 +65,22 @@ module aes_core(
   parameter AES192_ROUNDS = 12;
   parameter AES256_ROUNDS = 14;
   
-  parameter CTRL_IDLE   = 0;
-  parameter CTRL_INIT   = 1;
-  parameter CTRL_ROUNDS = 2;
-  parameter CTRL_DONE   = 3;
+  parameter CTRL_IDLE        = 0;
+  parameter CTRL_INIT_ROUND  = 1;
+  parameter CTRL_MAIN_ROUNDS = 2;
+  parameter CTRL_FINAL_ROUND = 3;
+  parameter CTRL_DONE        = 4;
   
+  parameter INIT_ROUND  = 0;
+  parameter MAIN_ROUND  = 1;
+  parameter FINAL_ROUND = 2;
+
   
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
   reg [1 : 0]   keylen_reg;
   reg           encdec_reg;
-  reg           init_we;
 
   reg [7 : 0]   s00_reg;
   reg [7 : 0]   s00_new;
@@ -86,7 +90,6 @@ module aes_core(
   reg [7 : 0]   s02_new;
   reg [7 : 0]   s03_reg;
   reg [7 : 0]   s03_new;
-
   reg [7 : 0]   s10_reg;
   reg [7 : 0]   s10_new;
   reg [7 : 0]   s11_reg;
@@ -95,7 +98,6 @@ module aes_core(
   reg [7 : 0]   s12_new;
   reg [7 : 0]   s13_reg;
   reg [7 : 0]   s13_new;
-
   reg [7 : 0]   s20_reg;
   reg [7 : 0]   s20_new;
   reg [7 : 0]   s21_reg;
@@ -104,7 +106,6 @@ module aes_core(
   reg [7 : 0]   s22_new;
   reg [7 : 0]   s23_reg;
   reg [7 : 0]   s23_new;
-
   reg [7 : 0]   s30_reg;
   reg [7 : 0]   s30_new;
   reg [7 : 0]   s31_reg;
@@ -113,7 +114,6 @@ module aes_core(
   reg [7 : 0]   s32_new;
   reg [7 : 0]   s33_reg;
   reg [7 : 0]   s33_new;
-  
   reg           s_we;
   
   reg           ready_reg;
@@ -123,8 +123,6 @@ module aes_core(
   reg           result_valid_reg;
   reg           result_valid_new;
   reg           result_valid_we;
-
-  reg [3 : 0]   num_rounds;
 
   reg [3 : 0]   round_ctr_reg;
   reg [3 : 0]   round_ctr_new;
@@ -140,49 +138,49 @@ module aes_core(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [7 : 0] tmp_data;
+  reg [7 : 0]    tmp_data;
   
-  reg init_state;
-  reg update_state;
+  reg            init_state;
+  reg            update_state;
 
+  reg [3 : 0]    num_rounds;
   reg [1 : 0]    round_type;
   wire [127 : 0] round_key;
+  reg            next_key;
 
-  reg           next_key;
+  wire [7 : 0]   enc_s00_new;
+  wire [7 : 0]   enc_s01_new;
+  wire [7 : 0]   enc_s02_new;
+  wire [7 : 0]   enc_s03_new;
+  wire [7 : 0]   enc_s10_new;
+  wire [7 : 0]   enc_s11_new;
+  wire [7 : 0]   enc_s12_new;
+  wire [7 : 0]   enc_s13_new;
+  wire [7 : 0]   enc_s20_new;
+  wire [7 : 0]   enc_s21_new;
+  wire [7 : 0]   enc_s22_new;
+  wire [7 : 0]   enc_s23_new;
+  wire [7 : 0]   enc_s30_new;
+  wire [7 : 0]   enc_s31_new;
+  wire [7 : 0]   enc_s32_new;
+  wire [7 : 0]   enc_s33_new;
 
-  wire [7 : 0] enc_s00_new;
-  wire [7 : 0] enc_s01_new;
-  wire [7 : 0] enc_s02_new;
-  wire [7 : 0] enc_s03_new;
-  wire [7 : 0] enc_s10_new;
-  wire [7 : 0] enc_s11_new;
-  wire [7 : 0] enc_s12_new;
-  wire [7 : 0] enc_s13_new;
-  wire [7 : 0] enc_s20_new;
-  wire [7 : 0] enc_s21_new;
-  wire [7 : 0] enc_s22_new;
-  wire [7 : 0] enc_s23_new;
-  wire [7 : 0] enc_s30_new;
-  wire [7 : 0] enc_s31_new;
-  wire [7 : 0] enc_s32_new;
-  wire [7 : 0] enc_s33_new;
-
-  wire [7 : 0] dec_s00_new;
-  wire [7 : 0] dec_s01_new;
-  wire [7 : 0] dec_s02_new;
-  wire [7 : 0] dec_s03_new;
-  wire [7 : 0] dec_s10_new;
-  wire [7 : 0] dec_s11_new;
-  wire [7 : 0] dec_s12_new;
-  wire [7 : 0] dec_s13_new;
-  wire [7 : 0] dec_s20_new;
-  wire [7 : 0] dec_s21_new;
-  wire [7 : 0] dec_s22_new;
-  wire [7 : 0] dec_s23_new;
-  wire [7 : 0] dec_s30_new;
-  wire [7 : 0] dec_s31_new;
-  wire [7 : 0] dec_s32_new;
-  wire [7 : 0] dec_s33_new;
+  wire [7 : 0]   dec_s00_new;
+  wire [7 : 0]   dec_s01_new;
+  wire [7 : 0]   dec_s02_new;
+  wire [7 : 0]   dec_s03_new;
+  wire [7 : 0]   dec_s10_new;
+  wire [7 : 0]   dec_s11_new;
+  wire [7 : 0]   dec_s12_new;
+  wire [7 : 0]   dec_s13_new;
+  wire [7 : 0]   dec_s20_new;
+  wire [7 : 0]   dec_s21_new;
+  wire [7 : 0]   dec_s22_new;
+  wire [7 : 0]   dec_s23_new;
+  wire [7 : 0]   dec_s30_new;
+  wire [7 : 0]   dec_s31_new;
+  wire [7 : 0]   dec_s32_new;
+  wire [7 : 0]   dec_s33_new;
   
   
   //----------------------------------------------------------------
@@ -322,9 +320,7 @@ module aes_core(
           s31_reg          <= 8'h00;
           s32_reg          <= 8'h00;
           s33_reg          <= 8'h00;
-
           round_ctr_reg    <= 4'h0;
-          
           aes_ctrl_reg     <= CTRL_IDLE;
         end
       else
@@ -339,7 +335,7 @@ module aes_core(
               result_valid_reg <= result_valid_new;
             end
           
-          if (init_we)
+          if (init)
             begin
               keylen_reg <= keylen;
               encdec_reg <= encdec;
@@ -379,23 +375,6 @@ module aes_core(
             end
         end
     end // reg_update
-
-
-  //----------------------------------------------------------------
-  // rounds_select
-  //
-  // Simple logic that selects number of rounds based on the given
-  // key length.
-  //----------------------------------------------------------------
-  always @*
-    begin : rounds_select
-      case (keylen_reg)
-        AES_128_BIT_KEY: num_rounds = AES128_ROUNDS;
-        AES_192_BIT_KEY: num_rounds = AES192_ROUNDS;
-        AES_256_BIT_KEY: num_rounds = AES256_ROUNDS;
-        default:         num_rounds = 4'h0;
-      endcase // case (keylen_reg)
-    end // rounds_select
 
 
   //----------------------------------------------------------------
@@ -494,6 +473,23 @@ module aes_core(
 
 
   //----------------------------------------------------------------
+  // rounds_select
+  //
+  // Simple logic that selects number of rounds based on the given
+  // key length.
+  //----------------------------------------------------------------
+  always @*
+    begin : rounds_select
+      case (keylen_reg)
+        AES_128_BIT_KEY: num_rounds = AES128_ROUNDS;
+        AES_192_BIT_KEY: num_rounds = AES192_ROUNDS;
+        AES_256_BIT_KEY: num_rounds = AES256_ROUNDS;
+        default:         num_rounds = 4'h0;
+      endcase // case (keylen_reg)
+    end // rounds_select
+
+
+  //----------------------------------------------------------------
   // round_ctr
   //
   // The round counter with reset and increase logic.
@@ -519,6 +515,11 @@ module aes_core(
   // aes_ctrl_fsm
   //
   // The control FSM that runs the core.
+  //
+  // Note that the control FSM assumes that the core user has
+  // pulled init previously to initialize the cipher with the
+  // given key. Pulling init also sampled encdec flag and keylen
+  // which are used during round processing.
   //----------------------------------------------------------------
   always @*
     begin : aes_ctrl_fsm
@@ -526,44 +527,68 @@ module aes_core(
       ready_we         = 0;
       result_valid_new = 0;
       result_valid_we  = 0;
-      init_we          = 0;
       init_state       = 0;
+      update_state     = 0;
       round_ctr_rst    = 0;
       round_ctr_inc    = 0;
-      update_state     = 0;
+      round_type       = 2'h0;
+      next_key         = 0;
       aes_ctrl_new     = CTRL_IDLE;
       aes_ctrl_we      = 0;
       
       case (aes_ctrl_reg)
         CTRL_IDLE:
           begin
-            if (init)
+            if (next)
               begin
-                init_we      = 1;
-                aes_ctrl_new = CTRL_INIT;
+                init_state       = 1;
+                round_ctr_rst    = 1;
+                ready_new        = 0;
+                ready_we         = 1;
+                result_valid_new = 0;
+                result_valid_we  = 1;
+                aes_ctrl_new     = CTRL_INIT_ROUND;
+                aes_ctrl_we      = 1;
+              end
+          end
+
+
+        CTRL_INIT_ROUND:
+          begin
+            next_key     = 1;
+            round_type   = INIT_ROUND;
+            update_state = 1;
+            aes_ctrl_new = CTRL_MAIN_ROUNDS;
+            aes_ctrl_we  = 1;
+          end
+
+
+        CTRL_MAIN_ROUNDS:
+          begin
+            next_key      = 1;
+            round_type    = MAIN_ROUND;
+            update_state  = 1;
+            round_ctr_inc = 1;
+
+            if (round_ctr_reg < num_rounds)
+              begin
+                aes_ctrl_new = CTRL_FINAL_ROUND;
                 aes_ctrl_we  = 1;
               end
           end
 
-        CTRL_INIT:
-          begin
-            aes_ctrl_new = CTRL_ROUNDS;
-            aes_ctrl_we  = 1;
-          end
 
-        CTRL_ROUNDS:
+        CTRL_FINAL_ROUND:
           begin
-            aes_ctrl_new = CTRL_DONE;
-            aes_ctrl_we  = 1;
+            round_type       = FINAL_ROUND;
+            update_state     = 1;
+            ready_new        = 1;
+            ready_we         = 1;
+            result_valid_new = 1;
+            result_valid_we  = 1;
+            aes_ctrl_new     = CTRL_IDLE;
+            aes_ctrl_we      = 1;
           end
-          
-
-        CTRL_DONE:
-          begin
-            aes_ctrl_new = CTRL_IDLE;
-            aes_ctrl_we  = 1;
-          end
-
         
         default:
           begin
@@ -571,7 +596,6 @@ module aes_core(
           end
       endcase // case (aes_ctrl_reg)
     end // aes_ctrl_fsm
-    
 endmodule // aes_core
 
 //======================================================================
