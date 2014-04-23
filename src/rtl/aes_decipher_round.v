@@ -119,11 +119,11 @@ module aes_decipher_round(
     end
   endfunction // gm8
 
-  function [7 : 0] gm9(input [7 : 0] op);
+  function [7 : 0] gm09(input [7 : 0] op);
     begin
-      gm9 = gm4(op) ^ op;
+      gm09 = gm8(op) ^ op;
     end
-  endfunction // gm9
+  endfunction // gm09
 
   function [7 : 0] gm11(input [7 : 0] op);
     begin
@@ -313,25 +313,25 @@ module aes_decipher_round(
             s33_0 = sbox32_data;
 
             // MixColumns
-            s00_1 = gm2(s00_0) ^ gm3(s10_0) ^ s20_0      ^ s30_0;
-            s10_1 = s00_0      ^ gm2(s10_0) ^ gm3(s20_0) ^ s30_0;
-            s20_1 = s00_0      ^ s10_0      ^ gm2(s20_0) ^ gm3(s30_0);
-            s30_1 = gm3(s00_0) ^ s10_0      ^ s20_0      ^ gm2(s30_0);
+            s00_1 = gm14(s00_0) ^ gm11(s10_0) ^ gm13(s20_0) ^ gm09(s30_0);
+            s10_1 = gm09(s00_0) ^ gm14(s10_0) ^ gm11(s20_0) ^ gm13(s30_0);
+            s20_1 = gm13(s00_0) ^ gm09(s10_0) ^ gm14(s20_0) ^ gm11(s30_0);
+            s30_1 = gm11(s00_0) ^ gm13(s10_0) ^ gm09(s20_0) ^ gm14(s30_0);
 
-            s01_1 = gm2(s01_0) ^ gm3(s11_0) ^ s21_0      ^ s31_0;
-            s11_1 = s01_0      ^ gm2(s11_0) ^ gm3(s21_0) ^ s31_0;
-            s21_1 = s01_0      ^ s11_0      ^ gm2(s21_0) ^ gm3(s31_0);
-            s31_1 = gm3(s01_0) ^ s11_0      ^ s21_1      ^ gm2(s31_0);
+            s01_1 = gm14(s01_0) ^ gm11(s11_0) ^ gm13(s21_0) ^ gm09(s31_0);
+            s11_1 = gm09(s01_0) ^ gm14(s11_0) ^ gm11(s21_0) ^ gm13(s31_0);
+            s21_1 = gm13(s01_0) ^ gm09(s11_0) ^ gm14(s21_0) ^ gm11(s31_0);
+            s31_1 = gm11(s01_0) ^ gm13(s11_0) ^ gm09(s21_0) ^ gm14(s31_0);
 
-            s02_1 = gm2(s02_0) ^ gm3(s12_0) ^ s22_0      ^ s32_0;
-            s12_1 = s02_0      ^ gm2(s12_0) ^ gm3(s22_0) ^ s32_0;
-            s22_1 = s02_0      ^ s12_0      ^ gm2(s22_0) ^ gm3(s32_0);
-            s32_1 = gm3(s02_0) ^ s12_0      ^ s22_1      ^ gm2(s32_0);
+            s02_1 = gm14(s02_0) ^ gm11(s12_0) ^ gm13(s22_0) ^ gm09(s32_0);
+            s12_1 = gm09(s02_0) ^ gm14(s12_0) ^ gm11(s22_0) ^ gm13(s32_0);
+            s22_1 = gm13(s02_0) ^ gm09(s12_0) ^ gm14(s22_0) ^ gm11(s32_0);
+            s32_1 = gm11(s02_0) ^ gm13(s12_0) ^ gm09(s22_0) ^ gm14(s32_0);
 
-            s03_1 = gm2(s03_0) ^ gm3(s13_0) ^ s23_0      ^ s33_0;
-            s13_1 = s03_0      ^ gm2(s13_0) ^ gm3(s23_0) ^ s33_0;
-            s23_1 = s03_0      ^ s13_0      ^ gm2(s23_0) ^ gm3(s33_0);
-            s33_1 = gm3(s03_0) ^ s13_0      ^ s23_1      ^ gm2(s33_0);
+            s03_1 = gm14(s03_0) ^ gm11(s13_0) ^ gm13(s23_0) ^ gm09(s33_0);
+            s13_1 = gm09(s03_0) ^ gm14(s13_0) ^ gm11(s23_0) ^ gm13(s33_0);
+            s23_1 = gm13(s03_0) ^ gm09(s13_0) ^ gm14(s23_0) ^ gm11(s33_0);
+            s33_1 = gm11(s03_0) ^ gm13(s13_0) ^ gm09(s23_0) ^ gm14(s33_0);
 
             // AddRoundKey
             // TODO: Add correct round_key indices.
