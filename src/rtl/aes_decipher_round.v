@@ -106,7 +106,43 @@ module aes_decipher_round(
       gm3 = gm2(op) ^ op;
     end
   endfunction // gm3
-  
+
+  function [7 : 0] gm4(input [7 : 0] op);
+    begin
+      gm4 = gm2(op) ^ gm2(op);
+    end
+  endfunction // gm4
+
+  function [7 : 0] gm8(input [7 : 0] op);
+    begin
+      gm8 = gm4(op) ^ gm4(op);
+    end
+  endfunction // gm8
+
+  function [7 : 0] gm9(input [7 : 0] op);
+    begin
+      gm9 = gm4(op) ^ op;
+    end
+  endfunction // gm9
+
+  function [7 : 0] gm11(input [7 : 0] op);
+    begin
+      gm11 = gm8(op) ^ gm2(op) ^ op;
+    end
+  endfunction // gm11
+
+  function [7 : 0] gm13(input [7 : 0] op);
+    begin
+      gm13 = gm8(op) ^ gm4(op) ^ op;
+    end
+  endfunction // gm13
+
+  function [7 : 0] gm14(input [7 : 0] op);
+    begin
+      gm14 = gm8(op) ^ gm4(op) ^ gm2(op);
+    end
+  endfunction // gm14
+
   
   //----------------------------------------------------------------
   // Wires.
