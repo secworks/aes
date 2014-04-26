@@ -8,7 +8,7 @@ Encryption Standard) as specified in the NIST document [FIPS 197](http://csrc.ni
 
 ## Introduction ##
 
-This implementation supports 128 , 192and 256 bit keys. The
+This implementation supports 128, 192 and 256 bit keys. The
 implementation is iterative but process all bytes in parallel and with
 16 S-boxes in the data path.
 
