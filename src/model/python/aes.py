@@ -196,6 +196,29 @@ class AES():
         print("State at round 0x%02x:" % round)
         print("")
 
+    def _gm2(self, op):
+        return ((op << 1) ^ (0x1b & (op & 0x80))) & 0xff
+
+    def _gm3(self, op):
+        return self._gm2(op) ^ op
+
+    def _gm4(self, op):
+        return self._gm2(self._gm2(op))
+
+    def _gm8(self, op):
+        return self._gm4(self._gm4(op))
+
+    def _gm9(self, op):
+        return self._gm8(op) ^ op
+
+    def _gm11(self, op):
+        return self._gm8(op) ^ self._gm2(op) ^ op
+
+    def _gm13(self, op):
+        return self._gm8(op) ^ self._gm4(op) ^ op
+
+    def _gm14(self, op):
+        return self._gm8(op) ^ self._gm4(op) ^ self._gm2(op)
 
 
 #-------------------------------------------------------------------
