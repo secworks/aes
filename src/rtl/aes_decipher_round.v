@@ -101,12 +101,6 @@ module aes_decipher_round(
     end
   endfunction // gm2
 
-  function [7 : 0] gm3(input [7 : 0] op);
-    begin
-      gm3 = gm2(op) ^ op;
-    end
-  endfunction // gm3
-
   function [7 : 0] gm4(input [7 : 0] op);
     begin
       gm4 = gm2(gm2(op));
