@@ -192,6 +192,50 @@ class AES():
         pass
             
 
+    def _mixcolumn(self, op0, op1, op2, op3):
+        (self.S[0][0], self.S[1][0], self.S[2][0], self.S[3][0]) =
+        self._mixer(self.S[0][0], self.S[1][0], self.S[2][0], self.S[3][0])
+
+        (self.S[0][1], self.S[1][1], self.S[2][1], self.S[3][1]) =
+        self._mixer(self.S[0][1], self.S[1][1], self.S[2][1], self.S[3][1])
+
+        (self.S[0][2], self.S[1][2], self.S[2][2], self.S[3][2]) =
+        self._mixer(self.S[0][2], self.S[1][2], self.S[2][2], self.S[3][2])
+
+        (self.S[0][3], self.S[1][3], self.S[2][3], self.S[3][3]) =
+        self._mixer(self.S[0][3], self.S[1][3], self.S[2][3], self.S[3][3])
+
+
+    def _inverse_mixcolumn(self, op0, op1, op2, op3):
+        (self.S[0][0], self.S[1][0], self.S[2][0], self.S[3][0]) =
+        self._inv_mixer(self.S[0][0], self.S[1][0], self.S[2][0], self.S[3][0])
+
+        (self.S[0][1], self.S[1][1], self.S[2][1], self.S[3][1]) =
+        self._inv_mixer(self.S[0][1], self.S[1][1], self.S[2][1], self.S[3][1])
+
+        (self.S[0][2], self.S[1][2], self.S[2][2], self.S[3][2]) =
+        self._inv_mixer(self.S[0][2], self.S[1][2], self.S[2][2], self.S[3][2])
+
+        (self.S[0][3], self.S[1][3], self.S[2][3], self.S[3][3]) =
+        self._inv_mixer(self.S[0][3], self.S[1][3], self.S[2][3], self.S[3][3])
+
+
+    def _mixer(self, op0, op1, op2, op3):
+        new_op0 = gm2(op0) ^ gm3(op1) ^ op2      ^ op3;
+        new_op1 = op0      ^ gm2(op1) ^ gm3(op2) ^ op3;
+        new_op2 = op0      ^ op1      ^ gm2(op2) ^ gm3(op3);
+        new_op3 = gm3(op0) ^ op1      ^ op2      ^ gm2(op3);
+        return (new_op0, new_op1, new_op2, new_op3)
+
+
+    def _inv_mixer(self, op0, op1, op2, op3):
+        new_op0 = gm14(op0) ^ gm11(op1) ^ gm13(2) ^ gm09(3);
+        new_op1 = gm09(op0) ^ gm14(op1) ^ gm11(2) ^ gm13(3);
+        new_op2 = gm13(op0) ^ gm09(op1) ^ gm14(2) ^ gm11(3);
+        new_op3 = gm11(op0) ^ gm13(op1) ^ gm09(2) ^ gm14(3);
+        return (new_op0, new_op1, new_op2, new_op3)
+
+
     def _print_state(self, round):
         print("State at round 0x%02x:" % round)
         print("")
@@ -247,6 +291,27 @@ def test_nist_ecb_single_block(tc, encdec, key, plaintext, expected):
     my_aes = AES()
     my_aes.init(key)
     my_aes.next(encdec, plaintext)
+
+
+#-------------------------------------------------------------------
+# test_mixers()
+#
+# Test the mixcolumn and inverse mixcolumn functions.
+#-------------------------------------------------------------------
+def test_mixers()
+    my_aes = AES()
+    mixer_tests = [((db, 0x13, 0x53, 0x45), (0x8e, 0x4d, 0xa1, 0xbc)),
+                   ((f2, 0x0a, 0x22, 0x5c), (0x9f, 0xdc, 0x58, 0x9d)),
+                   ((01, 0x01, 0x01, 0x01), (0x01, 0x01, 0x01, 0x01)),
+                   ((c6, 0xc6, 0xc6, 0xc6), (0xc6, 0xc6, 0xc6, 0xc6)),
+                   ((d4, 0xd4, 0xd4, 0xd5), (0xd5, 0xd5, 0xd7, 0xd6)),
+                   ((2d, 0x26, 0x31, 0x4c), (0x4d, 0x7e, 0xbd, 0xf8))]
+
+    for (input, expected) in mixer_tests:
+        (op0, op1, op2, op3) = input
+        result = my_aes._mixer(op0, op1, op2, op3)
+        print("Result: ", result)
+        print("Expected: ", expected)
         
 
 #-------------------------------------------------------------------
