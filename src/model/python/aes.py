@@ -60,6 +60,8 @@ AES_128_BIT_KEY = 0
 AES_192_BIT_KEY = 1
 AES_256_BIT_KEY = 2
 
+VERBOSE = True
+
 
 #-------------------------------------------------------------------
 # ChaCha()
@@ -140,19 +142,23 @@ class AES():
 
         
     def init(self, key):
-        pass
-#        if len(key) not in [16, 24, 32]:
-#            print("Key is %d bits, not 128, 192 or 256 bits long." % (8 * len(key)))
-#            return 0
-#
-#        self.key = key
-#        self.keylen = (8 * len(key))
-#        if self.verbose:
-#            print("Key length: %d bits" % self.keylen)
-#        self._gen_roundkeys()
-#        self.S = [[0] * 4 for i in range(4)]
-#        if self.verbose:
-#            print("State size: %d bits" % len(self.S))
+        if len(key) not in [16, 24, 32]:
+            print("Key is %d bits, not 128, 192 or 256 bits long." % (8 * len(key)))
+            return 0
+
+        self.key = key
+        self.keylen = (8 * len(key))
+
+        if self.keylen == 128:
+            self.num_rounds = AES_128_ROUNDS
+        if self.keylen == 192:
+            self.num_rounds = AES_192_ROUNDS
+        if self.keylen == 256:
+            self.num_rounds = AES_256_ROUNDS
+
+        if self.verbose:
+            print("Key length: %d bits" % self.keylen)
+        self._gen_roundkeys()
 
 
     def next(self, encdec, block):
@@ -178,13 +184,16 @@ class AES():
 
 
     def _gen_roundkeys(self):
-        self.round_keys = [[0x00] * 16] * 14
+        self.round_keys = [[0x00] * 16] * self.num_rounds
+        if self.verbose:
+            print("Round keys:")
+            print(self.round_keys)
 
-        self.rcon = 0x8d
-
-        for i in range(256):
-            print("rcon[0x%02x] = 0x%02x" % (i, self.rcon))
-            self.rcon = ((self.rcon << 1) ^ (0x11b & -(self.rcon >> 7))) & 0xff
+#        self.rcon = 0x8d
+#
+#        for i in range(256):
+#            print("rcon[0x%02x] = 0x%02x" % (i, self.rcon))
+#            self.rcon = ((self.rcon << 1) ^ (0x11b & -(self.rcon >> 7))) & 0xff
 
             #self.roundkeys = [0] * rounds[self.keylen]
 
@@ -764,8 +773,15 @@ def test_key_expansion():
 
     my_aes = AES(verbose=True)
 
-#    for (key, expect) in key_expansion_testcases:
-#        my_aes.init(key)
+    for (key, expect) in key_expansion_testcases:
+        if VERBOSE:
+            print("Key:")
+            print(key)
+            print("Expected round keys:")
+            print(expect)
+            print("")
+
+        my_aes.init(key)
 #        if my_aes.round_keys == expect:
 #            print("Correct round keys generated.")
 #        else:
