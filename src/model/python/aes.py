@@ -748,9 +748,15 @@ def test_key_expansion():
                    [0x24, 0xfc, 0x79, 0xcc, 0xbf, 0x09, 0x79, 0xe9,
                     0x37, 0x1a, 0xc2, 0x3c, 0x6d, 0x68, 0xde, 0x36]]
 
-    key_expansion_testcases = [(key128_1, expect128_1), (key128_2, expect128_2), (key128_3, expect128_3),
-                               (key192_1, expect192_1), (key192_2, expect192_2), (key192_3, expect192_3),
-                               (key256_1, expect256_1), (key256_2, expect256_2), (key256_3, expect256_3)]
+    key_expansion_testcases = [(key128_1, expect128_1),
+                               (key128_2, expect128_2),
+                               (key128_3, expect128_3),
+                               (key192_1, expect192_1),
+                               (key192_2, expect192_2),
+                               (key192_3, expect192_3),
+                               (key256_1, expect256_1),
+                               (key256_2, expect256_2),
+                               (key256_3, expect256_3)]
 
 
     print("Key expansion test started.")
