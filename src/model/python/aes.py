@@ -185,6 +185,18 @@ class AES():
 
     def _gen_roundkeys(self):
         self.round_keys = [[0x00] * 16] * self.num_rounds
+
+        # Initial round key created by copying from the key.
+        if self.keylen == 128:
+            self.round_keys[0] = self.key[:]
+        if self.keylen == 192:
+            self.round_keys[0] = self.key[0 : 16]
+            self.round_keys[1] = self.key[16 : 24] + [0] * 8
+
+        if self.keylen == 256:
+            self.round_keys[0] = self.key[0 : 16]
+            self.round_keys[1] = self.key[16 : 32]
+
         if self.verbose:
             print("Round keys:")
             print(self.round_keys)
