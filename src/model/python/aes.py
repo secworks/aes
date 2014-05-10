@@ -201,13 +201,13 @@ class AES():
             print("Round keys:")
             print(self.round_keys)
 
-#        self.rcon = 0x8d
-#
-#        for i in range(256):
-#            print("rcon[0x%02x] = 0x%02x" % (i, self.rcon))
-#            self.rcon = ((self.rcon << 1) ^ (0x11b & -(self.rcon >> 7))) & 0xff
+        self.rcon = 0x8d
 
-            #self.roundkeys = [0] * rounds[self.keylen]
+        #self.roundkeys = [0] * rounds[self.keylen]
+
+
+    def _next_rcon(self):
+        self.rcon = ((self.rcon << 1) ^ (0x11b & -(self.rcon >> 7))) & 0xff
 
 
     def _subbytes(self):
