@@ -172,29 +172,6 @@ module aes_keygen(
       tmp_round_key = key_mem[round];
     end // key_mem_read
 
-
-  //----------------------------------------------------------------
-  // round_key_mux
-  //
-  // Read access mux to the round keys.
-  //----------------------------------------------------------------
-  always @*
-    begin: round_key_mux
-      case(round_ctr_reg)
-        0:       tmp_round_key = key_mem[0];
-        1:       tmp_round_key = key_mem[1];
-        2:       tmp_round_key = key_mem[2];
-        3:       tmp_round_key = key_mem[3];
-        4:       tmp_round_key = key_mem[4];
-        5:       tmp_round_key = key_mem[5];
-        6:       tmp_round_key = key_mem[6];
-        7:       tmp_round_key = key_mem[7];
-        8:       tmp_round_key = key_mem[8];
-        9:       tmp_round_key = key_mem[9];
-        default: tmp_round_key = 128'h00000000000000000000000000000000;
-      endcase // case (addr)
-    end // round_key_mux
-
   
   //----------------------------------------------------------------
   // round_key_gen
