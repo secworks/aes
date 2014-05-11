@@ -74,7 +74,6 @@ module aes_keygen(
   reg [3 : 0] round_ctr_reg;
   reg [3 : 0] round_ctr_new;
   reg         round_ctr_rst;
-  reg         round_ctr_dec;
   reg         round_ctr_inc;
   reg         round_ctr_we;
   
