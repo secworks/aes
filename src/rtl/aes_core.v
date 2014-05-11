@@ -267,10 +267,9 @@ module aes_core(
                     .reset_n(reset_n),
                     .key(key),
                     .keylen(keylen),
-                    .encdec(encdec),
                     .init(init),
-                    .next(next_key),
 
+                    .round(round_nr),
                     .round_key(round_key),
                     .ready(key_ready)
                    );
