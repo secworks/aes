@@ -53,9 +53,13 @@ module aes_keygen(
   //----------------------------------------------------------------
   // Parameters.
   //----------------------------------------------------------------
-  parameter NUM_ROUNDS_128 = 10;
-  parameter NUM_ROUNDS_192 = 12;
-  parameter NUM_ROUNDS_256 = 14;
+  parameter AES_128_BIT_KEY = 0;
+  parameter AES_192_BIT_KEY = 1;
+  parameter AES_256_BIT_KEY = 2;
+
+  parameter AES_128_NUM_ROUNDS = 10;
+  parameter AES_128_NUM_ROUNDS = 12;
+  parameter AES_128_NUM_ROUNDS = 14;
   
   parameter CTRL_IDLE = 0;
   parameter CTRL_INIT = 1;
@@ -179,14 +183,13 @@ module aes_keygen(
   //
   // The round key generator logic
   //----------------------------------------------------------------
-//  always @*
-//    begin: round_key_gen
-//      // Default assignments.
-//      key_mem_we  = 0;
-//      key_mem_new = 128'h00000000000000000000000000000000;
-//
-//      
-//    end // round_key_gen
+  always @*
+    begin: round_key_gen
+      // Default assignments.
+      key_mem_we  = 0;
+      key_mem_new = 128'h00000000000000000000000000000000;
+
+    end // round_key_gen
 
   
   //----------------------------------------------------------------
