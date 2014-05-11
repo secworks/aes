@@ -42,10 +42,9 @@ module aes_keygen(
                   
                   input wire [255 : 0]  key,
                   input wire [1   : 0]  keylen,
-                  input wire            encdec,
                   input wire            init,
-                  input wire            next,
 
+                  input wire    [3 : 0] round,
                   output wire [127 : 0] round_key,
                   output wire           ready
                  );
@@ -162,7 +161,18 @@ module aes_keygen(
         end
     end // reg_update
 
-                  
+
+  //----------------------------------------------------------------
+  // key_mem_read
+  //
+  // Combinational read port for the key memory.
+  //----------------------------------------------------------------
+  always @*
+    begin : key_mem_read
+      tmp_round_key = key_mem[round];
+    end // key_mem_read
+
+
   //----------------------------------------------------------------
   // round_key_mux
   //
