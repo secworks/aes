@@ -54,7 +54,9 @@ module aes_keygen(
   //----------------------------------------------------------------
   // Parameters.
   //----------------------------------------------------------------
-  parameter NUM_ROUNDS = 10;
+  parameter NUM_ROUNDS_128 = 10;
+  parameter NUM_ROUNDS_192 = 12;
+  parameter NUM_ROUNDS_256 = 14;
   
   parameter CTRL_IDLE = 0;
   parameter CTRL_INIT = 1;
