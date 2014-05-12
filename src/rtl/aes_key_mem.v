@@ -84,6 +84,14 @@ module aes_key_mem(
   reg [2 : 0] key_mem_ctrl_new;
   reg         key_mem_ctrl_we;
 
+  reg         ready_reg;
+  reg         ready_new;
+  reg         ready_we;
+  
+
+  //----------------------------------------------------------------
+  // Wires.
+  //----------------------------------------------------------------
   reg [7 : 0] sbox0_addr;
   reg [7 : 0] sbox1_addr;
   reg [7 : 0] sbox2_addr;
@@ -94,10 +102,6 @@ module aes_key_mem(
   wire [7 : 0] sbox2_data;
   wire [7 : 0] sbox3_data;
 
-
-  //----------------------------------------------------------------
-  // Wires.
-  //----------------------------------------------------------------
   reg [127 : 0] tmp_round_key;
   reg           tmp_ready;
   
@@ -115,7 +119,7 @@ module aes_key_mem(
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
   assign round_key = tmp_round_key;
-  assign ready     = tmp_ready;
+  assign ready     = ready_reg;
   
     
   //----------------------------------------------------------------
@@ -143,6 +147,7 @@ module aes_key_mem(
           key_mem [11]    <= 128'h00000000000000000000000000000000;
           key_mem [12]    <= 128'h00000000000000000000000000000000;
           key_mem [13]    <= 128'h00000000000000000000000000000000;
+          ready_reg       <= 0;
           round_ctr_reg   <= 4'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
         end
@@ -151,7 +156,12 @@ module aes_key_mem(
           if (round_ctr_we)
             begin
               round_ctr_reg <= round_ctr_new;
-                  end
+            end
+
+          if (ready_we)
+            begin
+              ready_reg <= ready_new;
+            end
           
           if (key_mem_we)
             begin
@@ -201,17 +211,18 @@ module aes_key_mem(
   always @*
     begin: key_mem_ctrl
       // Default assignments.
-      tmp_ready   = 0;
+      ready_new        = 0;
+      ready_we         = 0;
       key_mem_ctrl_new = CTRL_IDLE;
       key_mem_ctrl_we  = 0;
 
       case(key_mem_ctrl_reg)
         CTRL_IDLE:
           begin
-            tmp_ready = 1;
-
             if (init)
               begin
+                ready_new        = 0;
+                ready_we         = 1;
                 key_mem_ctrl_new = CTRL_INIT;
                 key_mem_ctrl_we  = 1;
               end
@@ -220,9 +231,16 @@ module aes_key_mem(
         CTRL_INIT:
           begin
             // NOTE: TEMPORARY JUMPBACK!
-            key_mem_ctrl_new = CTRL_IDLE;
+            key_mem_ctrl_new = CTRL_DONE;
             key_mem_ctrl_we  = 1;
           end
+
+        CTRL_DONE:
+          begin
+            ready_new        = 1;
+            ready_we         = 1;
+            key_mem_ctrl_new = CTRL_IDLE;
+            key_mem_ctrl_we  = 1;
       
         default:
           begin
