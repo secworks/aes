@@ -87,6 +87,12 @@ module aes_key_mem(
   reg         ready_reg;
   reg         ready_new;
   reg         ready_we;
+
+  reg [7 : 0] rcon_reg;
+  reg [7 : 0] rcon_new;
+  reg         rcon_we;
+  reg         rcon_set;
+  reg         rcon_next;
   
 
   //----------------------------------------------------------------
@@ -147,6 +153,7 @@ module aes_key_mem(
           key_mem [11]    <= 128'h00000000000000000000000000000000;
           key_mem [12]    <= 128'h00000000000000000000000000000000;
           key_mem [13]    <= 128'h00000000000000000000000000000000;
+          rcon_reg        <= 8'h00;
           ready_reg       <= 0;
           round_ctr_reg   <= 4'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
@@ -161,6 +168,11 @@ module aes_key_mem(
           if (ready_we)
             begin
               ready_reg <= ready_new;
+            end
+
+          if (rcon_we)
+            begin
+              rcon_reg <= rcon_new;
             end
           
           if (key_mem_we)
@@ -201,6 +213,31 @@ module aes_key_mem(
 
     end // round_key_gen
 
+
+  //----------------------------------------------------------------
+  // rcon_logic
+  //
+  // Caclulates the rcon value for the different key expansion
+  // iterations.
+  //----------------------------------------------------------------
+  always @*
+    begin : rcon_logic
+      rcon_new = 8'h00;
+      rcon_we  = 0;
+
+      if (rcon_set)
+        begin
+          rcon_new = 8'h8d;
+          rcon_we  = 1;
+        end
+
+      if (rcon_next)
+        begin
+          rcon_new  = ({rcon_reg[6 : 0], 1'b0} ^ (8'h11 & rcon[7]));
+          rcon_we  = 1;
+        end
+    end
+
   
   //----------------------------------------------------------------
   // key_mem_ctrl
@@ -211,6 +248,8 @@ module aes_key_mem(
   always @*
     begin: key_mem_ctrl
       // Default assignments.
+      rcon_set         = 0;
+      rcon_next        = 0;
       ready_new        = 0;
       ready_we         = 0;
       key_mem_ctrl_new = CTRL_IDLE;
@@ -221,6 +260,7 @@ module aes_key_mem(
           begin
             if (init)
               begin
+                rcon_set         = 1;
                 ready_new        = 0;
                 ready_we         = 1;
                 key_mem_ctrl_new = CTRL_INIT;
