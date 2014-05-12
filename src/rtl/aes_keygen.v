@@ -1,8 +1,8 @@
 //======================================================================
 //
-// aes_keygen.v
-// ------------
-// The AES round key generator.xs
+// aes_key_mem.v
+// -------------
+// The AES key memort including round key generator.
 //
 //
 // Author: Joachim Strombergson
@@ -36,18 +36,18 @@
 //
 //======================================================================
 
-module aes_keygen(
-                  input wire            clk,
-                  input wire            reset_n,
-                  
-                  input wire [255 : 0]  key,
-                  input wire [1   : 0]  keylen,
-                  input wire            init,
+module aes_key_mem(
+                   input wire            clk,
+                   input wire            reset_n,
 
-                  input wire    [3 : 0] round,
-                  output wire [127 : 0] round_key,
-                  output wire           ready
-                 );
+                   input wire [255 : 0]  key,
+                   input wire [1   : 0]  keylen,
+                   input wire            init,
+
+                   input wire    [3 : 0] round,
+                   output wire [127 : 0] round_key,
+                   output wire           ready
+                  );
 
   
   //----------------------------------------------------------------
@@ -80,9 +80,9 @@ module aes_keygen(
   reg         round_ctr_inc;
   reg         round_ctr_we;
   
-  reg [2 : 0] keygen_ctrl_reg;
-  reg [2 : 0] keygen_ctrl_new;
-  reg         keygen_ctrl_we;
+  reg [2 : 0] key_mem_ctrl_reg;
+  reg [2 : 0] key_mem_ctrl_new;
+  reg         key_mem_ctrl_we;
 
   reg [7 : 0] sbox0_addr;
   reg [7 : 0] sbox1_addr;
@@ -144,7 +144,7 @@ module aes_keygen(
           key_mem [12]    <= 128'h00000000000000000000000000000000;
           key_mem [13]    <= 128'h00000000000000000000000000000000;
           round_ctr_reg   <= 4'h0;
-          keygen_ctrl_reg <= CTRL_IDLE;
+          key_mem_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
@@ -158,9 +158,9 @@ module aes_keygen(
               key_mem[round_ctr_reg] = key_mem_new;
             end
 
-          if (keygen_ctrl_we)
+          if (key_mem_ctrl_we)
             begin
-              keygen_ctrl_reg <= keygen_ctrl_new;
+              key_mem_ctrl_reg <= key_mem_ctrl_new;
             end
         end
     end // reg_update
@@ -193,45 +193,45 @@ module aes_keygen(
 
   
   //----------------------------------------------------------------
-  // keygen_ctrl
+  // key_mem_ctrl
   //
   //
   // The FSM that controls the round key generation.
   //----------------------------------------------------------------
   always @*
-    begin: keygen_ctrl
+    begin: key_mem_ctrl
       // Default assignments.
       tmp_ready   = 0;
-      keygen_ctrl_new = CTRL_IDLE;
-      keygen_ctrl_we  = 0;
+      key_mem_ctrl_new = CTRL_IDLE;
+      key_mem_ctrl_we  = 0;
 
-      case(keygen_ctrl_reg)
+      case(key_mem_ctrl_reg)
         CTRL_IDLE:
           begin
             tmp_ready = 1;
 
             if (init)
               begin
-                keygen_ctrl_new = CTRL_INIT;
-                keygen_ctrl_we  = 1;
+                key_mem_ctrl_new = CTRL_INIT;
+                key_mem_ctrl_we  = 1;
               end
           end
 
         CTRL_INIT:
           begin
             // NOTE: TEMPORARY JUMPBACK!
-            keygen_ctrl_new = CTRL_IDLE;
-            keygen_ctrl_we  = 1;
+            key_mem_ctrl_new = CTRL_IDLE;
+            key_mem_ctrl_we  = 1;
           end
       
         default:
           begin
           end
-      endcase // case (keygen_ctrl_reg)
+      endcase // case (key_mem_ctrl_reg)
 
-    end // keygen_ctrl
-endmodule // aes_keygen
+    end // key_mem_ctrl
+endmodule // aes_key_mem
 
 //======================================================================
-// EOF aes_keygen.v
+// EOF aes_key_mem.v
 //======================================================================
