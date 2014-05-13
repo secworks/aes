@@ -56,7 +56,7 @@ module test_rcon();
   reg [7 : 0] rcon_reg;
   reg [7 : 0] rcon_new;
   reg         rcon_we;
-  reg         rcon_rst;
+  reg         rcon_set;
   reg         rcon_next;
 
   //----------------------------------------------------------------
@@ -76,6 +76,16 @@ module test_rcon();
       #CLK_HALF_PERIOD clk = !clk;
     end // clk_gen
   
+    
+  //----------------------------------------------------------------
+  // sys_monitor
+  //----------------------------------------------------------------
+  always
+    begin : sys_monitor
+      #(CLK_PERIOD);      
+      $display("rcon_reg = 0x%02x", rcon_reg);
+    end
+
     
   //----------------------------------------------------------------
   // reg_update
@@ -119,7 +129,7 @@ module test_rcon();
 
       if (rcon_next)
         begin
-          rcon_new  = ({rcon_reg[6 : 0], 1'b0} ^ (8'h11 & {8{rcon[7]}}));
+          rcon_new  = ({rcon_reg[6 : 0], 1'b0} ^ (8'h11 & {8{rcon_reg[7]}}));
           rcon_we  = 1;
         end
     end
@@ -142,11 +152,11 @@ module test_rcon();
   //----------------------------------------------------------------
   // run_test()
   //----------------------------------------------------------------
-  task run_test()
+  task run_test();
     begin
-      rcon_rst  = 1;
+      rcon_set  = 1;
       #(2 * CLK_PERIOD);
-      rcon_rst  = 0;
+      rcon_set  = 0;
       #(2 * CLK_PERIOD);
 
       rcon_next = 1;
@@ -163,7 +173,7 @@ module test_rcon();
     begin
       clk       = 0;
       reset_n   = 1;
-      rcon_rst  = 0;
+      rcon_set  = 0;
       rcon_next = 0;
     end
   endtask // init_test
@@ -180,6 +190,7 @@ module test_rcon();
 
       init_test();
       reset_dut();
+      run_test();
       
       $display("*** rcon simulation done. ***");
       $finish;
