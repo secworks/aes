@@ -36,6 +36,66 @@
 //
 //======================================================================
 
+//------------------------------------------------------------------
+// Simulator directives.
+//------------------------------------------------------------------
+`timescale 1ns/10ps
+
+module test_rcon();
+  
+  //----------------------------------------------------------------
+  // Internal constant and parameter definitions.
+  //----------------------------------------------------------------
+  parameter CLK_HALF_PERIOD = 1;
+  parameter CLK_PERIOD      = CLK_HALF_PERIOD * 2;
+  
+
+  //----------------------------------------------------------------
+  // Register and Wire declarations.
+  //----------------------------------------------------------------
+  reg [7 : 0] rcon_reg;
+  reg [7 : 0] rcon_new;
+  reg         rcon_we;
+  reg         rcon_rst;
+  reg         rcon_next;
+
+  
+  //----------------------------------------------------------------
+  // clk_gen
+  //
+  // Clock generator process. 
+  //----------------------------------------------------------------
+  always 
+    begin : clk_gen
+      #CLK_HALF_PERIOD tb_clk = !tb_clk;
+    end // clk_gen
+
+  
+    
+  //----------------------------------------------------------------
+  // reg_update
+  //
+  // Update functionality for all registers in the core.
+  // All registers are positive edge triggered with synchronous
+  // active low reset. All registers have write enable.
+  //----------------------------------------------------------------
+  always @ (posedge clk)
+    begin: reg_update
+      if (!reset_n)
+        begin
+          rcon_reg        <= 8'h00;
+        end
+      else
+        begin
+          if (rcon_we)
+            begin
+              rcon_reg <= rcon_new;
+            end
+        end
+    end // reg_update
+  
+endmodule // test_rcon
+
 //======================================================================
 // EOF test_rcon.v
 //======================================================================
