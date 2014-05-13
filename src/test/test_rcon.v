@@ -51,7 +51,7 @@ module test_rcon();
   
 
   //----------------------------------------------------------------
-  // Register and Wire declarations.
+  // Registers and Wire declarations.
   //----------------------------------------------------------------
   reg [7 : 0] rcon_reg;
   reg [7 : 0] rcon_new;
@@ -59,6 +59,12 @@ module test_rcon();
   reg         rcon_rst;
   reg         rcon_next;
 
+  //----------------------------------------------------------------
+  // Wires.
+  //----------------------------------------------------------------
+  reg clk;
+  reg reset_n;
+  
   
   //----------------------------------------------------------------
   // clk_gen
@@ -67,9 +73,8 @@ module test_rcon();
   //----------------------------------------------------------------
   always 
     begin : clk_gen
-      #CLK_HALF_PERIOD tb_clk = !tb_clk;
+      #CLK_HALF_PERIOD clk = !clk;
     end // clk_gen
-
   
     
   //----------------------------------------------------------------
@@ -93,6 +98,93 @@ module test_rcon();
             end
         end
     end // reg_update
+
+
+  //----------------------------------------------------------------
+  // rcon_logic
+  //
+  // Caclulates the rcon value for the different key expansion
+  // iterations.
+  //----------------------------------------------------------------
+  always @*
+    begin : rcon_logic
+      rcon_new = 8'h00;
+      rcon_we  = 0;
+
+      if (rcon_set)
+        begin
+          rcon_new = 8'h8d;
+          rcon_we  = 1;
+        end
+
+      if (rcon_next)
+        begin
+          rcon_new  = ({rcon_reg[6 : 0], 1'b0} ^ (8'h11 & {8{rcon[7]}}));
+          rcon_we  = 1;
+        end
+    end
+
+  
+  //----------------------------------------------------------------
+  // reset_dut()
+  //----------------------------------------------------------------
+  task reset_dut();
+    begin
+      $display("*** Reset asserted ***");
+      reset_n = 0;
+      #(2 * CLK_PERIOD);
+      reset_n = 1;
+      $display("*** Reset deasserted ***");
+    end
+  endtask // reset_dut
+
+
+  //----------------------------------------------------------------
+  // run_test()
+  //----------------------------------------------------------------
+  task run_test()
+    begin
+      rcon_rst  = 1;
+      #(2 * CLK_PERIOD);
+      rcon_rst  = 0;
+      #(2 * CLK_PERIOD);
+
+      rcon_next = 1;
+      #(256 * CLK_PERIOD);
+      rcon_next = 0;
+    end
+  endtask // run_test
+  
+  
+  //----------------------------------------------------------------
+  // init_test()
+  //----------------------------------------------------------------
+  task init_test();
+    begin
+      clk       = 0;
+      reset_n   = 1;
+      rcon_rst  = 0;
+      rcon_next = 0;
+    end
+  endtask // init_test
+
+    
+  //----------------------------------------------------------------
+  // rcon_test
+  //
+  // The main test functionality. 
+  //----------------------------------------------------------------
+  initial
+    begin : rcon_test
+      $display("*** rcon simulation started. ***");
+
+      init_test();
+      reset_dut();
+      
+      $display("*** rcon simulation done. ***");
+      $finish;
+    end // rcon_test
+
   
 endmodule // test_rcon
 
