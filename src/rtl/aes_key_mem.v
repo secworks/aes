@@ -233,7 +233,7 @@ module aes_key_mem(
 
       if (rcon_next)
         begin
-          rcon_new  = ({rcon_reg[6 : 0], 1'b0} ^ (8'h11 & rcon[7]));
+          rcon_new  = ({rcon_reg[6 : 0], 1'b0} ^ (8'h11 & {8{rcon[7]}}));
           rcon_we  = 1;
         end
     end
