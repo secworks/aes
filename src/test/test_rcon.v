@@ -154,14 +154,17 @@ module test_rcon();
   //----------------------------------------------------------------
   task run_test();
     begin
+      $display("*** rcon set to init value. ***");
       rcon_set  = 1;
       #(2 * CLK_PERIOD);
       rcon_set  = 0;
       #(2 * CLK_PERIOD);
 
       rcon_next = 1;
+      $display("*** rcon next asserted. ***");
       #(256 * CLK_PERIOD);
       rcon_next = 0;
+      $display("*** rcon next desserted. ***");
     end
   endtask // run_test
   
