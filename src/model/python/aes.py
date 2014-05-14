@@ -140,7 +140,7 @@ class AES():
         self.verbose = verbose
         self.S = [[0] * 4 for i in range(4)]
 
-        
+
     def init(self, key):
         if len(key) not in [16, 24, 32]:
             print("Key is %d bits, not 128, 192 or 256 bits long." % (8 * len(key)))
@@ -185,6 +185,7 @@ class AES():
 
     def _gen_roundkeys(self):
         self.round_keys = [[0x00] * 16] * self.num_rounds
+        self.rcon = 0x8d
 
         # Initial round key created by copying from the key.
         if self.keylen == 128:
@@ -200,8 +201,6 @@ class AES():
         if self.verbose:
             print("Round keys:")
             print(self.round_keys)
-
-        self.rcon = 0x8d
 
         #self.roundkeys = [0] * rounds[self.keylen]
 
@@ -317,6 +316,23 @@ def test_nist_ecb_single_block(tc, encdec, key, plaintext, expected):
     my_aes = AES()
     my_aes.init(key)
     my_aes.next(encdec, plaintext)
+
+
+#-------------------------------------------------------------------
+# test_rcon()
+#
+# Test the rcon logic used in key expansion.
+#-------------------------------------------------------------------
+def test_rcon():
+    print("Testing rcon generation:")
+    print("------------------------")
+
+    my_aes = AES()
+    my_aes.init([0x00] * 16)
+    for i in range(256):
+        print("rcon[%02x] = 0x%02x" % (i, my_aes.rcon))
+        my_aes._next_rcon()
+    print("")
 
 
 #-------------------------------------------------------------------
@@ -809,6 +825,9 @@ def main():
     print("Testing the AES Python model started")
     print("====================================")
     print
+
+    # Test rcon generation.
+    test_rcon()
 
     # Test the mixers.
     test_mixers()
