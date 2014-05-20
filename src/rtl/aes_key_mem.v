@@ -243,6 +243,29 @@ module aes_key_mem(
 
   
   //----------------------------------------------------------------
+  // round_ctr
+  //
+  // The round counter logic with increase and reset.
+  //----------------------------------------------------------------
+  always @*
+    begin : round_ctr
+      round_ctr_new = 4'h00;
+      round_ctr_we  = 0;
+
+      if (round_ctr_rst)
+        begin
+          round_ctr_new = 4'h00;
+          round_ctr_we  = 1;
+        end
+      else if (round_ctr_inc)
+        begin
+          round_ctr_new = round_ctr_reg + 1'b1;
+          round_ctr_we  = 1;
+        end
+    end
+
+
+  //----------------------------------------------------------------
   // key_mem_ctrl
   //
   //
