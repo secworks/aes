@@ -108,6 +108,8 @@ module aes_key_mem(
   wire [7 : 0] sbox2_data;
   wire [7 : 0] sbox3_data;
 
+  reg           round_key_update;
+
   reg [127 : 0] tmp_round_key;
   reg           tmp_ready;
   
@@ -252,6 +254,7 @@ module aes_key_mem(
       rcon_next        = 0;
       ready_new        = 0;
       ready_we         = 0;
+      round_key_update = 0;
       key_mem_ctrl_new = CTRL_IDLE;
       key_mem_ctrl_we  = 0;
 
