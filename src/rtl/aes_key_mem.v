@@ -109,6 +109,7 @@ module aes_key_mem(
   wire [7 : 0] sbox3_data;
 
   reg           round_key_update;
+  reg [3 : 0]   num_rounds;
 
   reg [127 : 0] tmp_round_key;
   reg           tmp_ready;
@@ -255,6 +256,8 @@ module aes_key_mem(
       ready_new        = 0;
       ready_we         = 0;
       round_key_update = 0;
+      round_ctr_rst    = 0;
+      round_ctr_inc    = 0;
       key_mem_ctrl_new = CTRL_IDLE;
       key_mem_ctrl_we  = 0;
 
@@ -273,9 +276,20 @@ module aes_key_mem(
 
         CTRL_INIT:
           begin
-            // NOTE: TEMPORARY JUMPBACK!
-            key_mem_ctrl_new = CTRL_DONE;
+            round_ctr_rst    = 1;
+            key_mem_ctrl_new = CTRL_GENERATE;
             key_mem_ctrl_we  = 1;
+          end
+
+        CTRL_GENERATE:
+          begin
+            round_ctr_inc    = 1;
+            round_key_update = 1;
+            if (round_key_reg == num_rounds)
+              begin
+                key_mem_ctrl_new = CTRL_DONE;
+                key_mem_ctrl_we  = 1;
+              end
           end
 
         CTRL_DONE:
