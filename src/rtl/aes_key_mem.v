@@ -211,9 +211,59 @@ module aes_key_mem(
   always @*
     begin: round_key_gen
       // Default assignments.
-      key_mem_we  = 0;
       key_mem_new = 128'h00000000000000000000000000000000;
+      key_mem_we  = 0;
 
+      if (round_key_update)
+        key_mem_we  = 1;
+        begin
+          case (keylen)
+            AES_128_BIT_KEY:
+              begin
+                if (round_ctr_reg = 0)
+                  begin
+                    key_mem_new = key;
+                  end
+                else
+                  begin
+
+                  end
+              end
+
+
+            AES_192_BIT_KEY:
+              begin
+                if (round_ctr_reg = 0)
+                  begin
+                    key_mem_new = key[255 : 128);
+                  end
+
+                if (round_ctr_reg = 1)
+                  begin
+                    key_mem_new = key[127 : 0);
+                  end
+              end
+
+
+            AES_256_BIT_KEY:
+              begin
+                if (round_ctr_reg = 0)
+                  begin
+                    key_mem_new = key[255 : 128);
+                  end
+
+                if (round_ctr_reg = 1)
+                  begin
+                    key_mem_new = key[127 : 0);
+                  end
+              end
+
+            default:
+              begin
+                num_rounds = 4'h0;
+              end
+          endcase // case (keylen)
+        end
     end // round_key_gen
 
 
