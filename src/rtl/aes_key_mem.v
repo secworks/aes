@@ -183,7 +183,7 @@ module aes_key_mem(
           
           if (key_mem_we)
             begin
-              key_mem[round_ctr_reg] = key_mem_new;
+              key_mem[round_ctr_reg] <= key_mem_new;
               prev_key_reg           <= key_mem_new;
             end
 
