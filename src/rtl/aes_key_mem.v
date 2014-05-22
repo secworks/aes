@@ -74,6 +74,8 @@ module aes_key_mem(
   reg [127 : 0] key_mem_new;
   reg           key_mem_we;
 
+  reg [127 : 0] prev_key_reg;
+  
   reg [3 : 0] round_ctr_reg;
   reg [3 : 0] round_ctr_new;
   reg         round_ctr_rst;
@@ -156,6 +158,7 @@ module aes_key_mem(
           key_mem [11]    <= 128'h00000000000000000000000000000000;
           key_mem [12]    <= 128'h00000000000000000000000000000000;
           key_mem [13]    <= 128'h00000000000000000000000000000000;
+          prev_key_reg    <= 128'h00000000000000000000000000000000;
           rcon_reg        <= 8'h00;
           ready_reg       <= 0;
           round_ctr_reg   <= 4'h0;
@@ -181,6 +184,7 @@ module aes_key_mem(
           if (key_mem_we)
             begin
               key_mem[round_ctr_reg] = key_mem_new;
+              prev_key_reg           <= key_mem_new;
             end
 
           if (key_mem_ctrl_we)
@@ -235,12 +239,12 @@ module aes_key_mem(
               begin
                 if (round_ctr_reg = 0)
                   begin
-                    key_mem_new = key[255 : 128);
+                    key_mem_new = key[191 : 64);
                   end
 
                 if (round_ctr_reg = 1)
                   begin
-                    key_mem_new = key[127 : 0);
+                    key_mem_new = {key[63 : 0), prev_key_reg[128 : 64]};
                   end
               end
 
