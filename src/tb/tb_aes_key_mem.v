@@ -136,14 +136,13 @@ module tb_aes_key_mem();
       $display("State of DUT");
       $display("------------");
       $display("Inputs and outputs:");
-      $display("encdec = 0x%01x, init = 0x%01x, next = 0x%01x", 
-               dut.encdec, dut.init, dut.next);
-      $display("keylen = 0x%01x, key  = 0x%032x ", dut.keylen, dut.key);
-      $display("block  = 0x%032x", dut.block);
+      $display("key = 0x%032x" % dut.key);
+      $display("keylen = 0x1x, init = 0x%01x, ready = 0x%01x" % dut.keylen, 
+               dut.init, dut.ready);
       $display("");
-      $display("ready        = 0x%01x", dut.ready);
-      $display("result_valid = 0x%01x, result = 0x%032x",
-               dut.result_valid, dut.result);
+
+      $display("round     = 0x%02x" % dut.round);
+      $display("round_key = 0x%016x" % dut.round_key);
       $display("");
     end
   endtask // dump_dut_state
@@ -265,6 +264,9 @@ module tb_aes_key_mem();
   //----------------------------------------------------------------
   initial
     begin : aes_key_mem_test
+      reg [255 : 0] aes128_key0;
+      reg [255 : 0] aes128_key1;
+      reg [255 : 0] aes128_key2;
 
       $display("   -= Testbench for aes key mem started =-");
       $display("    =====================================");
@@ -273,8 +275,11 @@ module tb_aes_key_mem();
       init_sim();
       dump_dut_state();
       reset_dut();
-      dump_dut_state();
 
+      #(100 *CLK_PERIOD);
+
+      dump_dut_state();
+      
       display_test_result();
       $display("");
       $display("*** AES core simulation done. ***");
