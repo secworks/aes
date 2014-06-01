@@ -72,25 +72,29 @@ module tb_aes_key_mem();
 
   reg            tb_clk;
   reg            tb_reset_n;
-  reg            tb_encdec;
-  reg            tb_init;
-  reg            tb_next;
-  wire           tb_ready;
   reg [255 : 0]  tb_key;
   reg [1 : 0]    tb_keylen;
-  reg [127 : 0]  tb_block;
-  wire [127 : 0] tb_result;
-  wire           tb_result_valid;
+  reg            tb_init;
+  reg [3 : 0]    tb_round;
+  wire [127 : 0] tb_round_key;
+  wire           tb_ready;
   
   
   //----------------------------------------------------------------
   // Device Under Test.
   //----------------------------------------------------------------
-  aes_core dut(
-               .clk(tb_clk),
-               .reset_n(tb_reset_n),
+  aes_key_mem dut(
+                  .clk(tb_clk),
+                  .reset_n(tb_reset_n),
 
-              );
+                  .key(tb_key),
+                  .keylen(tb_keylen),
+                  .init(tb_init),
+
+                  .round(tb_round),
+                  .round_key(tb_round_key),
+                  .ready(tb_ready)
+                 );
   
 
   //----------------------------------------------------------------
@@ -269,3 +273,4 @@ endmodule // tb_aes_key_mem
 //======================================================================
 // EOF tb_aes_key_mem.v
 //======================================================================
+
