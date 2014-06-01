@@ -194,7 +194,7 @@ module tb_aes_core();
 
       tb_block  = {4{32'h00000000}};
     end
-  endtask // init_dut
+  endtask // init_sim
 
   
   //----------------------------------------------------------------
