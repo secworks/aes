@@ -218,44 +218,6 @@ module tb_aes_key_mem();
         end
     end
   endtask // display_test_result
-  
-
-  //----------------------------------------------------------------
-  // wait_ready()
-  //
-  // Wait for the ready flag in the dut to be set.
-  //
-  // Note: It is the callers responsibility to call the function
-  // when the dut is actively processing and will in fact at some
-  // point set the flag.
-  //----------------------------------------------------------------
-  task wait_ready();
-    begin
-      while (!tb_ready)
-        begin
-          #(CLK_PERIOD);
-        end
-    end
-  endtask // wait_ready
-  
-
-  //----------------------------------------------------------------
-  // wait_valid()
-  //
-  // Wait for the result_valid flag in the dut to be set.
-  //
-  // Note: It is the callers responsibility to call the function
-  // when the dut is actively processing a block and will in fact 
-  // at some point set the flag.
-  //----------------------------------------------------------------
-  task wait_valid();
-    begin
-      while (!tb_result_valid)
-        begin
-          #(CLK_PERIOD);
-        end
-    end
-  endtask // wait_valid
                          
     
   //----------------------------------------------------------------
