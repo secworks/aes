@@ -38,22 +38,23 @@
 
 SBOX_SRC=../src/rtl/aes_sbox.v
 INV_SBOX_SRC=../src/rtl/aes_inv_sbox.v
-KEYGEN_SRC=../src/rtl/aes_keygen.v
+KEYMEM_SRC=../src/rtl/aes_keymem.v
 ENCIPHER_SRC=../src/rtl/aes_encipher_round.v
 DECIPHER_SRC=../src/rtl/aes_decipher_round.v
 CORE_SRC=../src/rtl/aes_core.v $(KEYGEN_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC) $(DECIPHER_SRC)
 TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
 TB_CORE_SRC =../src/tb/tb_aes_core.v
+TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
 
 CC=iverilog
 
 
-all: core.sim core keygen
+all: core.sim core keymem
 
 
-keygen: $(KEYGEN_SRC) $(SBOX_SRC)
-	$(CC) -o keygen.sim $(KEYGEN_SRC) $(SBOX_SRC)
+keymem: $(KEYGEN_SRC) $(SBOX_SRC) $(TB_KEYMEM_SRC)
+	$(CC) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
 
 
 core: $(CORE_SRC)
@@ -64,8 +65,8 @@ core.sim: $(TB_CORE_SRC) core
 	$(CC) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
 
 
-sim-keygen: keygen.sim
-	./keygen.sim
+sim-keymem: keymem.sim
+	./keymem.sim
 
 
 sim-core: core.sim
