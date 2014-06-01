@@ -147,6 +147,21 @@ module tb_aes_key_mem();
       $display("");
     end
   endtask // dump_dut_state
+
+
+  
+  //----------------------------------------------------------------
+  // dump_mem()
+  //
+  // Dump the contents of the key memory in the dut.
+  //----------------------------------------------------------------
+  task dump_mem();
+    begin
+      $display("State of key mem");
+      $display("----------------");
+      $display("");
+    end
+  endtask // dump_mem
   
   
   //----------------------------------------------------------------
@@ -178,15 +193,12 @@ module tb_aes_key_mem();
       
       tb_clk     = 0;
       tb_reset_n = 1;
-      tb_encdec  = 0;
-      tb_init    = 0;
-      tb_next    = 0;
       tb_key     = {8{32'h00000000}};
-      tb_keylen  = 0;
-
-      tb_block  = {4{32'h00000000}};
+      tb_keylen  = 2'h0;
+      tb_init    = 0;
+      tb_round   = 4'h0;
     end
-  endtask // init_dut
+  endtask // init_sim
 
   
   //----------------------------------------------------------------
