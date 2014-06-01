@@ -262,17 +262,18 @@ module aes_core(
                               );
   
   
-  aes_keygen keygen(
-                    .clk(clk),
-                    .reset_n(reset_n),
-                    .key(key),
-                    .keylen(keylen),
-                    .init(init),
+  aes_key_mem keymem(
+                     .clk(clk),
+                     .reset_n(reset_n),
 
-                    .round(round_nr),
-                    .round_key(round_key),
-                    .ready(key_ready)
-                   );
+                     .key(key),
+                     .keylen(keylen),
+                     .init(init),
+
+                     .round(round_nr),
+                     .round_key(round_key),
+                     .ready(key_ready)
+                    );
 
 
   //----------------------------------------------------------------
