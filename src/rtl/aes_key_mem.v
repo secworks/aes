@@ -61,10 +61,10 @@ module aes_key_mem(
   parameter AES_192_NUM_ROUNDS = 12;
   parameter AES_256_NUM_ROUNDS = 14;
   
-  parameter CTRL_IDLE = 0;
-  parameter CTRL_INIT = 1;
-  parameter CTRL_NEXT = 2;
-  parameter CTRL_DONE = 3;
+  parameter CTRL_IDLE     = 0;
+  parameter CTRL_INIT     = 1;
+  parameter CTRL_GENERATE = 2;
+  parameter CTRL_DONE     = 3;
 
   
   //----------------------------------------------------------------
@@ -393,7 +393,7 @@ module aes_key_mem(
           begin
             round_ctr_inc    = 1;
             round_key_update = 1;
-            if (round_key_reg == num_rounds)
+            if (round_ctr_reg == num_rounds)
               begin
                 key_mem_ctrl_new = CTRL_DONE;
                 key_mem_ctrl_we  = 1;
