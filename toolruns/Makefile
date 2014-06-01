@@ -84,8 +84,9 @@ help:
 	@echo "------------------"
 	@echo "all:        Build all simulation targets."
 	@echo "core:       Build the core simulation target."
+	@echo "keymem:     Build the keymem simulation target."
 	@echo "core.sim:   Run core level simulation."
-	@echo "keygen.sim: Run core level simulation."
+	@echo "keymem.sim: Run keymem simulation."
 	@echo "clean:      Delete all built files."
 
 #===================================================================
