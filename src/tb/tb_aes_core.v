@@ -6,7 +6,7 @@
 //
 //
 // Author: Joachim Strombergson
-// Copyright (c) 2013, Secworks Sweden AB
+// Copyright (c) 2014, Secworks Sweden AB
 // All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or 
