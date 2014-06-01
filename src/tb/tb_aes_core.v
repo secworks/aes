@@ -2,7 +2,7 @@
 //
 // tb_aes_core.v
 // ----------------
-// Testbench for the SHA-256 core.
+// Testbench for the AES block cipher core.
 //
 //
 // Author: Joachim Strombergson
