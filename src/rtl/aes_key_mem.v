@@ -224,7 +224,7 @@ module aes_key_mem(
           case (keylen)
             AES_128_BIT_KEY:
               begin
-                if (round_ctr_reg = 0)
+                if (round_ctr_reg == 0)
                   begin
                     key_mem_new = key;
                   end
@@ -237,28 +237,28 @@ module aes_key_mem(
 
             AES_192_BIT_KEY:
               begin
-                if (round_ctr_reg = 0)
+                if (round_ctr_reg == 0)
                   begin
-                    key_mem_new = key[191 : 64);
+                    key_mem_new = key[191 : 64];
                   end
-
-                if (round_ctr_reg = 1)
+                
+                if (round_ctr_reg == 1)
                   begin
-                    key_mem_new = {key[63 : 0), prev_key_reg[128 : 64]};
+                    key_mem_new = {key[63 : 0], prev_key_reg[128 : 64]};
                   end
               end
 
 
             AES_256_BIT_KEY:
               begin
-                if (round_ctr_reg = 0)
+                if (round_ctr_reg == 0)
                   begin
-                    key_mem_new = key[255 : 128);
+                    key_mem_new = key[255 : 128];
                   end
 
-                if (round_ctr_reg = 1)
+                if (round_ctr_reg == 1)
                   begin
-                    key_mem_new = key[127 : 0);
+                    key_mem_new = key[127 : 0];
                   end
               end
 
@@ -406,7 +406,8 @@ module aes_key_mem(
             ready_we         = 1;
             key_mem_ctrl_new = CTRL_IDLE;
             key_mem_ctrl_we  = 1;
-      
+          end
+
         default:
           begin
           end
