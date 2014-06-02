@@ -59,6 +59,10 @@ module tb_aes_key_mem();
   parameter AES_192_BIT_KEY = 2'h1;
   parameter AES_256_BIT_KEY = 2'h2;
 
+  parameter AES_128_NUM_ROUNDS = 10;
+  parameter AES_192_NUM_ROUNDS = 12;
+  parameter AES_256_NUM_ROUNDS = 14;
+
   parameter AES_DECIPHER = 1'b0;
   parameter AES_ENCIPHER = 1'b1;
 
@@ -202,7 +206,59 @@ module tb_aes_key_mem();
     end
   endtask // init_sim
 
+
+  //----------------------------------------------------------------
+  // dump_dut_memory()
+  //----------------------------------------------------------------
+  task dump_dut_memory();
+    reg [3 : 0] round_nr;
+    begin
+      for (round_nr = 4'h0 ; round_nr < AES_256_NUM_ROUNDS ; round_nr = round_nr + 1'b1)
+        begin
+          tb_round = round_nr;
+          #(CLK_PERIOD);
+          $display("round_key[0x%01x] = 0x%016x", round_nr, tb_round_key);
+        end
+    end
+  endtask // dump_dut_memory
+
+
+  //----------------------------------------------------------------
+  // wait_ready()
+  //
+  // Wait for the ready flag in the dut to be set.
+  //
+  // Note: It is the callers responsibility to call the function
+  // when the dut is actively processing and will in fact at some
+  // point set the flag.
+  //----------------------------------------------------------------
+  task wait_ready();
+    begin
+      while (!tb_ready)
+        begin
+          #(CLK_PERIOD);
+        end
+    end
+  endtask // wait_ready
+
+
+  //----------------------------------------------------------------
+  // test_key_128()
+  //
+  // Test 128 bit keys.
+  //----------------------------------------------------------------
+  task test_key_128(input [255 : 0] key);
+    begin
+      tb_key = key;
+      tb_init = 1;
+      #(2 * CLK_PERIOD);
+      tb_init = 0;
+      wait_ready();
+      dump_dut_state();
+    end
+  endtask // test_key_128
   
+
   //----------------------------------------------------------------
   // display_test_result()
   //
@@ -243,7 +299,9 @@ module tb_aes_key_mem();
 
       #(100 *CLK_PERIOD);
 
-      dump_dut_state();
+      aes128_key0 = {8{32'h00000000}};
+      test_key_128(aes128_key0);
+      dump_dut_memory();
       
       display_test_result();
       $display("");
