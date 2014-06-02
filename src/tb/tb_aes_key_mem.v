@@ -136,13 +136,16 @@ module tb_aes_key_mem();
       $display("State of DUT");
       $display("------------");
       $display("Inputs and outputs:");
-      $display("key = 0x%032x" % dut.key);
-      $display("keylen = 0x1x, init = 0x%01x, ready = 0x%01x" % dut.keylen, 
-               dut.init, dut.ready);
+      $display("key       = 0x%032x", dut.key);
+      $display("keylen    = 0x%01x, init = 0x%01x, ready = 0x%01x",
+               dut.keylen, dut.init, dut.ready);
+      $display("round     = 0x%02x", dut.round);
+      $display("round_key = 0x%016x", dut.round_key);
       $display("");
 
-      $display("round     = 0x%02x" % dut.round);
-      $display("round_key = 0x%016x" % dut.round_key);
+      $display("Internal states:");
+      $display("key_mem_ctrl = 0x%01x, round_ctr_reg = 0x%01x, rcon_reg = 0x%01x",
+               dut.key_mem_ctrl_reg, dut.round_ctr_reg, dut.rcon_reg);
       $display("");
     end
   endtask // dump_dut_state
