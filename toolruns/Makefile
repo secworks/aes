@@ -50,7 +50,7 @@ TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
 CC=iverilog
 
 
-all: core.sim keymem.sim core keymem
+all: core.sim core keymem
 
 
 keymem: $(KEYGEN_SRC) $(SBOX_SRC) $(TB_KEYMEM_SRC)
