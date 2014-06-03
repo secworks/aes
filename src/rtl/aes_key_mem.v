@@ -120,10 +120,10 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox0(.addr(sbox0_addr), .data(sbox0_data));
-  aes_sbox sbox1(.addr(sbox1_addr), .data(sbox1_data));
-  aes_sbox sbox2(.addr(sbox2_addr), .data(sbox2_data));
-  aes_sbox sbox3(.addr(sbox3_addr), .data(sbox3_data));
+  aes_sbox sbox0(.addr(prev_key_reg[23 : 16]), .data(sbox0_data));
+  aes_sbox sbox1(.addr(prev_key_reg[15 :  8]), .data(sbox1_data));
+  aes_sbox sbox2(.addr(prev_key_reg[7  :  0]), .data(sbox2_data));
+  aes_sbox sbox3(.addr(prev_key_reg[31 : 24]), .data(sbox3_data));
 
   
   //----------------------------------------------------------------
@@ -214,6 +214,14 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin: round_key_gen
+      reg [31 : 0] w0, w1, w2, w3, subw;
+      w0 = prev_key_reg[127 : 096];
+      w1 = prev_key_reg[095 : 064];
+      w2 = prev_key_reg[063 : 032];
+      w3 = prev_key_reg[031 : 000];
+
+      subw = {sbox0_data, sbox1_data, sbox2_data, sbox3_data};
+      
       // Default assignments.
       key_mem_new = 128'h00000000000000000000000000000000;
       key_mem_we  = 0;
@@ -230,10 +238,12 @@ module aes_key_mem(
                   end
                 else
                   begin
-
+                    key_mem_new[127 : 096] = w0 ^ subw ^ rcon_reg;
+                    key_mem_new[095 : 064] = w0 ^ w1 ^ subw ^ rcon_reg;
+                    key_mem_new[063 : 032] = w0 ^ w1 ^ w2 ^ subw ^ rcon_reg;
+                    key_mem_new[031 : 000] = w0 ^ w1 ^ w2 ^ w3 ^ subw ^ rcon_reg;
                   end
               end
-
 
             AES_192_BIT_KEY:
               begin
