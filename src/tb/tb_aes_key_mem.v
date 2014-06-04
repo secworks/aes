@@ -247,7 +247,7 @@ module tb_aes_key_mem();
   //
   // Test 128 bit keys.
   //----------------------------------------------------------------
-  task test_key_128(input [255 : 0] key);
+  task test_key_128(input [255 : 0] key, input [127 : 0] expected_keys [0 : 14]);
     begin
       tb_key = key;
       tb_init = 1;
@@ -255,6 +255,9 @@ module tb_aes_key_mem();
       tb_init = 0;
       wait_ready();
       dump_dut_state();
+
+      dump_dut_memory();
+      
     end
   endtask // test_key_128
   
@@ -285,10 +288,10 @@ module tb_aes_key_mem();
   //----------------------------------------------------------------
   initial
     begin : aes_key_mem_test
-      reg [255 : 0] aes128_key0;
-      reg [255 : 0] aes128_key1;
-      reg [255 : 0] aes128_key2;
-
+      reg [255 : 0] test_key;
+      reg [127 : 0] expected [0 : 14];
+      
+      
       $display("   -= Testbench for aes key mem started =-");
       $display("    =====================================");
       $display("");
@@ -296,12 +299,26 @@ module tb_aes_key_mem();
       init_sim();
       dump_dut_state();
       reset_dut();
-
+      
       #(100 *CLK_PERIOD);
+      
+      test_key = {8{32'h00000000}};
 
-      aes128_key0 = {8{32'h00000000}};
-      test_key_128(aes128_key0);
-      dump_dut_memory();
+      // Expected keys:
+      expected[00] = 128'h00000000000000000000000000000000;
+      expected[01] = 128'h62636363626363636263636362636363; 
+      expected[02] = 128'h9b9898c9f9fbfbaa9b9898c9f9fbfbaa; 
+      expected[03] = 128'h90973450696ccffaf2f457330b0fac99; 
+      expected[04] = 128'hee06da7b876a1581759e42b27e91ee2b; 
+      expected[05] = 128'h7f2e2b88f8443e098dda7cbbf34b9290; 
+      expected[06] = 128'hec614b851425758c99ff09376ab49ba7; 
+      expected[07] = 128'h217517873550620bacaf6b3cc61bf09b; 
+      expected[08] = 128'h0ef903333ba9613897060a04511dfa9f; 
+      expected[09] = 128'hb1d4d8e28a7db9da1d7bb3de4c664941; 
+      expected[10] = 128'hb4ef5bcb3e92e21123e951cf6f8f188e; 
+
+      test_key_128(test_key, expected);
+
       
       display_test_result();
       $display("");
