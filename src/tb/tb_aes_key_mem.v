@@ -242,10 +242,38 @@ module tb_aes_key_mem();
   endtask // wait_ready
 
 
+
+  //----------------------------------------------------------------
+  // check_key()
+  //
+  // Check a given key in the dut key memory against a given
+  // expected key.
+  //----------------------------------------------------------------
+  task check_key(input [3 : 0] key_nr, input [127 : 0] expected);
+    begin
+      tb_round = key_nr;
+      #(CLK_PERIOD);
+      if (tb_round_key == expected)
+        begin
+          $display("key 0x%01x matched expected round key.", key_nr);
+        end
+      else
+        begin
+          $display("Error: key 0x%01x did not match expected round key.", key_nr);
+          $display("Expected: 0x%016x", expected);
+          $display("Got:      0x%016x", tb_round_key);
+          error_ctr = error_ctr + 1;
+        end
+      $display("");
+    end
+  endtask // dump_dut_memory
+
+
   //----------------------------------------------------------------
   // test_key_128()
   //
-  // Test 128 bit keys.
+  // Test 128 bit keys. Due to array problems, the result check
+  // is fairly ugly.
   //----------------------------------------------------------------
   task test_key_128(input [255 : 0] key, 
                     input [127 : 0] expected00,
@@ -260,15 +288,25 @@ module tb_aes_key_mem();
                     input [127 : 0] expected09
                    );
     begin
+      $display("Testing with 128-bit key 0x%16x", key[255 : 128]);
+      $display("");
+
       tb_key = key;
       tb_init = 1;
       #(2 * CLK_PERIOD);
       tb_init = 0;
       wait_ready();
-      dump_dut_state();
 
-      dump_dut_memory();
-      
+      check_key(4'h0, expected00);
+      check_key(4'h1, expected01);
+      check_key(4'h2, expected02);
+      check_key(4'h3, expected03);
+      check_key(4'h4, expected04);
+      check_key(4'h5, expected05);
+      check_key(4'h6, expected06);
+      check_key(4'h7, expected07);
+      check_key(4'h8, expected08);
+      check_key(4'h9, expected09);
     end
   endtask // test_key_128
   
@@ -322,6 +360,10 @@ module tb_aes_key_mem();
       init_sim();
       dump_dut_state();
       reset_dut();
+
+      $display("State after reset:");
+      dump_dut_state();
+      $display("");
       
       #(100 *CLK_PERIOD);
 
