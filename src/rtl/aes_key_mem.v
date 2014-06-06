@@ -214,13 +214,14 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin: round_key_gen
-      reg [31 : 0] w0, w1, w2, w3, subw;
-      w0 = prev_key_reg[127 : 096];
-      w1 = prev_key_reg[095 : 064];
-      w2 = prev_key_reg[063 : 032];
-      w3 = prev_key_reg[031 : 000];
+      reg [31 : 0] w0, w1, w2, w3, subw, rconw;
+      w3 = prev_key_reg[127 : 096];
+      w2 = prev_key_reg[095 : 064];
+      w1 = prev_key_reg[063 : 032];
+      w0 = prev_key_reg[031 : 000];
 
       subw = {sbox0_data, sbox1_data, sbox2_data, sbox3_data};
+      rconw = {rcon_reg, 24'h000000};
       
       // Default assignments.
       key_mem_new = 128'h00000000000000000000000000000000;
@@ -238,10 +239,10 @@ module aes_key_mem(
                   end
                 else
                   begin
-                    key_mem_new[127 : 096] = w0 ^ subw ^ rcon_reg;
-                    key_mem_new[095 : 064] = w0 ^ w1 ^ subw ^ rcon_reg;
-                    key_mem_new[063 : 032] = w0 ^ w1 ^ w2 ^ subw ^ rcon_reg;
-                    key_mem_new[031 : 000] = w0 ^ w1 ^ w2 ^ w3 ^ subw ^ rcon_reg;
+                    key_mem_new[127 : 096] = w0 ^ subw ^ rconw;
+                    key_mem_new[095 : 064] = w0 ^ w1 ^ subw ^ rconw;
+                    key_mem_new[063 : 032] = w0 ^ w1 ^ w2 ^ subw ^ rconw;
+                    key_mem_new[031 : 000] = w0 ^ w1 ^ w2 ^ w3 ^ subw ^ rconw;
                   end
               end
 
@@ -403,6 +404,7 @@ module aes_key_mem(
           begin
             round_ctr_inc    = 1;
             round_key_update = 1;
+            rcon_next        = 1;
             if (round_ctr_reg == num_rounds)
               begin
                 key_mem_ctrl_new = CTRL_DONE;
