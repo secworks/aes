@@ -82,6 +82,12 @@ module aes_key_mem(
   reg         round_ctr_inc;
   reg         round_ctr_we;
   
+  reg [1 : 0] word_ctr_reg;
+  reg [1 : 0] word_ctr_new;
+  reg         word_ctr_rst;
+  reg         word_ctr_inc;
+  reg         word_ctr_we;
+
   reg [2 : 0] key_mem_ctrl_reg;
   reg [2 : 0] key_mem_ctrl_new;
   reg         key_mem_ctrl_we;
@@ -162,6 +168,7 @@ module aes_key_mem(
           rcon_reg        <= 8'h00;
           ready_reg       <= 0;
           round_ctr_reg   <= 4'h0;
+          word_ctr_reg    <= 2'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
         end
       else
@@ -169,6 +176,11 @@ module aes_key_mem(
           if (round_ctr_we)
             begin
               round_ctr_reg <= round_ctr_new;
+            end
+
+          if (word_ctr_we)
+            begin
+              word_ctr_reg <= word_ctr_new;
             end
 
           if (ready_we)
@@ -306,7 +318,7 @@ module aes_key_mem(
         end
     end
 
-  
+
   //----------------------------------------------------------------
   // round_ctr
   //
@@ -326,6 +338,29 @@ module aes_key_mem(
         begin
           round_ctr_new = round_ctr_reg + 1'b1;
           round_ctr_we  = 1;
+        end
+    end
+
+
+  //----------------------------------------------------------------
+  // word_ctr
+  //
+  // The word counter logic with increase and reset.
+  //----------------------------------------------------------------
+  always @*
+    begin : word_ctr
+      word_ctr_new = 2'h0;
+      word_ctr_we  = 0;
+
+      if (word_ctr_rst)
+        begin
+          word_ctr_new = 2'h0;
+          word_ctr_we  = 1;
+        end
+      else if (word_ctr_inc)
+        begin
+          word_ctr_new = word_ctr_reg + 1'b1;
+          word_ctr_we  = 1;
         end
     end
 
