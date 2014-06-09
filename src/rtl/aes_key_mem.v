@@ -222,7 +222,7 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin : key_mem_read
-      tmp_round_key = key_mem[round];
+      tmp_round_key = {key_mem0[round], key_mem1[round], key_mem2[round], key_mem3[round]};
     end // key_mem_read
 
   
