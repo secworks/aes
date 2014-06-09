@@ -70,9 +70,17 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Registers.
   //----------------------------------------------------------------
-  reg [127 : 0] key_mem [0 : 13];
-  reg [127 : 0] key_mem_new;
-  reg           key_mem_we;
+  reg [31 : 0] key_mem0 [0 : 13];
+  reg          key_mem0_we;
+
+  reg [31 : 0] key_mem1 [0 : 13];
+  reg          key_mem1_we;
+
+  reg [31 : 0] key_mem2 [0 : 13];
+  reg          key_mem2_we;
+
+  reg [31 : 0] key_mem3 [0 : 13];
+  reg          key_mem3_we;
 
   reg [127 : 0] prev_key_reg;
   
