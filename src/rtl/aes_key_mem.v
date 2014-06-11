@@ -70,17 +70,9 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Registers.
   //----------------------------------------------------------------
-  reg [31 : 0] key_mem0 [0 : 13];
-  reg          key_mem0_we;
-
-  reg [31 : 0] key_mem1 [0 : 13];
-  reg          key_mem1_we;
-
-  reg [31 : 0] key_mem2 [0 : 13];
-  reg          key_mem2_we;
-
-  reg [31 : 0] key_mem3 [0 : 13];
-  reg          key_mem3_we;
+  reg [127 : 0] key_mem [0 : 13];
+  reg [127 : 0] key_mem_new;
+  reg           key_mem_we;
 
   reg [127 : 0] prev_key_reg;
   
@@ -222,7 +214,7 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin : key_mem_read
-      tmp_round_key = {key_mem0[round], key_mem1[round], key_mem2[round], key_mem3[round]};
+      tmp_round_key = key_mem[round];
     end // key_mem_read
 
   
@@ -259,10 +251,11 @@ module aes_key_mem(
                   end
                 else
                   begin
-                    key_mem_new[127 : 096] = w0 ^ subw ^ rconw;
-                    key_mem_new[095 : 064] = w0 ^ w1 ^ subw ^ rconw;
-                    key_mem_new[063 : 032] = w0 ^ w1 ^ w2 ^ subw ^ rconw;
-                    key_mem_new[031 : 000] = w0 ^ w1 ^ w2 ^ w3 ^ subw ^ rconw;
+                    w0 = prev_key_reg[127 : 096] ^ subw ^ rconw;
+                    w1 = w0 ^ prev_key_reg[063 : 032] ^ subw ^ rconw;
+                    w2 = w0 ^ w1 ^ prev_key_reg[095 : 064] ^ subw ^ rconw;
+                    w3 = w0 ^ w1 ^ w2 ^ prev_key_reg[127 : 096] ^ subw ^ rconw;
+                    key_mem_new = {w0, w1, w2, w3};
                   end
               end
 
