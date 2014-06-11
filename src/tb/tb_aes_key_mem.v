@@ -50,7 +50,7 @@ module tb_aes_key_mem();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG = 0;
+  parameter DEBUG = 1;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
@@ -150,6 +150,11 @@ module tb_aes_key_mem();
       $display("Internal states:");
       $display("key_mem_ctrl = 0x%01x, round_ctr_reg = 0x%01x, rcon_reg = 0x%01x",
                dut.key_mem_ctrl_reg, dut.round_ctr_reg, dut.rcon_reg);
+      $display("prev_key_reg = 0x%016x", dut.prev_key_reg);
+      $display("w0 = 0x%04x, w1 = 0x%04x, w2 = 0x%04x, w3 = 0x%04x",
+               dut.round_key_gen.w0, dut.round_key_gen.w1, 
+               dut.round_key_gen.w2, dut.round_key_gen.w3);
+      $display("key_mem_new = 0x%016x", dut.key_mem_new);
       $display("");
     end
   endtask // dump_dut_state
