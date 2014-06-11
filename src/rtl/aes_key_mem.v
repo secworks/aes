@@ -252,9 +252,9 @@ module aes_key_mem(
                 else
                   begin
                     w0 = prev_key_reg[127 : 096] ^ subw ^ rconw;
-                    w1 = w0 ^ prev_key_reg[063 : 032] ^ subw ^ rconw;
-                    w2 = w0 ^ w1 ^ prev_key_reg[095 : 064] ^ subw ^ rconw;
-                    w3 = w0 ^ w1 ^ w2 ^ prev_key_reg[127 : 096] ^ subw ^ rconw;
+                    w1 = prev_key_reg[063 : 032] ^ subw ^ rconw;
+                    w2 = prev_key_reg[095 : 064] ^ subw ^ rconw;
+                    w3 = prev_key_reg[031 : 000] ^ subw ^ rconw;
                     key_mem_new = {w0, w1, w2, w3};
                   end
               end
