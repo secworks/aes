@@ -265,9 +265,9 @@ module tb_aes_key_mem();
         end
       else
         begin
-          $display("Error: key 0x%01x did not match expected round key.", key_nr);
-          $display("Expected: 0x%016x", expected);
-          $display("Got:      0x%016x", tb_round_key);
+          $display("** Error: key 0x%01x did not match expected round key. **", key_nr);
+          $display("** Expected: 0x%016x **", expected);
+          $display("** Got:      0x%016x **", tb_round_key);
           error_ctr = error_ctr + 1;
         end
       $display("");
