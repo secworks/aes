@@ -117,7 +117,7 @@ module aes(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [31 : 0]   tmp_data_out;
+  reg [31 : 0]   tmp_read_data;
   reg            tmp_error;
   
   wire           core_encdec;
@@ -133,7 +133,7 @@ module aes(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign data_out = tmp_data_out;
+  assign read_data = tmp_read_data;
   assign error    = tmp_error;
   
   assign core_key = {key3_reg, key2_reg, key1_reg, key0_reg};
@@ -187,12 +187,12 @@ module aes(
   //----------------------------------------------------------------
   always @*
     begin : api
-      tmp_data_out = 32'h00000000;
+      tmp_read_data = 32'h00000000;
       tmp_error    = 0;
       
       if (cs)
         begin
-          if (write_read)
+          if (we)
             begin
               case (address)
                 // Write operations.
@@ -202,7 +202,7 @@ module aes(
                     tmp_error = 1;
                   end
               endcase // case (address)
-            end // if (write_read)
+            end // if (we)
 
           else
             begin
@@ -210,17 +210,17 @@ module aes(
                 // Read operations.
                 ADDR_NAME0:
                   begin
-                    tmp_data_out = CORE_NAME0;
+                    tmp_read_data = CORE_NAME0;
                   end
                 
                 ADDR_NAME1:
                   begin
-                    tmp_data_out = CORE_NAME1;
+                    tmp_read_data = CORE_NAME1;
                   end
 
                 ADDR_VERSION:
                   begin
-                    tmp_data_out = CORE_VERSION;
+                    tmp_read_data = CORE_VERSION;
                   end
                 
                 default:
