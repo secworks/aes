@@ -258,6 +258,14 @@ module aes(
   always @*
     begin : api
       ctrl_we = 0;
+      key0_we = 0;
+      key1_we = 0;
+      key2_we = 0;
+      key3_we = 0;
+      key4_we = 0;
+      key5_we = 0;
+      key6_we = 0;
+      key7_we = 0;
       
       tmp_read_data = 32'h00000000;
       tmp_error    = 0;
@@ -271,6 +279,46 @@ module aes(
                 ADDR_CTRL:
                   begin
                     ctrl_we = 1;
+                  end
+
+                ADDR_KEY0:
+                  begin
+                    key0_we = 1;
+                  end
+
+                ADDR_KEY1:
+                  begin
+                    key1_we = 1;
+                  end
+
+                ADDR_KEY2:
+                  begin
+                    key2_we = 1;
+                  end
+
+                ADDR_KEY3:
+                  begin
+                    key3_we = 1;
+                  end
+
+                ADDR_KEY4:
+                  begin
+                    key4_we = 1;
+                  end
+
+                ADDR_KEY5:
+                  begin
+                    key5_we = 1;
+                  end
+
+                ADDR_KEY6:
+                  begin
+                    key6_we = 1;
+                  end
+
+                ADDR_KEY7:
+                  begin
+                    key7_we = 1;
                   end
                 
                 default:
