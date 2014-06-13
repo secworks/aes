@@ -289,7 +289,6 @@ module aes_key_mem(
 
             default:
               begin
-                num_rounds = 4'h0;
               end
           endcase // case (keylen)
         end
@@ -374,6 +373,8 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin : num_rounds_logic
+      num_rounds = 4'h0;
+
       case (keylen)
         AES_128_BIT_KEY:
           begin
@@ -392,7 +393,6 @@ module aes_key_mem(
 
         default:
           begin
-            num_rounds = 4'h0;
           end
       endcase // case (keylen)
     end
