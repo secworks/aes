@@ -147,8 +147,8 @@ module aes(
   wire [255 : 0] core_key;
   wire [1   : 0] core_keylen;
   wire [127 : 0] core_block;
-  wire [127 : 0] core_results;
-  wire           core_results_valid;
+  wire [127 : 0] core_result;
+  wire           core_valid;
   
   
   //----------------------------------------------------------------
@@ -176,8 +176,8 @@ module aes(
                 .keylen(core_keylen),
                    
                 .block(core_block),
-                .result(core_results),
-                .result_valid(core_results_valid)
+                .result(core_result),
+                .result_valid(core_valid)
                );
   
   
@@ -217,7 +217,8 @@ module aes(
       else
         begin
           ready_reg      <= core_ready;
-          valid_reg      <= core_results_valid;
+          valid_reg      <= core_valid;
+          result_reg     <= core_result;
 
           if (ctrl_we)
             begin
@@ -225,6 +226,46 @@ module aes(
               next_reg   <= write_data[CTRL_NEXT_BIT];
               encdec_reg <= write_data[CTRL_ENCDEC_BIT];
               keylen_reg <= write_data[CTRL_KEYLEN_HIGH : CTRL_KEYLEN_LOW];
+            end
+
+          if (key0_we)
+            begin
+              key0_reg <= write_data;
+            end
+
+          if (key1_we)
+            begin
+              key1_reg <= write_data;
+            end
+
+          if (key2_we)
+            begin
+              key2_reg <= write_data;
+            end
+
+          if (key3_we)
+            begin
+              key3_reg <= write_data;
+            end
+
+          if (key4_we)
+            begin
+              key4_reg <= write_data;
+            end
+
+          if (key5_we)
+            begin
+              key5_reg <= write_data;
+            end
+
+          if (key6_we)
+            begin
+              key6_reg <= write_data;
+            end
+
+          if (key7_we)
+            begin
+              key7_reg <= write_data;
             end
 
           if (block0_we)
@@ -257,18 +298,21 @@ module aes(
   //----------------------------------------------------------------
   always @*
     begin : api
-      ctrl_we = 0;
-      key0_we = 0;
-      key1_we = 0;
-      key2_we = 0;
-      key3_we = 0;
-      key4_we = 0;
-      key5_we = 0;
-      key6_we = 0;
-      key7_we = 0;
-      
+      ctrl_we       = 0;
+      key0_we       = 0;
+      key1_we       = 0;
+      key2_we       = 0;
+      key3_we       = 0;
+      key4_we       = 0;
+      key5_we       = 0;
+      key6_we       = 0;
+      key7_we       = 0;
+      block0_we     = 0;
+      block1_we     = 0;
+      block2_we     = 0;
+      block3_we     = 0;
       tmp_read_data = 32'h00000000;
-      tmp_error    = 0;
+      tmp_error     = 0;
       
       if (cs)
         begin
@@ -319,6 +363,26 @@ module aes(
                 ADDR_KEY7:
                   begin
                     key7_we = 1;
+                  end
+
+                ADDR_BLOCK0:
+                  begin
+                    block0_we = 1;
+                  end
+
+                ADDR_BLOCK1:
+                  begin
+                    block1_we = 1;
+                  end
+
+                ADDR_BLOCK2:
+                  begin
+                    block2_we = 1;
+                  end
+
+                ADDR_BLOCK3:
+                  begin
+                    block3_we = 1;
                   end
                 
                 default:
