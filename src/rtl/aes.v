@@ -62,6 +62,7 @@ module aes(
   parameter ADDR_CTRL        = 8'h08;
   parameter CTRL_INIT_BIT    = 0;
   parameter CTRL_NEXT_BIT    = 1;
+  parameter CTRL_ENCDEC_BIT  = 2;
 
   parameter ADDR_STATUS      = 8'h09;
   parameter STATUS_READY_BIT = 0;
@@ -71,6 +72,10 @@ module aes(
   parameter ADDR_BLOCK1    = 8'h11;
   parameter ADDR_BLOCK2    = 8'h12;
   parameter ADDR_BLOCK3    = 8'h13;
+  parameter ADDR_BLOCK4    = 8'h14;
+  parameter ADDR_BLOCK5    = 8'h15;
+  parameter ADDR_BLOCK6    = 8'h16;
+  parameter ADDR_BLOCK7    = 8'h17;
                              
   parameter ADDR_RESULT0   = 8'h20;
   parameter ADDR_RESULT1   = 8'h21;
@@ -109,6 +114,14 @@ module aes(
   reg          key2_we;
   reg [31 : 0] key3_reg;
   reg          key3_we;
+  reg [31 : 0] key4_reg;
+  reg          key4_we;
+  reg [31 : 0] key5_reg;
+  reg          key5_we;
+  reg [31 : 0] key6_reg;
+  reg          key6_we;
+  reg [31 : 0] key7_reg;
+  reg          key7_we;
 
   reg [1  : 0] keylen_reg;
   reg [1  : 0] keylen_new;
@@ -176,13 +189,35 @@ module aes(
     begin
       if (!reset_n)
         begin
+          block0_reg <= 32'h00000000;
+          block1_reg <= 32'h00000000;
+          block2_reg <= 32'h00000000;
+          block3_reg <= 32'h00000000;
 
+          key0_reg   <= 32'h00000000;
+          key1_reg   <= 32'h00000000;
+          key2_reg   <= 32'h00000000;
+          key3_reg   <= 32'h00000000;
+          key4_reg   <= 32'h00000000;
+          key5_reg   <= 32'h00000000;
+          key6_reg   <= 32'h00000000;
+          key7_reg   <= 32'h00000000;
+
+          init_reg   <= 0;
+          next_reg   <= 0;
+          encdec_reg <= 0;
         end
       else
         begin
           ready_reg        <= core_ready;
           result_valid_reg <= core_results_valid;
-          
+
+          if (ctrl_we)
+            begin
+              init_reg   <= write_data[CTRL_INIT_BIT];
+              next_reg   <= write_data[CTRL_NEXT_BIT];
+              encdec_reg <= write_data[CTRL_ENCDEC_BIT];
+            end
         end
     end // reg_update
 
@@ -194,6 +229,8 @@ module aes(
   //----------------------------------------------------------------
   always @*
     begin : api
+      ctrl_we = 0;
+      
       tmp_read_data = 32'h00000000;
       tmp_error    = 0;
       
@@ -203,6 +240,10 @@ module aes(
             begin
               case (address)
                 // Write operations.
+                ADDR_CTRL:
+                  begin
+                    ctrl_we = 1;
+                  end
                 
                 default:
                   begin
