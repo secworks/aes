@@ -126,10 +126,10 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox0(.addr(prev_key_reg[31 : 24]), .data(sbox0_data));
-  aes_sbox sbox1(.addr(prev_key_reg[23 : 16]), .data(sbox1_data));
-  aes_sbox sbox2(.addr(prev_key_reg[15 : 08]), .data(sbox2_data));
-  aes_sbox sbox3(.addr(prev_key_reg[07 : 00]), .data(sbox3_data));
+  aes_sbox sbox0(.addr(prev_key_reg[127 : 120]), .data(sbox0_data));
+  aes_sbox sbox1(.addr(prev_key_reg[119 : 112]), .data(sbox1_data));
+  aes_sbox sbox2(.addr(prev_key_reg[111 : 104]), .data(sbox2_data));
+  aes_sbox sbox3(.addr(prev_key_reg[103 : 096]), .data(sbox3_data));
 
   
   //----------------------------------------------------------------
@@ -232,6 +232,7 @@ module aes_key_mem(
       w1 = prev_key_reg[063 : 032];
       w0 = prev_key_reg[031 : 000];
 
+      // Note: This is where we do column rotation.
       subw = {sbox0_data, sbox1_data, sbox2_data, sbox3_data};
       rconw = {rcon_reg, 24'h000000};
       
@@ -252,9 +253,9 @@ module aes_key_mem(
                 else
                   begin
                     w0 = prev_key_reg[127 : 096] ^ subw ^ rconw;
-                    w1 = prev_key_reg[063 : 032] ^ subw ^ rconw;
-                    w2 = prev_key_reg[095 : 064] ^ subw ^ rconw;
-                    w3 = prev_key_reg[031 : 000] ^ subw ^ rconw;
+                    w1 = prev_key_reg[063 : 032] ^ w0;
+                    w2 = prev_key_reg[095 : 064] ^ w0;
+                    w3 = prev_key_reg[031 : 000] ^ w0;
                     key_mem_new = {w0, w1, w2, w3};
                   end
               end
