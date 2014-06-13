@@ -63,28 +63,35 @@ module aes(
   parameter CTRL_INIT_BIT    = 0;
   parameter CTRL_NEXT_BIT    = 1;
   parameter CTRL_ENCDEC_BIT  = 2;
+  parameter CTRL_KEYLEN_LOW  = 3;
+  parameter CTRL_KEYLEN_HIGH = 4;
 
   parameter ADDR_STATUS      = 8'h09;
   parameter STATUS_READY_BIT = 0;
   parameter STATUS_VALID_BIT = 1;
-                             
-  parameter ADDR_BLOCK0    = 8'h10;
-  parameter ADDR_BLOCK1    = 8'h11;
-  parameter ADDR_BLOCK2    = 8'h12;
-  parameter ADDR_BLOCK3    = 8'h13;
-  parameter ADDR_BLOCK4    = 8'h14;
-  parameter ADDR_BLOCK5    = 8'h15;
-  parameter ADDR_BLOCK6    = 8'h16;
-  parameter ADDR_BLOCK7    = 8'h17;
-                             
-  parameter ADDR_RESULT0   = 8'h20;
-  parameter ADDR_RESULT1   = 8'h21;
-  parameter ADDR_RESULT2   = 8'h22;
-  parameter ADDR_RESULT3   = 8'h23;
 
-  parameter CORE_NAME0     = 32'h6165732d; // "aes-"
-  parameter CORE_NAME1     = 32'h31323820; // "128 "
-  parameter CORE_VERSION   = 32'h302e3530; // "0.50"
+  parameter ADDR_KEY0        = 8'h10;
+  parameter ADDR_KEY1        = 8'h11;
+  parameter ADDR_KEY2        = 8'h12;
+  parameter ADDR_KEY3        = 8'h13;
+  parameter ADDR_KEY4        = 8'h14;
+  parameter ADDR_KEY5        = 8'h15;
+  parameter ADDR_KEY6        = 8'h16;
+  parameter ADDR_KEY6        = 8'h17;
+                             
+  parameter ADDR_BLOCK0      = 8'h20;
+  parameter ADDR_BLOCK1      = 8'h21;
+  parameter ADDR_BLOCK2      = 8'h22;
+  parameter ADDR_BLOCK3      = 8'h23;
+                             
+  parameter ADDR_RESULT0     = 8'h30;
+  parameter ADDR_RESULT1     = 8'h31;
+  parameter ADDR_RESULT2     = 8'h32;
+  parameter ADDR_RESULT3     = 8'h33;
+
+  parameter CORE_NAME0       = 32'h6165732d; // "aes-"
+  parameter CORE_NAME1       = 32'h31323820; // "128 "
+  parameter CORE_VERSION     = 32'h302e3530; // "0.50"
 
   
   //----------------------------------------------------------------
@@ -94,8 +101,7 @@ module aes(
   reg next_reg;
   reg init_reg;
   reg ctrl_we;
-  
-  reg ready_reg;
+  reg [1  : 0] keylen_reg;
 
   reg [31 : 0] block0_reg;
   reg          block0_we;
@@ -123,13 +129,9 @@ module aes(
   reg [31 : 0] key7_reg;
   reg          key7_we;
 
-  reg [1  : 0] keylen_reg;
-  reg [1  : 0] keylen_new;
-  reg          keylen_we;
-
   reg [128 : 0] result_reg;
-
-  reg result_valid_reg;
+  reg           valid_reg;
+  reg           ready_reg;
 
   
   //----------------------------------------------------------------
@@ -206,17 +208,43 @@ module aes(
           init_reg   <= 0;
           next_reg   <= 0;
           encdec_reg <= 0;
+          keylen_reg <= 2'h0;
+
+          result_reg <= 128'h00000000000000000000000000000000;
+          valid_reg  <= 0;
+          ready_reg  <= 0;
         end
       else
         begin
-          ready_reg        <= core_ready;
-          result_valid_reg <= core_results_valid;
+          ready_reg      <= core_ready;
+          valid_reg      <= core_results_valid;
 
           if (ctrl_we)
             begin
               init_reg   <= write_data[CTRL_INIT_BIT];
               next_reg   <= write_data[CTRL_NEXT_BIT];
               encdec_reg <= write_data[CTRL_ENCDEC_BIT];
+              keylen_reg <= write_data[CTRL_KEYLEN_HIGH : CTRL_KEYLEN_LOW];
+            end
+
+          if (block0_we)
+            begin
+              block0_reg <= write_data;
+            end
+
+          if (block1_we)
+            begin
+              block1_reg <= write_data;
+            end
+
+          if (block2_we)
+            begin
+              block2_reg <= write_data;
+            end
+
+          if (block3_we)
+            begin
+              block3_reg <= write_data;
             end
         end
     end // reg_update
@@ -269,6 +297,96 @@ module aes(
                 ADDR_VERSION:
                   begin
                     tmp_read_data = CORE_VERSION;
+                  end
+
+                ADDR_CTRL:
+                  begin
+                    tmp_read_data = {27'h0000000, keylen_reg, encdec_reg,
+                                     next_reg, init_reg};
+                  end
+
+                ADDR_STATUS:
+                  begin
+                    tmp_read_data = {30'h00000000, valid_reg, ready_reg};
+                  end
+
+                ADDR_KEY0:
+                  begin
+                    tmp_read_data = key0_reg;
+
+                ADDR_KEY1:
+                  begin
+                    tmp_read_data = key1_reg;
+                  end
+
+                ADDR_KEY2:
+                  begin
+                    tmp_read_data = key2_reg;
+                  end
+
+                ADDR_KEY3:
+                  begin
+                    tmp_read_data = key3_reg;
+                  end
+
+                ADDR_KEY4:
+                  begin
+                    tmp_read_data = key4_reg;
+                  end
+
+                ADDR_KEY5:
+                  begin
+                    tmp_read_data = key5_reg;
+                  end
+
+                ADDR_KEY6:
+                  begin
+                    tmp_read_data = key6_reg;
+                  end
+
+                ADDR_KEY7:
+                  begin
+                    tmp_read_data = key7_reg;
+                  end
+
+                ADDR_BLOCK0:
+                  begin
+                    tmp_read_data = block0_reg;
+                  end
+
+                ADDR_BLOCK1:
+                  begin
+                    tmp_read_data = block1_reg;
+                  end
+
+                ADDR_BLOCK2:
+                  begin
+                    tmp_read_data = block2_reg;
+                  end
+
+                ADDR_BLOCK3:
+                  begin
+                    tmp_read_data = block3_reg;
+                  end
+
+                ADDR_RESULT0:
+                  begin
+                    tmp_read_data = result_reg[127 : 96];
+                  end
+
+                ADDR_RESULT1:
+                  begin
+                    tmp_read_data = result_reg[95 : 64];
+                  end
+
+                ADDR_RESULT2:
+                  begin
+                    tmp_read_data = result_reg[63 : 32];
+                  end
+
+                ADDR_RESULT3:
+                  begin
+                    tmp_read_data = result_reg[31 : 0];
                   end
                 
                 default:
