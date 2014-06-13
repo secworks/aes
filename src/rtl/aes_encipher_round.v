@@ -184,8 +184,8 @@ module aes_encipher_round(
   assign s23_new = tmp_s23_new;
   assign s30_new = tmp_s30_new;
   assign s31_new = tmp_s31_new;
-  assign s31_new = tmp_s32_new;
-  assign s32_new = tmp_s33_new;
+  assign s32_new = tmp_s32_new;
+  assign s33_new = tmp_s33_new;
 
 
   //----------------------------------------------------------------
