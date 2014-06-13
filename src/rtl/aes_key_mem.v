@@ -269,7 +269,7 @@ module aes_key_mem(
                 
                 if (round_ctr_reg == 1)
                   begin
-                    key_mem_new = {key[63 : 0], prev_key_reg[128 : 64]};
+                    key_mem_new = {key[63 : 0], prev_key_reg[127 : 64]};
                   end
               end
 
