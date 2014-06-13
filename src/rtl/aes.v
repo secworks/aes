@@ -87,6 +87,7 @@ module aes(
   //----------------------------------------------------------------
   reg encdec_reg;
   reg next_reg;
+  reg init_reg;
   reg ctrl_we;
   
   reg ready_reg;
@@ -109,6 +110,10 @@ module aes(
   reg [31 : 0] key3_reg;
   reg          key3_we;
 
+  reg [1  : 0] keylen_reg;
+  reg [1  : 0] keylen_new;
+  reg          keylen_we;
+
   reg [128 : 0] result_reg;
 
   reg result_valid_reg;
@@ -121,10 +126,11 @@ module aes(
   reg            tmp_error;
   
   wire           core_encdec;
+  wire           core_init;
   wire           core_next;
   wire           core_ready;
   wire [255 : 0] core_key;
-  wire           core_load_key;
+  wire [1   : 0] core_keylen;
   wire [127 : 0] core_block;
   wire [127 : 0] core_results;
   wire           core_results_valid;
@@ -143,20 +149,21 @@ module aes(
   // core instantiation.
   //----------------------------------------------------------------
   aes_core core(
-                   .clk(clk),
-                   .reset_n(reset_n),
+                .clk(clk),
+                .reset_n(reset_n),
                    
-                   .encdec(core_encdec),
-                   .next(core_next),
-                   .ready(core_ready),
+                .encdec(core_encdec),
+                .init(core_init),
+                .next(core_next),
+                .ready(core_ready),
 
-                   .key(core_key),
-                   .load_key(core_load_key),
+                .key(core_key),
+                .keylen(core_keylen),
                    
-                   .block(core_block),
-                   .result(core_results),
-                   .result_valid(core_results_valid)
-                  );
+                .block(core_block),
+                .result(core_results),
+                .result_valid(core_results_valid)
+               );
   
   
   //----------------------------------------------------------------
