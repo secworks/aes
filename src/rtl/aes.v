@@ -155,9 +155,15 @@ module aes(
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign read_data = tmp_read_data;
-  assign error    = tmp_error;
+  assign error     = tmp_error;
   
-  assign core_key = {key3_reg, key2_reg, key1_reg, key0_reg};
+  assign core_key = {key0_reg, key1_reg, key2_reg, key3_reg,
+                     key4_reg, key5_reg, key6_reg, key7_reg};
+
+  assign core_block  = {block_reg, block1_reg, block2_reg, block3_reg};
+  assign core_init   = init_reg;
+  assign core_next   = next_reg;
+  assign core_keylen = keylen_reg;
   
              
   //----------------------------------------------------------------
