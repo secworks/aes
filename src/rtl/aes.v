@@ -77,7 +77,7 @@ module aes(
   parameter ADDR_KEY4        = 8'h14;
   parameter ADDR_KEY5        = 8'h15;
   parameter ADDR_KEY6        = 8'h16;
-  parameter ADDR_KEY6        = 8'h17;
+  parameter ADDR_KEY7        = 8'h17;
                              
   parameter ADDR_BLOCK0      = 8'h20;
   parameter ADDR_BLOCK1      = 8'h21;
@@ -160,7 +160,7 @@ module aes(
   assign core_key = {key0_reg, key1_reg, key2_reg, key3_reg,
                      key4_reg, key5_reg, key6_reg, key7_reg};
 
-  assign core_block  = {block_reg, block1_reg, block2_reg, block3_reg};
+  assign core_block  = {block0_reg, block1_reg, block2_reg, block3_reg};
   assign core_init   = init_reg;
   assign core_next   = next_reg;
   assign core_keylen = keylen_reg;
@@ -431,6 +431,7 @@ module aes(
                 ADDR_KEY0:
                   begin
                     tmp_read_data = key0_reg;
+                  end
 
                 ADDR_KEY1:
                   begin
@@ -506,7 +507,7 @@ module aes(
                   begin
                     tmp_read_data = result_reg[31 : 0];
                   end
-                
+
                 default:
                   begin
                     tmp_error = 1;
