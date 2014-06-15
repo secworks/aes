@@ -291,9 +291,12 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin : rcon_logic
+      reg [8 : 0] tmp_rcon;
       rcon_new = 8'h00;
       rcon_we  = 0;
 
+      tmp_rcon = {rcon_reg[7 : 0], 1'b0} ^ (9'h11b & {9{rcon_reg[7]}});
+      
       if (rcon_set)
         begin
           rcon_new = 8'h8d;
@@ -302,7 +305,7 @@ module aes_key_mem(
 
       if (rcon_next)
         begin
-          rcon_new  = {rcon_reg[7 : 0], 1'b0} ^ (9'h11b & {9{rcon_reg[7]}});
+          rcon_new  = tmp_rcon[7 : 0];
           rcon_we  = 1;
         end
     end
