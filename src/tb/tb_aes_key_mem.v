@@ -261,7 +261,8 @@ module tb_aes_key_mem();
       #(CLK_PERIOD);
       if (tb_round_key == expected)
         begin
-          $display("key 0x%01x matched expected round key.", key_nr);
+          $display("** key 0x%01x matched expected round key.", key_nr);
+          $display("** Got:      0x%016x **", tb_round_key);
         end
       else
         begin
