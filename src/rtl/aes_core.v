@@ -57,23 +57,23 @@ module aes_core(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter AES_128_BIT_KEY = 0;
-  parameter AES_192_BIT_KEY = 1;
-  parameter AES_256_BIT_KEY = 2;
+  parameter AES_128_BIT_KEY = 2'h0;
+  parameter AES_192_BIT_KEY = 2'h1;
+  parameter AES_256_BIT_KEY = 2'h2;
 
-  parameter AES128_ROUNDS = 10;
-  parameter AES192_ROUNDS = 12;
-  parameter AES256_ROUNDS = 14;
+  parameter AES128_ROUNDS = 4'ha;
+  parameter AES192_ROUNDS = 4'hc;
+  parameter AES256_ROUNDS = 4'he;
   
-  parameter CTRL_IDLE        = 0;
-  parameter CTRL_INIT_ROUND  = 1;
-  parameter CTRL_MAIN_ROUNDS = 2;
-  parameter CTRL_FINAL_ROUND = 3;
-  parameter CTRL_DONE        = 4;
+  parameter CTRL_IDLE        = 3'h0;
+  parameter CTRL_INIT_ROUND  = 3'h1;
+  parameter CTRL_MAIN_ROUNDS = 3'h2;
+  parameter CTRL_FINAL_ROUND = 3'h3;
+  parameter CTRL_DONE        = 3'h4;
   
-  parameter INIT_ROUND  = 0;
-  parameter MAIN_ROUND  = 1;
-  parameter FINAL_ROUND = 2;
+  parameter INIT_ROUND  = 2'h0;
+  parameter MAIN_ROUND  = 2'h1;
+  parameter FINAL_ROUND = 2'h2;
 
   
   //----------------------------------------------------------------
