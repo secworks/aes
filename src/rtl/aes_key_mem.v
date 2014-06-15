@@ -53,18 +53,18 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Parameters.
   //----------------------------------------------------------------
-  parameter AES_128_BIT_KEY = 0;
-  parameter AES_192_BIT_KEY = 1;
-  parameter AES_256_BIT_KEY = 2;
+  parameter AES_128_BIT_KEY = 2'h0;
+  parameter AES_192_BIT_KEY = 2'h1;
+  parameter AES_256_BIT_KEY = 2'h2;
 
-  parameter AES_128_NUM_ROUNDS = 10;
-  parameter AES_192_NUM_ROUNDS = 12;
-  parameter AES_256_NUM_ROUNDS = 14;
+  parameter AES_128_NUM_ROUNDS = 4'ha;
+  parameter AES_192_NUM_ROUNDS = 4'hc;
+  parameter AES_256_NUM_ROUNDS = 4'he;
   
-  parameter CTRL_IDLE     = 0;
-  parameter CTRL_INIT     = 1;
-  parameter CTRL_GENERATE = 2;
-  parameter CTRL_DONE     = 3;
+  parameter CTRL_IDLE     = 3'h0;
+  parameter CTRL_INIT     = 3'h1;
+  parameter CTRL_GENERATE = 3'h2;
+  parameter CTRL_DONE     = 3'h3;
 
   
   //----------------------------------------------------------------
