@@ -145,7 +145,6 @@ module aes_core(
 
   reg [3 : 0]    num_rounds;
   reg [1 : 0]    round_type;
-  reg [3 : 0]    round_nr;
   wire [127 : 0] round_key;
   wire           key_ready;
 
@@ -271,7 +270,7 @@ module aes_core(
                      .keylen(keylen),
                      .init(init),
 
-                     .round(round_nr),
+                     .round(round_ctr_reg),
                      .round_key(round_key),
                      .ready(key_ready)
                     );
@@ -533,7 +532,6 @@ module aes_core(
       round_ctr_rst    = 0;
       round_ctr_inc    = 0;
       round_type       = 2'h0;
-      next_key         = 0;
       aes_ctrl_new     = CTRL_IDLE;
       aes_ctrl_we      = 0;
       
@@ -556,7 +554,6 @@ module aes_core(
 
         CTRL_INIT_ROUND:
           begin
-            next_key     = 1;
             round_type   = INIT_ROUND;
             update_state = 1;
             aes_ctrl_new = CTRL_MAIN_ROUNDS;
@@ -566,7 +563,6 @@ module aes_core(
 
         CTRL_MAIN_ROUNDS:
           begin
-            next_key      = 1;
             round_type    = MAIN_ROUND;
             update_state  = 1;
             round_ctr_inc = 1;
