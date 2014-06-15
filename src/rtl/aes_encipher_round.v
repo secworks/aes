@@ -294,22 +294,22 @@ module aes_encipher_round(
       case (round_type)
         INIT_ROUND:
           begin
-            tmp_s00_new = 8'h00;
-            tmp_s01_new = 8'h00;
-            tmp_s02_new = 8'h00;
-            tmp_s03_new = 8'h00;
-            tmp_s10_new = 8'h00;
-            tmp_s11_new = 8'h00;
-            tmp_s12_new = 8'h00;
-            tmp_s13_new = 8'h00;
-            tmp_s20_new = 8'h00;
-            tmp_s21_new = 8'h00;
-            tmp_s22_new = 8'h00;
-            tmp_s23_new = 8'h00;
-            tmp_s30_new = 8'h00;
-            tmp_s31_new = 8'h00;
-            tmp_s32_new = 8'h00;
-            tmp_s33_new = 8'h00;
+            tmp_s00_new = init_s00;
+            tmp_s01_new = init_s01;
+            tmp_s02_new = init_s02;
+            tmp_s03_new = init_s03;
+            tmp_s10_new = init_s10;
+            tmp_s11_new = init_s11;
+            tmp_s12_new = init_s12;
+            tmp_s13_new = init_s13;
+            tmp_s20_new = init_s20;
+            tmp_s21_new = init_s21;
+            tmp_s22_new = init_s22;
+            tmp_s23_new = init_s23;
+            tmp_s30_new = init_s30;
+            tmp_s31_new = init_s31;
+            tmp_s32_new = init_s32;
+            tmp_s33_new = init_s33;
           end
 
         MAIN_ROUND:
