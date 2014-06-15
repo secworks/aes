@@ -162,7 +162,6 @@ module aes_key_mem(
           rcon_reg        <= 8'h00;
           ready_reg       <= 0;
           round_ctr_reg   <= 4'h0;
-          word_ctr_reg    <= 2'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
         end
       else
@@ -170,11 +169,6 @@ module aes_key_mem(
           if (round_ctr_we)
             begin
               round_ctr_reg <= round_ctr_new;
-            end
-
-          if (word_ctr_we)
-            begin
-              word_ctr_reg <= word_ctr_new;
             end
 
           if (ready_we)
@@ -242,7 +236,7 @@ module aes_key_mem(
               begin
                 if (round_ctr_reg == 0)
                   begin
-                    key_mem_new = key;
+                    key_mem_new = key[255 : 128];
                   end
                 else
                   begin
