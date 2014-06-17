@@ -87,6 +87,15 @@ sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
 
 
 #-------------------------------------------------------------------
+# rol8()
+#
+# Rotate the given 32 bit word 8 bits left.
+#-------------------------------------------------------------------
+def rol8(w):
+    return ((w << 8) | (w >> 24)) & 0xffffffff
+
+
+#-------------------------------------------------------------------
 # key_gen()
 #
 # The actual key generation.
@@ -96,7 +105,7 @@ def key_gen(key):
     expanded_keys.append(key)
     for i in range(1, AES_128_ROUNDS):
         (prev_x0, prev_x1, prev_x2, prev_x3) = expanded_keys[(i-1)]
-        x0 = prev_x0 + 0x12345678
+        x0 = rol8(prev_x0) + 0x12345678
         x1 = prev_x1 ^ x0
         x2 = prev_x2 ^ x1
         x3 = prev_x3 ^ x2
