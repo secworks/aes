@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 #=======================================================================
 #
-# aes512.py
-# ---------
+# aes.py
+# ------
 # Simple, pure Python model of the AES block cipher. The model is
 # used as a reference for the HW implementation. The code follows
 # the structure of the HW implementation as much as possible.
