@@ -103,13 +103,16 @@ def rol8(w):
 def key_gen(key):
     expanded_keys = []
     expanded_keys.append(key)
+    rcon = 0x8d
+
     for i in range(1, AES_128_ROUNDS):
         (prev_x0, prev_x1, prev_x2, prev_x3) = expanded_keys[(i-1)]
-        x0 = rol8(prev_x0) + 0x12345678
+        x0 = rol8(prev_x0) ^ (rcon << 24)
         x1 = prev_x1 ^ x0
         x2 = prev_x2 ^ x1
         x3 = prev_x3 ^ x2
         expanded_keys.append((x0, x1, x2, x3))
+        rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
 
     for i in range(AES_128_ROUNDS):
         (x0, x1, x2, x3) = expanded_keys[i]
