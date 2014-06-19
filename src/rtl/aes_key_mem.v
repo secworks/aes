@@ -120,10 +120,10 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox0(.addr(prev_key_reg[127 : 120]), .data(sbox0_data));
-  aes_sbox sbox1(.addr(prev_key_reg[119 : 112]), .data(sbox1_data));
-  aes_sbox sbox2(.addr(prev_key_reg[111 : 104]), .data(sbox2_data));
-  aes_sbox sbox3(.addr(prev_key_reg[103 : 096]), .data(sbox3_data));
+  aes_sbox sbox0(.addr(sbox_addr0), .data(sbox0_data));
+  aes_sbox sbox1(.addr(sbox_addr1), .data(sbox1_data));
+  aes_sbox sbox2(.addr(sbox_addr2), .data(sbox2_data));
+  aes_sbox sbox3(.addr(sbox_addr3), .data(sbox3_data));
 
   
   //----------------------------------------------------------------
