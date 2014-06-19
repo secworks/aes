@@ -120,10 +120,10 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_sbox sbox0(.addr(sbox_addr0), .data(sbox0_data));
-  aes_sbox sbox1(.addr(sbox_addr1), .data(sbox1_data));
-  aes_sbox sbox2(.addr(sbox_addr2), .data(sbox2_data));
-  aes_sbox sbox3(.addr(sbox_addr3), .data(sbox3_data));
+  aes_sbox sbox0(.addr(sbox0_addr), .data(sbox0_data));
+  aes_sbox sbox1(.addr(sbox1_addr), .data(sbox1_data));
+  aes_sbox sbox2(.addr(sbox2_addr), .data(sbox2_data));
+  aes_sbox sbox3(.addr(sbox3_addr), .data(sbox3_data));
 
   
   //----------------------------------------------------------------
@@ -215,14 +215,14 @@ module aes_key_mem(
   always @*
     begin: round_key_gen
       reg [31 : 0] w0, w1, w2, w3, subw, rconw;
-      w3 = prev_key_reg[127 : 096];
-      w2 = prev_key_reg[095 : 064];
-      w1 = prev_key_reg[063 : 032];
-      w0 = prev_key_reg[031 : 000];
 
-      // Note: This is where we do column rotation.
-      subw = {sbox0_data, sbox1_data, sbox2_data, sbox3_data};
-      rconw = {rcon_reg, 24'h000000};
+      sbox0_addr = prev_key_reg[007 : 000];
+      sbox1_addr = prev_key_reg[015 : 008];
+      sbox2_addr = prev_key_reg[023 : 016];
+      sbox3_addr = prev_key_reg[031 : 024];
+      subw       = {sbox2_data, sbox1_data, sbox0_data, sbox3_data};
+      rconw      = {rcon_reg, 24'h000000};
+
       
       // Default assignments.
       key_mem_new = 128'h00000000000000000000000000000000;
@@ -241,8 +241,8 @@ module aes_key_mem(
                 else
                   begin
                     w0 = prev_key_reg[127 : 096] ^ subw ^ rconw;
-                    w1 = prev_key_reg[063 : 032] ^ w0;
-                    w2 = prev_key_reg[095 : 064] ^ w1;
+                    w1 = prev_key_reg[095 : 064] ^ w0;
+                    w2 = prev_key_reg[063 : 032] ^ w1;
                     w3 = prev_key_reg[031 : 000] ^ w2;
                     key_mem_new = {w0, w1, w2, w3};
                   end
