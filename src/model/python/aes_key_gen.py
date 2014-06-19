@@ -87,9 +87,24 @@ sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
 
 
 #-------------------------------------------------------------------
+# substw()
+#
+# Returns a 32-bit word in which each of the bytes in the
+# given 32-bit word has been used as lookup into the AES S-box.
 #-------------------------------------------------------------------
 def substw(w):
-    pass
+    b0 = w >> 24
+    b1 = w >> 16 & 0xff
+    b2 = w >> 8 & 0xff
+    b3 = w & 0xff
+
+    s0 = sbox[b0]
+    s1 = sbox[b1]
+    s2 = sbox[b2]
+    s3 = sbox[b3]
+
+    return (s0 << 24) + (s1 << 16) + (s2 << 8) + s3
+
 
 #-------------------------------------------------------------------
 # rol8()
@@ -112,8 +127,8 @@ def key_gen(key):
 
     for i in range(1, AES_128_ROUNDS):
         (prev_x0, prev_x1, prev_x2, prev_x3) = expanded_keys[(i-1)]
-        tmp = subst(rol8(prev_x3)) ^ (rcon << 24)
-        x0 = prev_x0) ^ tmp
+        tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
+        x0 = prev_x0 ^ tmp
         x1 = prev_x1 ^ x0
         x2 = prev_x2 ^ x0
         x3 = prev_x3 ^ x0
