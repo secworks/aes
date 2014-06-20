@@ -47,6 +47,8 @@ import sys
 #-------------------------------------------------------------------
 # Constants.
 #-------------------------------------------------------------------
+VERBOSE = True
+
 AES_128_ROUNDS = 10
 AES_192_ROUNDS = 12
 AES_256_ROUNDS = 14
@@ -121,26 +123,43 @@ def rol8(w):
 # The actual key generation.
 #-------------------------------------------------------------------
 def key_gen(key):
-    expanded_keys = []
-    expanded_keys.append(key)
+    if VERBOSE:
+        print("key length: %d" % len(key))
+
+    round_keys = []
+    round_keys.append(key)
     rcon = 0x8d
 
     for i in range(1, AES_128_ROUNDS + 1):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
-        (prev_x0, prev_x1, prev_x2, prev_x3) = expanded_keys[(i-1)]
+        (prev_x0, prev_x1, prev_x2, prev_x3) = round_keys[(i-1)]
         tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
         x0 = prev_x0 ^ tmp
         x1 = prev_x1 ^ x0
         x2 = prev_x2 ^ x1
         x3 = prev_x3 ^ x2
-        expanded_keys.append((x0, x1, x2, x3))
-        print("rcon = 0x%02x, rconw = 0x%08x" % (rcon, rcon << 24))
+        round_keys.append((x0, x1, x2, x3))
+        if VERBOSE:
+            print("rcon = 0x%02x, rconw = 0x%08x" % (rcon, rcon << 24))
 
-    for i in range(AES_128_ROUNDS + 1):
-        (x0, x1, x2, x3) = expanded_keys[i]
-        print("Round %02d: x0 = 0x%08x, x1 = 0x%08x, x2 = 0x%08x, x3 = 0x%08x" % (i, x0, x1, x2, x3))
-#        print("Round %02d: x0 = 0x%08x, x1 = 0x%08x, x2 = 0x%08x, x3 = 0x%08x"\
-#              % (i, x0, x1, x2, x3))
+    if VERBOSE:
+        for i in range(AES_128_ROUNDS + 1):
+            (x0, x1, x2, x3) = round_keys[i]
+            print("Round %02d: x0 = 0x%08x, x1 = 0x%08x, x2 = 0x%08x, x3 = 0x%08x"\
+                  % (i, x0, x1, x2, x3))
+    return round_keys
+
+
+#-------------------------------------------------------------------
+# test_keys()
+#
+# Generate round keys for a given key and compare them to
+# the given expected round keys.
+#-------------------------------------------------------------------
+def test_keys(key, expected):
+    generated = key_gen(key)
+    print("Expected number of round keys: %d" % len(expected))
+    print("Got number of round keys:      %d" % len(generated))
 
 
 #-------------------------------------------------------------------
@@ -152,8 +171,20 @@ def main():
     print("Testing the AES key generation")
     print("==============================")
     print
-    test_key = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
-    key_gen(test_key)
+    test_key0 = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
+    expected0 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
+                 (0x62636363, 0x62636363, 0x62636363, 0x62636363),
+                 (0x9b9898c9, 0xf9fbfbaa, 0x9b9898c9, 0xf9fbfbaa),
+                 (0x90973450, 0x696ccffa, 0xf2f45733, 0x0b0fac99),
+                 (0xee06da7b, 0x876a1581, 0x759e42b2, 0x7e91ee2b),
+                 (0x7f2e2b88, 0xf8443e09, 0x8dda7cbb, 0xf34b9290),
+                 (0xec614b85, 0x1425758c, 0x99ff0937, 0x6ab49ba7),
+                 (0x21751787, 0x3550620b, 0xacaf6b3c, 0xc61bf09b),
+                 (0x0ef90333, 0x3ba96138, 0x97060a04, 0x511dfa9f),
+                 (0xb1d4d8e2, 0x8a7db9da, 0x1d7bb3de, 0x4c664941),
+                 (0xb4ef5bcb, 0x3e92e211, 0x23e951cf, 0x6f8f188e))
+
+    test_keys(test_key0, expected0)
 
 
 #-------------------------------------------------------------------
