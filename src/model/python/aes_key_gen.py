@@ -158,8 +158,23 @@ def key_gen(key):
 #-------------------------------------------------------------------
 def test_keys(key, expected):
     generated = key_gen(key)
-    print("Expected number of round keys: %d" % len(expected))
-    print("Got number of round keys:      %d" % len(generated))
+
+    if (len(generated) != len(expected)):
+        print("Error: Incorrect number of keys generated.")
+        print("Expected number of round keys: %d" % len(expected))
+        print("Got number of round keys:      %d" % len(generated))
+
+    for i in range(len(generated)):
+        exp = expected[i]
+        got = generated[i]
+        if (exp != got):
+            print("Error: Error in round key %d." % i)
+            (e0, e1, e2, e3) = exp
+            (g0, g1, g2, g3) = got
+            print("Expected: 0x%08x 0x%08x 0x%08x 0x%08x"\
+                  % (e0, e1, e2, e3))
+            print("Got:      0x%08x 0x%08x 0x%08x 0x%08x"\
+                  % (g0, g1, g2, g3))
 
 
 #-------------------------------------------------------------------
