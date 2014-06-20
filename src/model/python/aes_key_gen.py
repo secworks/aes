@@ -210,10 +210,24 @@ def main():
                  (0x549932d1, 0xf0855768, 0x1093ed9c, 0xbe2c974e),
                  (0x13111d7f, 0xe3944a17, 0xf307a78b, 0x4d2b30c5))
 
+    test_key3 = (0x6920e299, 0xa5202a6d, 0x656e6368, 0x69746f2a)
+    expected3 = ((0x6920e299, 0xa5202a6d, 0x656e6368, 0x69746f2a),
+                 (0xfa880760, 0x5fa82d0d, 0x3ac64e65, 0x53b2214f),
+                 (0xcf75838d, 0x90ddae80, 0xaa1be0e5, 0xf9a9c1aa),
+                 (0x180d2f14, 0x88d08194, 0x22cb6171, 0xdb62a0db),
+                 (0xbaed96ad, 0x323d1739, 0x10f67648, 0xcb94d693),
+                 (0x881b4ab2, 0xba265d8b, 0xaad02bc3, 0x6144fd50),
+                 (0xb34f195d, 0x096944d6, 0xa3b96f15, 0xc2fd9245),
+                 (0xa7007778, 0xae6933ae, 0x0dd05cbb, 0xcf2dcefe),
+                 (0xff8bccf2, 0x51e2ff5c, 0x5c32a3e7, 0x931f6d19),
+                 (0x24b7182e, 0x7555e772, 0x29674495, 0xba78298c),
+                 (0xae127cda, 0xdb479ba8, 0xf220df3d, 0x4858f6b1))
+
 
     test_keys(test_key0, expected0)
     test_keys(test_key1, expected1)
     test_keys(test_key2, expected2)
+    test_keys(test_key3, expected3)
 
 
 #-------------------------------------------------------------------
