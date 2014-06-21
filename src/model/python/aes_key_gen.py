@@ -178,14 +178,13 @@ def test_keys(key, expected):
 
 
 #-------------------------------------------------------------------
-# main()
+# test_key_expansion()
 #
-# If executed tests the ChaCha class using known test vectors.
+# Perform key expansion tests.
+# The test keys and expected round keys are taken from:
+# http://www.samiam.org/key-schedule.html
 #-------------------------------------------------------------------
-def main():
-    print("Testing the AES key generation")
-    print("==============================")
-    print
+def test_key_expansion():
     # 128 bit keys.
     test_key0 = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
     expected0 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
@@ -259,6 +258,19 @@ def main():
                  (0x59f00e3e, 0xe1094f95, 0x83ecbc0f, 0x9b1e0830),
                  (0x0af31fa7, 0x4a8b8661, 0x137b885f, 0xf272c7ca),
                  (0x432ac886, 0xd834c0b6, 0xd2c7df11, 0x984c5970))
+
+
+#-------------------------------------------------------------------
+# main()
+#
+# If executed tests the ChaCha class using known test vectors.
+#-------------------------------------------------------------------
+def main():
+    print("Testing the AES key generation")
+    print("==============================")
+    print
+
+    test_key_expansion()
 
 
 #-------------------------------------------------------------------
