@@ -238,11 +238,6 @@ def test_key_expansion():
                 (0x24b7182e, 0x7555e772, 0x29674495, 0xba78298c),
                 (0xae127cda, 0xdb479ba8, 0xf220df3d, 0x4858f6b1))
 
-    test_keys(key128_1, exp128_1)
-    test_keys(key128_2, exp128_2)
-    test_keys(key128_3, exp128_3)
-    test_keys(key128_4, exp128_4)
-
     key192_1 = (0x00000000, 0x00000000, 0x00000000,
                 0x00000000, 0x00000000, 0x00000000)
     exp192_1 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
@@ -291,6 +286,14 @@ def test_key_expansion():
                 (0xde601e78, 0x27bcdf2c, 0xa223800f, 0xd8aeda32),
                 (0xa4970a33, 0x1a78dc09, 0xc418c271, 0xe3a41d5d))
 
+    test_keys(key128_1, exp128_1)
+    test_keys(key128_2, exp128_2)
+    test_keys(key128_3, exp128_3)
+    test_keys(key128_4, exp128_4)
+
+    test_keys(key192_1, exp192_1)
+    test_keys(key192_2, exp192_2)
+    test_keys(key192_3, exp192_3)
 
 #-------------------------------------------------------------------
 # main()
