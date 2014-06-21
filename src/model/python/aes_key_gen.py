@@ -47,7 +47,7 @@ import sys
 #-------------------------------------------------------------------
 # Constants.
 #-------------------------------------------------------------------
-VERBOSE = True
+VERBOSE = False
 
 AES_128_ROUNDS = 10
 AES_192_ROUNDS = 12
@@ -151,12 +151,12 @@ def key_gen(key):
 
 
 #-------------------------------------------------------------------
-# test_keys()
+# test_key()
 #
 # Generate round keys for a given key and compare them to
 # the given expected round keys.
 #-------------------------------------------------------------------
-def test_keys(key, expected):
+def test_key(key, expected):
     generated = key_gen(key)
 
     if (len(generated) != len(expected)):
@@ -286,14 +286,15 @@ def test_key_expansion():
                 (0xde601e78, 0x27bcdf2c, 0xa223800f, 0xd8aeda32),
                 (0xa4970a33, 0x1a78dc09, 0xc418c271, 0xe3a41d5d))
 
-    test_keys(key128_1, exp128_1)
-    test_keys(key128_2, exp128_2)
-    test_keys(key128_3, exp128_3)
-    test_keys(key128_4, exp128_4)
+    test_key(key128_1, exp128_1)
+    test_key(key128_2, exp128_2)
+    test_key(key128_3, exp128_3)
+    test_key(key128_4, exp128_4)
 
-    test_keys(key192_1, exp192_1)
-    test_keys(key192_2, exp192_2)
-    test_keys(key192_3, exp192_3)
+    test_key(key192_1, exp192_1)
+    test_key(key192_2, exp192_2)
+    test_key(key192_3, exp192_3)
+
 
 #-------------------------------------------------------------------
 # main()
