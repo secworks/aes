@@ -186,6 +186,7 @@ def main():
     print("Testing the AES key generation")
     print("==============================")
     print
+    # 128 bit keys.
     test_key0 = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
     expected0 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
                  (0x62636363, 0x62636363, 0x62636363, 0x62636363),
@@ -238,11 +239,26 @@ def main():
                  (0x24b7182e, 0x7555e772, 0x29674495, 0xba78298c),
                  (0xae127cda, 0xdb479ba8, 0xf220df3d, 0x4858f6b1))
 
-
     test_keys(test_key0, expected0)
     test_keys(test_key1, expected1)
     test_keys(test_key2, expected2)
     test_keys(test_key3, expected3)
+
+    test_key4 = (0x00000000, 0x00000000, 0x00000000,
+                 0x00000000, 0x00000000, 0x00000000)
+    expected4 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
+                 (0x00000000, 0x00000000, 0x62636363, 0x62636363),
+                 (0x62636363, 0x62636363, 0x62636363, 0x62636363),
+                 (0x9b9898c9, 0xf9fbfbaa, 0x9b9898c9, 0xf9fbfbaa),
+                 (0x9b9898c9, 0xf9fbfbaa, 0x90973450, 0x696ccffa),
+                 (0xf2f45733, 0x0b0fac99, 0x90973450, 0x696ccffa),
+                 (0xc81d19a9, 0xa171d653, 0x53858160, 0x588a2df9),
+                 (0xc81d19a9, 0xa171d653, 0x7bebf49b, 0xda9a22c8),
+                 (0x891fa3a8, 0xd1958e51, 0x198897f8, 0xb8f941ab),
+                 (0xc26896f7, 0x18f2b43f, 0x91ed1797, 0x407899c6),
+                 (0x59f00e3e, 0xe1094f95, 0x83ecbc0f, 0x9b1e0830),
+                 (0x0af31fa7, 0x4a8b8661, 0x137b885f, 0xf272c7ca),
+                 (0x432ac886, 0xd834c0b6, 0xd2c7df11, 0x984c5970))
 
 
 #-------------------------------------------------------------------
