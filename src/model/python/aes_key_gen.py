@@ -131,30 +131,28 @@ def key_gen(key):
     if nr_rounds == AES_128_ROUNDS:
         round_keys.append(key)
     elif nr_rounds == AES_192_ROUNDS:
-        (x0, x1, x2, x3, x4, x5) = key
-        round_keys.append((x0, x1, x2, x3))
+        (k0, k1, k2, k3, k4, k5) = key
+        round_keys.append((k0, k1, k2, k3))
     else:
-        (x0, x1, x2, x3, x4, x5, x6, x7) = key
-        round_keys.append((x0, x1, x2, x3))
-        round_keys.append((x4, x5, x6, x7))
+        (k0, k1, k2, k3, k4, k5, k6, k7) = key
+        round_keys.append((k0, k1, k2, k3))
+        round_keys.append((k4, k5, k6, k7))
 
     rcon = 0x8d
 
     for i in range(1, nr_rounds + 1):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
-
-        if (nr_rounds == AES_192_ROUNDS) and (i == 1):
-            (tmp_x0, tmp_x1, tmp_x2, tmp_x3) = round_keys[(i-1)]
-            (prev_x0, prev_x1, prev_x2, prev_x3) = (x4, x5, tmp_x0, tmp_x1)
-        else:
-            (prev_x0, prev_x1, prev_x2, prev_x3) = round_keys[(i-1)]
+        (prev_x0, prev_x1, prev_x2, prev_x3) = round_keys[(i-1)]
 
         tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
         x0 = prev_x0 ^ tmp
         x1 = prev_x1 ^ x0
         x2 = prev_x2 ^ x1
         x3 = prev_x3 ^ x2
-        round_keys.append((x0, x1, x2, x3))
+        if (nr_rounds == AES_192_ROUNDS) and (i == 1):
+            round_keys.append((k4, k5, x0, x1))
+        else:
+            round_keys.append((x0, x1, x2, x3))
         if VERBOSE:
             print("rcon = 0x%02x, rconw = 0x%08x" % (rcon, rcon << 24))
 
