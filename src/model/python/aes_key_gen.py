@@ -123,16 +123,32 @@ def rol8(w):
 # The actual key generation.
 #-------------------------------------------------------------------
 def key_gen(key):
+    nr_rounds = {4:AES_128_ROUNDS, 6:AES_192_ROUNDS, 8:AES_256_ROUNDS}[len(key)]
     if VERBOSE:
-        print("key length: %d" % len(key))
+        print("Generating keys for AES-%d." % len(key) * 32)
 
     round_keys = []
-    round_keys.append(key)
+    if nr_rounds == AES_128_ROUNDS:
+        round_keys.append(key)
+    elif nr_rounds == AES_192_ROUNDS:
+        (x0, x1, x2, x3, x4, x5) = key
+        round_keys.append((x0, x1, x2, x3))
+    else:
+        (x0, x1, x2, x3, x4, x5, x6, x7) = key
+        round_keys.append((x0, x1, x2, x3))
+        round_keys.append((x4, x5, x6, x7))
+
     rcon = 0x8d
 
-    for i in range(1, AES_128_ROUNDS + 1):
+    for i in range(1, nr_rounds + 1):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
-        (prev_x0, prev_x1, prev_x2, prev_x3) = round_keys[(i-1)]
+
+        if (nr_rounds == AES_192_ROUNDS) and (i == 1):
+            (tmp_x0, tmp_x1, tmp_x2, tmp_x3) = round_keys[(i-1)]
+            (prev_x0, prev_x1, prev_x2, prev_x3) = (x4, x5, tmp_x0, tmp_x1)
+        else:
+            (prev_x0, prev_x1, prev_x2, prev_x3) = round_keys[(i-1)]
+
         tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
         x0 = prev_x0 ^ tmp
         x1 = prev_x1 ^ x0
