@@ -660,29 +660,29 @@ def single_block_tests():
     print("---------------------")
     
     test_single_block(1, AES_ENCIPHER, nist_aes128_key, 
-                      nist_plaintext0, nist_ecb_128_enc_expected0)
+                      nist_plaintext0, nist_exp128_0)
 
     test_single_block(2, AES_ENCIPHER, nist_aes128_key, 
-                      nist_plaintext1, nist_ecb_128_enc_expected1)
+                      nist_plaintext1, nist_exp128_1)
 
     test_single_block(3, AES_ENCIPHER, nist_aes128_key, 
-                      nist_plaintext2, nist_ecb_128_enc_expected2)
+                      nist_plaintext2, nist_exp128_2)
     
     test_single_block(3, AES_ENCIPHER, nist_aes128_key, 
-                      nist_plaintext3, nist_ecb_128_enc_expected3)
+                      nist_plaintext3, nist_exp128_3)
 
     
     test_single_block(5, AES_DECIPHER, nist_aes128_key, 
-                      nist_ecb_128_enc_expected0, nist_plaintext0)
+                      nist_exp128_0, nist_plaintext0)
     
     test_single_block(6, AES_DECIPHER, nist_aes128_key, 
-                      nist_ecb_128_enc_expected1, nist_plaintext1)
+                      nist_exp128_1, nist_plaintext1)
 
     test_single_block(7, AES_DECIPHER, nist_aes128_key, 
-                      nist_ecb_128_enc_expected2, nist_plaintext2)
+                      nist_exp128_2, nist_plaintext2)
 
     test_single_block(8, AES_DECIPHER, nist_aes128_key, 
-                      nist_ecb_128_enc_expected3, nist_plaintext3)
+                      nist_exp128_3, nist_plaintext3)
     
 
     print("")
@@ -690,59 +690,58 @@ def single_block_tests():
     print("---------------------")
     
     test_single_block(9, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext0, nist_ecb_192_enc_expected0)
+                      nist_plaintext0, nist_exp192_0)
     
     test_single_block(10, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext1, nist_ecb_192_enc_expected1)
+                      nist_plaintext1, nist_exp192_1)
     
     test_single_block(11, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext2, nist_ecb_192_enc_expected2)
+                      nist_plaintext2, nist_exp192_2)
 
     test_single_block(12, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext3, nist_ecb_192_enc_expected3)
+                      nist_plaintext3, nist_exp192_3)
 
       
     test_single_block(13, AES_DECIPHER, nist_aes192_key, 
-                      nist_ecb_192_enc_expected0, nist_plaintext0)
+                      nist_exp192_0, nist_plaintext0)
 
     test_single_block(14, AES_DECIPHER, nist_aes192_key, 
-                      nist_ecb_192_enc_expected1, nist_plaintext1)
+                      nist_exp192_1, nist_plaintext1)
 
     test_single_block(15, AES_DECIPHER, nist_aes192_key, 
-                      nist_ecb_192_enc_expected2, nist_plaintext2)
+                      nist_exp192_2, nist_plaintext2)
 
     test_single_block(16, AES_DECIPHER, nist_aes192_key, 
-                      nist_ecb_192_enc_expected3, nist_plaintext3)
-
+                      nist_exp192_3, nist_plaintext3)
 
       
     print("")
     print("ECB 256 bit key tests")
     print("---------------------")
     test_single_block(17, AES_ENCIPHER, nist_aes256_key, 
-                      nist_plaintext0, nist_ecb_256_enc_expected0)
+                      nist_plaintext0, nist_exp256_0)
     
     test_single_block(18, AES_ENCIPHER, nist_aes256_key, 
-                      nist_plaintext1, nist_ecb_256_enc_expected1)
+                      nist_plaintext1, nist_exp256_1)
       
     test_single_block(19, AES_ENCIPHER, nist_aes256_key, 
-                      nist_plaintext2, nist_ecb_256_enc_expected2)
+                      nist_plaintext2, nist_exp256_2)
 
     test_single_block(20, AES_ENCIPHER, nist_aes256_key, 
-                      nist_plaintext3, nist_ecb_256_enc_expected3)
+                      nist_plaintext3, nist_exp256_3)
       
       
     test_single_block(21, AES_DECIPHER, nist_aes256_key, 
-                      nist_ecb_256_enc_expected0, nist_plaintext0)
+                      nist_exp256_0, nist_plaintext0)
 
     test_single_block(22, AES_DECIPHER, nist_aes256_key, 
-                      nist_ecb_256_enc_expected1, nist_plaintext1)
+                      nist_exp256_1, nist_plaintext1)
       
     test_single_block(23, AES_DECIPHER, nist_aes256_key, 
-                      nist_ecb_256_enc_expected2, nist_plaintext2)
+                      nist_exp256_2, nist_plaintext2)
 
     test_single_block(24, AES_DECIPHER, nist_aes256_key, 
-                      nist_ecb_256_enc_expected3, nist_plaintext3)
+                      nist_exp256_3, nist_plaintext3)
 
     
 #-------------------------------------------------------------------
