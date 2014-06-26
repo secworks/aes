@@ -644,44 +644,31 @@ def main():
 
     # Test of AES. These keys are from:
     # http://www.inconteam.com/software-development/41-encryption/55-aes-test-vectors
-    nist_aes128_key = [0x2b7e1516, 0x28aed2a6,
-                       0xabf71588, 0x09cf4f3c]
-
-    nist_aes192_key = [0x8e73b0f7, 0xda0e6452,
-                       0xc810f32b, 0x809079e5,
-                       0x62f8ead2, 0x522c6b7b]
-
-    nist_aes256_key = [0x603deb10, 0x15ca71be,
-                       0x2b73aef0, 0x857d7781,
-                       0x1f352c07, 0x3b6108d7,
-                       0x2d9810a3, 0x0914dff4]
+    nist_aes128_key = (0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x09cf4f3c)
+    nist_aes192_key = (0x8e73b0f7, 0xda0e6452, 0xc810f32b,
+                       0x809079e5, 0x62f8ead2, 0x522c6b7b)
+    nist_aes256_key = (0x603deb10, 0x15ca71be, 0x2b73aef0, 0x857d7781,
+                       0x1f352c07, 0x3b6108d7, 0x2d9810a3, 0x0914dff4)
     
-    nist_plaintext0 = [0x6bc1bee2, 0x2e409f96,
-                       0xe93d7e11, 0x7393172a]
+    nist_plaintext0 = (0x6bc1bee2, 0x2e409f96, 0xe93d7e11, 0x7393172a)
+    nist_plaintext1 = (0xae2d8a57, 0x1e03ac9c, 0x9eb76fac, 0x45af8e51)
+    nist_plaintext2 = (0x30c81c46, 0xa35ce411, 0xe5fbc119, 0x1a0a52ef)
+    nist_plaintext3 = (0xf69f2445, 0xdf4f9b17, 0xad2b417b, 0xe66c3710)
 
-    nist_plaintext1 = [0xae2d8a57, 0x1e03ac9c,
-                       0x9eb76fac, 0x45af8e51]
+    nist_exp128_0 = (0x3ad77bb40d7a3660a89ecaf32466ef97)
+    nist_exp128_1 = (0xf5d3d58503b9699de785895a96fdbaaf)
+    nist_exp128_2 = (0x43b1cd7f598ece23881b00e3ed030688)
+    nist_exp128_3 = (0x7b0c785e27e8ad3f8223207104725dd4)
 
-    nist_plaintext2 = [0x30c81c46, 0xa35ce411,
-                       0xe5fbc119, 0x1a0a52ef]
-
-    nist_plaintext3 = [0xf69f2445, 0xdf4f9b17,
-                       0xad2b417b, 0xe66c3710]
-
-    nist_ecb_128_enc_expected0 = 0x3ad77bb40d7a3660a89ecaf32466ef97
-    nist_ecb_128_enc_expected1 = 0xf5d3d58503b9699de785895a96fdbaaf
-    nist_ecb_128_enc_expected2 = 0x43b1cd7f598ece23881b00e3ed030688
-    nist_ecb_128_enc_expected3 = 0x7b0c785e27e8ad3f8223207104725dd4
-
-    nist_ecb_192_enc_expected0 = 0xbd334f1d6e45f25ff712a214571fa5cc
-    nist_ecb_192_enc_expected1 = 0x974104846d0ad3ad7734ecb3ecee4eef
-    nist_ecb_192_enc_expected2 = 0xef7afd2270e2e60adce0ba2face6444e
-    nist_ecb_192_enc_expected3 = 0x9a4b41ba738d6c72fb16691603c18e0e
+    nist_exp192_0 = (0xbd334f1d6e45f25ff712a214571fa5cc)
+    nist_exp192_1 = (0x974104846d0ad3ad7734ecb3ecee4eef)
+    nist_exp192_2 = (0xef7afd2270e2e60adce0ba2face6444e)
+    nist_exp192_3 = (0x9a4b41ba738d6c72fb16691603c18e0e)
     
-    nist_ecb_256_enc_expected0 = 0xf3eed1bdb5d2a03c064b5a7e3db181f8
-    nist_ecb_256_enc_expected1 = 0x591ccb10d410ed26dc5ba74a31362870
-    nist_ecb_256_enc_expected2 = 0xb6ed21b99ca6f4f9f153e7b1beafed1d
-    nist_ecb_256_enc_expected3 = 0x23304b7a39f9f3ff067d8d8f9e24ecc7
+    nist_exp256_0 = (0xf3eed1bdb5d2a03c064b5a7e3db181f8)
+    nist_exp256_1 = (0x591ccb10d410ed26dc5ba74a31362870)
+    nist_exp256_2 = (0xb6ed21b99ca6f4f9f153e7b1beafed1d)
+    nist_exp256_3 = (0x23304b7a39f9f3ff067d8d8f9e24ecc7)
 
     print("ECB 128 bit key tests")
     print("---------------------")
