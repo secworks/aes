@@ -594,6 +594,7 @@ def test_key_expansion():
     key_expansion_testcases = [(key128_1, exp128_1),
                                (key128_2, exp128_2),
                                (key128_3, exp128_3),
+                               (key128_4, exp128_4),
                                (key192_1, exp192_1),
                                (key192_2, exp192_2),
                                (key192_3, exp192_3),
