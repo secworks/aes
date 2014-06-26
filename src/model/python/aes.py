@@ -375,12 +375,11 @@ def compare_blocks(block, expected):
 
 
 #-------------------------------------------------------------------
-# test_NIST_ecb_single_block()
+# test_single_block()
 #
-# Perform single block ECB mode testing as specified by NIST:
-# http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
+# Perform single block testing of AES.
 #-------------------------------------------------------------------
-def test_nist_ecb_single_block(tc, encdec, key, plaintext, expected):
+def test_single_block(tc, encdec, key, plaintext, expected):
     my_aes = AES()
     my_aes.init(key)
     my_aes.next(encdec, plaintext)
@@ -622,28 +621,15 @@ def test_key_expansion():
 #        else:
 #            print("Error! Not correct round keys generated.")
 
-    
+
 #-------------------------------------------------------------------
-# main()
+# single_block_tests()
 #
-# If executed tests the ChaCha class using known test vectors.
+# Perform a set of test of the AES implementation. The tests are
+# from the NIST document:
+# http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
 #-------------------------------------------------------------------
-def main():
-    print("Testing the AES Python model started")
-    print("====================================")
-    print
-
-    # Test rcon generation.
-    test_rcon()
-
-    # Test the mixers.
-    test_mixers()
-
-    # Test the key expansion.
-    test_key_expansion()
-
-    # Test of AES. These keys are from:
-    # http://www.inconteam.com/software-development/41-encryption/55-aes-test-vectors
+def single_block_tests():
     nist_aes128_key = (0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x09cf4f3c)
     nist_aes192_key = (0x8e73b0f7, 0xda0e6452, 0xc810f32b,
                        0x809079e5, 0x62f8ead2, 0x522c6b7b)
@@ -673,90 +659,113 @@ def main():
     print("ECB 128 bit key tests")
     print("---------------------")
     
-    test_nist_ecb_single_block(1, AES_ENCIPHER, nist_aes128_key, 
-                               nist_plaintext0, nist_ecb_128_enc_expected0)
+    test_single_block(1, AES_ENCIPHER, nist_aes128_key, 
+                      nist_plaintext0, nist_ecb_128_enc_expected0)
 
-    test_nist_ecb_single_block(2, AES_ENCIPHER, nist_aes128_key, 
-                               nist_plaintext1, nist_ecb_128_enc_expected1)
+    test_single_block(2, AES_ENCIPHER, nist_aes128_key, 
+                      nist_plaintext1, nist_ecb_128_enc_expected1)
 
-    test_nist_ecb_single_block(3, AES_ENCIPHER, nist_aes128_key, 
-                               nist_plaintext2, nist_ecb_128_enc_expected2)
+    test_single_block(3, AES_ENCIPHER, nist_aes128_key, 
+                      nist_plaintext2, nist_ecb_128_enc_expected2)
     
-    test_nist_ecb_single_block(3, AES_ENCIPHER, nist_aes128_key, 
-                               nist_plaintext3, nist_ecb_128_enc_expected3)
+    test_single_block(3, AES_ENCIPHER, nist_aes128_key, 
+                      nist_plaintext3, nist_ecb_128_enc_expected3)
 
     
-    test_nist_ecb_single_block(5, AES_DECIPHER, nist_aes128_key, 
-                               nist_ecb_128_enc_expected0, nist_plaintext0)
+    test_single_block(5, AES_DECIPHER, nist_aes128_key, 
+                      nist_ecb_128_enc_expected0, nist_plaintext0)
     
-    test_nist_ecb_single_block(6, AES_DECIPHER, nist_aes128_key, 
-                               nist_ecb_128_enc_expected1, nist_plaintext1)
+    test_single_block(6, AES_DECIPHER, nist_aes128_key, 
+                      nist_ecb_128_enc_expected1, nist_plaintext1)
 
-    test_nist_ecb_single_block(7, AES_DECIPHER, nist_aes128_key, 
-                               nist_ecb_128_enc_expected2, nist_plaintext2)
+    test_single_block(7, AES_DECIPHER, nist_aes128_key, 
+                      nist_ecb_128_enc_expected2, nist_plaintext2)
 
-    test_nist_ecb_single_block(8, AES_DECIPHER, nist_aes128_key, 
-                               nist_ecb_128_enc_expected3, nist_plaintext3)
+    test_single_block(8, AES_DECIPHER, nist_aes128_key, 
+                      nist_ecb_128_enc_expected3, nist_plaintext3)
     
 
     print("")
     print("ECB 192 bit key tests")
     print("---------------------")
     
-    test_nist_ecb_single_block(9, AES_ENCIPHER, nist_aes192_key, 
-                               nist_plaintext0, nist_ecb_192_enc_expected0)
+    test_single_block(9, AES_ENCIPHER, nist_aes192_key, 
+                      nist_plaintext0, nist_ecb_192_enc_expected0)
     
-    test_nist_ecb_single_block(10, AES_ENCIPHER, nist_aes192_key, 
-                               nist_plaintext1, nist_ecb_192_enc_expected1)
+    test_single_block(10, AES_ENCIPHER, nist_aes192_key, 
+                      nist_plaintext1, nist_ecb_192_enc_expected1)
     
-    test_nist_ecb_single_block(11, AES_ENCIPHER, nist_aes192_key, 
-                               nist_plaintext2, nist_ecb_192_enc_expected2)
+    test_single_block(11, AES_ENCIPHER, nist_aes192_key, 
+                      nist_plaintext2, nist_ecb_192_enc_expected2)
 
-    test_nist_ecb_single_block(12, AES_ENCIPHER, nist_aes192_key, 
-                               nist_plaintext3, nist_ecb_192_enc_expected3)
+    test_single_block(12, AES_ENCIPHER, nist_aes192_key, 
+                      nist_plaintext3, nist_ecb_192_enc_expected3)
 
       
-    test_nist_ecb_single_block(13, AES_DECIPHER, nist_aes192_key, 
-                               nist_ecb_192_enc_expected0, nist_plaintext0)
+    test_single_block(13, AES_DECIPHER, nist_aes192_key, 
+                      nist_ecb_192_enc_expected0, nist_plaintext0)
 
-    test_nist_ecb_single_block(14, AES_DECIPHER, nist_aes192_key, 
-                               nist_ecb_192_enc_expected1, nist_plaintext1)
+    test_single_block(14, AES_DECIPHER, nist_aes192_key, 
+                      nist_ecb_192_enc_expected1, nist_plaintext1)
 
-    test_nist_ecb_single_block(15, AES_DECIPHER, nist_aes192_key, 
-                               nist_ecb_192_enc_expected2, nist_plaintext2)
+    test_single_block(15, AES_DECIPHER, nist_aes192_key, 
+                      nist_ecb_192_enc_expected2, nist_plaintext2)
 
-    test_nist_ecb_single_block(16, AES_DECIPHER, nist_aes192_key, 
-                               nist_ecb_192_enc_expected3, nist_plaintext3)
+    test_single_block(16, AES_DECIPHER, nist_aes192_key, 
+                      nist_ecb_192_enc_expected3, nist_plaintext3)
 
 
       
     print("")
     print("ECB 256 bit key tests")
     print("---------------------")
-    test_nist_ecb_single_block(17, AES_ENCIPHER, nist_aes256_key, 
-                               nist_plaintext0, nist_ecb_256_enc_expected0)
-
-    test_nist_ecb_single_block(18, AES_ENCIPHER, nist_aes256_key, 
-                               nist_plaintext1, nist_ecb_256_enc_expected1)
+    test_single_block(17, AES_ENCIPHER, nist_aes256_key, 
+                      nist_plaintext0, nist_ecb_256_enc_expected0)
+    
+    test_single_block(18, AES_ENCIPHER, nist_aes256_key, 
+                      nist_plaintext1, nist_ecb_256_enc_expected1)
       
-    test_nist_ecb_single_block(19, AES_ENCIPHER, nist_aes256_key, 
-                               nist_plaintext2, nist_ecb_256_enc_expected2)
+    test_single_block(19, AES_ENCIPHER, nist_aes256_key, 
+                      nist_plaintext2, nist_ecb_256_enc_expected2)
 
-    test_nist_ecb_single_block(20, AES_ENCIPHER, nist_aes256_key, 
-                               nist_plaintext3, nist_ecb_256_enc_expected3)
+    test_single_block(20, AES_ENCIPHER, nist_aes256_key, 
+                      nist_plaintext3, nist_ecb_256_enc_expected3)
       
       
-    test_nist_ecb_single_block(21, AES_DECIPHER, nist_aes256_key, 
-                               nist_ecb_256_enc_expected0, nist_plaintext0)
+    test_single_block(21, AES_DECIPHER, nist_aes256_key, 
+                      nist_ecb_256_enc_expected0, nist_plaintext0)
 
-    test_nist_ecb_single_block(22, AES_DECIPHER, nist_aes256_key, 
-                               nist_ecb_256_enc_expected1, nist_plaintext1)
+    test_single_block(22, AES_DECIPHER, nist_aes256_key, 
+                      nist_ecb_256_enc_expected1, nist_plaintext1)
       
-    test_nist_ecb_single_block(23, AES_DECIPHER, nist_aes256_key, 
-                               nist_ecb_256_enc_expected2, nist_plaintext2)
+    test_single_block(23, AES_DECIPHER, nist_aes256_key, 
+                      nist_ecb_256_enc_expected2, nist_plaintext2)
 
-    test_nist_ecb_single_block(24, AES_DECIPHER, nist_aes256_key, 
-                               nist_ecb_256_enc_expected3, nist_plaintext3)
+    test_single_block(24, AES_DECIPHER, nist_aes256_key, 
+                      nist_ecb_256_enc_expected3, nist_plaintext3)
+
+    
+#-------------------------------------------------------------------
+# main()
+#
+# If executed tests the ChaCha class using known test vectors.
+#-------------------------------------------------------------------
+def main():
+    print("Testing the AES Python model started")
+    print("====================================")
+    print
+
+    # Test rcon generation.
+    test_rcon()
+
+    # Test the mixers.
+    test_mixers()
+
+    # Test the key expansion.
+    test_key_expansion()
+
+    # Test of AES. These keys are from:
+    single_block_tests()
     
     print("")
     print("Testing the AES Python model completed")
