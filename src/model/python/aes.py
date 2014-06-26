@@ -263,6 +263,9 @@ class AES():
             
 
     #---------------------------------------------------------------
+    # _mixcolumn()
+    #
+    # The internal MixColumns operation.
     #---------------------------------------------------------------
     def _mixcolumn(self, op0, op1, op2, op3):
         (self.S[0][0], self.S[1][0], self.S[2][0], self.S[3][0]) =\
@@ -279,6 +282,9 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _inverse_mixcolumn()
+    #
+    # The internal inverse MixColumns operation.
     #---------------------------------------------------------------
     def _inverse_mixcolumn(self, op0, op1, op2, op3):
         (self.S[0][0], self.S[1][0], self.S[2][0], self.S[3][0]) =\
@@ -295,6 +301,9 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _mixer()
+    #
+    # Internal mixer function used in MixColumns.
     #---------------------------------------------------------------
     def _mixer(self, op0, op1, op2, op3):
         new_op0 = self._gm2(op0) ^ self._gm3(op1) ^ op2            ^ op3;
@@ -305,6 +314,9 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _inv_mixer()
+    #
+    # Internal inverse mixer function used in inverse MixColumns.
     #---------------------------------------------------------------
     def _inv_mixer(self, op0, op1, op2, op3):
         new_op0 = self._gm14(op0) ^ self._gm11(op1) ^ self._gm13(2) ^ self._gm09(3);
@@ -315,9 +327,15 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _print_state()
+    #
+    # Print the internal state.
     #---------------------------------------------------------------
-    def _print_state(self, round):
-        print("State at round 0x%02x:" % round)
+    def _print_state(self):
+        prin("State values:")
+        for i in range(int(len(self.S) / 4)):
+            print("S[%0d] = 0x€02x, S[%0d] = 0x€02x, S[%0d] = 0x€02x,  S[%0d] = 0x€02x"\
+                  % (i, S[i], S[i + 4], i, S[i + 8], i, S[i + 12]))
         print("")
 
 
