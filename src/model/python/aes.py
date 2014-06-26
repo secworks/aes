@@ -161,7 +161,7 @@ class AES():
     # do support reinitialize with keys of different sizes.
     #---------------------------------------------------------------
     def init(self, key):
-        self.keylen = (8 * len(key))
+        self.keylen = (32 * len(key))
         if self.keylen not in [AES_128_KEYSIZE, AES_192_KEYSIZE, AES_256_KEYSIZE]:
             print("Key is %d bits, not 128, 192 or 256 bits long." % (self.keylen))
             return 0
@@ -242,9 +242,23 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _subbytes()
+    #
+    # Perform SubBtyes replacement of the elements in S.
     #---------------------------------------------------------------
     def _subbytes(self):
-        pass
+        for i in range(len(self.S)):
+            self.S[i] = sbox(self.S[i])
+
+
+    #---------------------------------------------------------------
+    # _isubbytes()
+    #
+    # Perform inverse SubBtyes replacement of the elements in S.
+    #---------------------------------------------------------------
+    def _isubbytes(self):
+        for i in range(len(self.S)):
+            self.S[i] = isbox(self.S[i])
             
 
     #---------------------------------------------------------------
