@@ -182,6 +182,7 @@ class AES():
 
 
     def next(self, encdec, block):
+        self.encdec = encdec
 #        self.S = [0][0 : 3] = block[0  :  3]
 #        self.S = [1][0 : 3] = block[4  :  7]
 #        self.S = [2][0 : 3] = block[8  : 11]
@@ -192,24 +193,37 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _initial_round()
+    #
+    # Perform initial round.
     #---------------------------------------------------------------
     def _initial_round(self):
         pass
 
 
     #---------------------------------------------------------------
+    # _aes_round()
+    #
+    # Perform a regular AES round.
     #---------------------------------------------------------------
     def _aes_round(self):
         pass
 
 
     #---------------------------------------------------------------
+    # _final_round()
+    #
+    # Perform a final round.
     #---------------------------------------------------------------
     def _final_round(self):
         pass
 
 
     #---------------------------------------------------------------
+    # _gen_roundkeys()
+    #
+    # Usinh the given key generates the round keys needed
+    # to encrypt or decrypt. 
     #---------------------------------------------------------------
     def _gen_roundkeys(self):
         self.round_keys = [(0x00000000, 0x00000000,
