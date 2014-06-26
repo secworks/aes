@@ -212,19 +212,22 @@ class AES():
     #---------------------------------------------------------------
     #---------------------------------------------------------------
     def _gen_roundkeys(self):
-        self.round_keys = [[0x00] * 16] * self.num_rounds
+        self.round_keys = [(0x00000000, 0x00000000,
+                            0x00000000, 0x00000000)] * self.num_rounds
         self.rcon = 0x8d
 
         # Initial round key created by copying from the key.
         if self.keylen == 128:
             self.round_keys[0] = self.key[:]
-        if self.keylen == 192:
-            self.round_keys[0] = self.key[0 : 16]
-            self.round_keys[1] = self.key[16 : 24] + [0] * 8
+
+#        if self.keylen == 192:
+#            self.round_keys[0] = self.key[0 : 16]
+#            self.round_keys[1] = self.key[16 : 24] + [0] * 8
 
         if self.keylen == 256:
-            self.round_keys[0] = self.key[0 : 16]
-            self.round_keys[1] = self.key[16 : 32]
+            (key128_0, key128_1) = self.key
+            self.round_keys[0] = keys128_0
+            self.round_keys[1] = keys128_1
 
         if self.verbose:
             print("Round keys:")
