@@ -152,6 +152,7 @@ class AES():
     def __init__(self, verbose = 0):
         self.verbose = verbose
         self.S = [[0] * 4 for i in range(4)]
+        self.rcon = 0x00
 
 
     #---------------------------------------------------------------
