@@ -49,6 +49,10 @@ import sys
 #-------------------------------------------------------------------
 # Constants.
 #-------------------------------------------------------------------
+AES_128_KEYSIZE = 128
+AES_192_KEYSIZE = 192
+AES_256_KEYSIZE = 256
+
 AES_128_ROUNDS = 10
 AES_192_ROUNDS = 12
 AES_256_ROUNDS = 14
@@ -142,18 +146,18 @@ class AES():
 
 
     def init(self, key):
-        if len(key) not in [16, 24, 32]:
-            print("Key is %d bits, not 128, 192 or 256 bits long." % (8 * len(key)))
+        self.keylen = (8 * len(key))
+        if self.keylen not in [AES_128_KEYSIZE, AES_192_KEYSIZE, AES_256_KEYSIZE]:
+            print("Key is %d bits, not 128, 192 or 256 bits long." % (self.keylen))
             return 0
 
         self.key = key
-        self.keylen = (8 * len(key))
 
-        if self.keylen == 128:
+        if self.keylen == AES_128_KEYSIZE:
             self.num_rounds = AES_128_ROUNDS
-        if self.keylen == 192:
+        if self.keylen == AES_192_KEYSIZE:
             self.num_rounds = AES_192_ROUNDS
-        if self.keylen == 256:
+        if self.keylen == AES_256_KEYSIZE:
             self.num_rounds = AES_256_ROUNDS
 
         if self.verbose:
