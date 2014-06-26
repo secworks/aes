@@ -340,6 +340,10 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _gm2()
+    #
+    # Perform Galois multiplication with op and two.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm2(self, op):
         tmp_op = (op << 1) & 0xff
@@ -350,42 +354,70 @@ class AES():
 
 
     #---------------------------------------------------------------
+    # _gm2
+    #
+    # Perform Galois multiplication with op and two.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm3(self, op):
         return self._gm2(op) ^ op
 
 
     #---------------------------------------------------------------
+    # _gm4()
+    #
+    # Perform Galois multiplication with op and four.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm4(self, op):
         return self._gm2(self._gm2(op))
 
     
     #---------------------------------------------------------------
+    # _gm8()
+    #
+    # Perform Galois multiplication with op and eigth.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm8(self, op):
         return self._gm4(self._gm4(op))
 
 
     #---------------------------------------------------------------
+    # _gm9()
+    #
+    # Perform Galois multiplication with op and nine.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm9(self, op):
         return self._gm8(op) ^ op
 
 
     #---------------------------------------------------------------
+    # _gm11()
+    #
+    # Perform Galois multiplication with op and 11.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm11(self, op):
         return self._gm8(op) ^ self._gm2(op) ^ op
 
 
     #---------------------------------------------------------------
+    # _gm13()
+    #
+    # Perform Galois multiplication with op and 13.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm13(self, op):
         return self._gm8(op) ^ self._gm4(op) ^ op
 
 
     #---------------------------------------------------------------
+    # _gm14()
+    #
+    # Perform Galois multiplication with op and 14.
+    # Used in the MixColumn and inverse MixColumn operations.
     #---------------------------------------------------------------
     def _gm14(self, op):
         return self._gm8(op) ^ self._gm4(op) ^ self._gm2(op)
