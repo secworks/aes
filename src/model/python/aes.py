@@ -257,9 +257,11 @@ class AES():
 #            self.round_keys[1] = self.key[16 : 24] + [0] * 8
 
         if self.keylen == 256:
-            (key128_0, key128_1) = self.key
-            self.round_keys[0] = keys128_0
-            self.round_keys[1] = keys128_1
+            print("the the the key:")
+            print(self.key)
+            (k0, k1, k2, k3, k4, k5, k6, k7) = self.key
+            self.round_keys[0] = (k0, k1, k2, k3)
+            self.round_keys[1] = (k4, k5, k6, k7)
 
         if self.verbose:
             print("Round keys:")
