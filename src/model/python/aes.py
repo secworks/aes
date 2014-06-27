@@ -181,15 +181,20 @@ class AES():
         self._gen_roundkeys()
 
 
+    #---------------------------------------------------------------
+    # next()
+    #
+    # Perform encryption or decryption on the given block with
+    # the current key.
+    #---------------------------------------------------------------
     def next(self, encdec, block):
         self.encdec = encdec
-#        self.S = [0][0 : 3] = block[0  :  3]
-#        self.S = [1][0 : 3] = block[4  :  7]
-#        self.S = [2][0 : 3] = block[8  : 11]
-#        self.S = [3][0 : 3] = block[12 : 15]
-        if self.verbose:
-            print(self.S)
-        return self.S
+        (w0, w1, w2, w3) = block
+
+        self._init_column(0, w0)
+        self._init_column(1, w1)
+        self._init_column(2, w2)
+        self._init_column(3, w3)
 
 
     #---------------------------------------------------------------
@@ -217,6 +222,19 @@ class AES():
     #---------------------------------------------------------------
     def _final_round(self):
         pass
+
+
+    #---------------------------------------------------------------
+    # _init_column()
+    #
+    # Given a column number and a 32-bit word initializes the
+    # bytes in the column with the content of the word.
+    #---------------------------------------------------------------
+    def _init_column(column, w):
+        self.S[0][column] = (w >> 24) & 0xff
+        self.S[1][column] = (w >> 16) & 0xff
+        self.S[2][column] = (w >> 8) & 0xff
+        self.S[3][column] = w & 0xff
 
 
     #---------------------------------------------------------------
