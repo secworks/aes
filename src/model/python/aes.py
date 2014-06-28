@@ -244,24 +244,24 @@ class AES():
     # to encrypt or decrypt. 
     #---------------------------------------------------------------
     def _gen_roundkeys(self):
-        self.round_keys = [(0x00000000, 0x00000000,
-                            0x00000000, 0x00000000)] * self.num_rounds
+        self.round_keys = []
         self.rcon = 0x8d
 
         # Initial round key created by copying from the key.
         if self.keylen == 128:
-            self.round_keys[0] = self.key[:]
+            self.round_keys += self.key
 
-#        if self.keylen == 192:
-#            self.round_keys[0] = self.key[0 : 16]
-#            self.round_keys[1] = self.key[16 : 24] + [0] * 8
+        if self.keylen == 192:
+            (k0, k1, k2, k3, k4, k5) = self.key
+            self.round_keys += (k0, k1, k2, k3)
+            self.round_keys += (k4, k5, 0x00000000, 0x00000000)
 
         if self.keylen == 256:
             print("the the the key:")
             print(self.key)
             (k0, k1, k2, k3, k4, k5, k6, k7) = self.key
-            self.round_keys[0] = (k0, k1, k2, k3)
-            self.round_keys[1] = (k4, k5, k6, k7)
+            self.round_keys += (k0, k1, k2, k3)
+            self.round_keys += (k4, k5, k6, k7)
 
         if self.verbose:
             print("Round keys:")
