@@ -257,8 +257,6 @@ class AES():
             self.round_keys += (k4, k5, 0x00000000, 0x00000000)
 
         if self.keylen == 256:
-            print("the the the key:")
-            print(self.key)
             (k0, k1, k2, k3, k4, k5, k6, k7) = self.key
             self.round_keys += (k0, k1, k2, k3)
             self.round_keys += (k4, k5, k6, k7)
