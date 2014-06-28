@@ -230,7 +230,7 @@ class AES():
     # Given a column number and a 32-bit word initializes the
     # bytes in the column with the content of the word.
     #---------------------------------------------------------------
-    def _init_column(column, w):
+    def _init_column(self, column, w):
         self.S[0][column] = (w >> 24) & 0xff
         self.S[1][column] = (w >> 16) & 0xff
         self.S[2][column] = (w >> 8) & 0xff
