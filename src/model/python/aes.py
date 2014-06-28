@@ -364,19 +364,6 @@ class AES():
 
 
     #---------------------------------------------------------------
-    # _print_state()
-    #
-    # Print the internal state.
-    #---------------------------------------------------------------
-    def _print_state(self):
-        prin("State values:")
-        for i in range(int(len(self.S) / 4)):
-            print("S[%0d] = 0x€02x, S[%0d] = 0x€02x, S[%0d] = 0x€02x,  S[%0d] = 0x€02x"\
-                  % (i, S[i], S[i + 4], i, S[i + 8], i, S[i + 12]))
-        print("")
-
-
-    #---------------------------------------------------------------
     # _gm2()
     #
     # Perform Galois multiplication with op and two.
@@ -458,6 +445,19 @@ class AES():
     #---------------------------------------------------------------
     def _gm14(self, op):
         return self._gm8(op) ^ self._gm4(op) ^ self._gm2(op)
+
+
+    #---------------------------------------------------------------
+    # _print_state()
+    #
+    # Print the internal state.
+    #---------------------------------------------------------------
+    def _print_state(self):
+        prin("State values:")
+        for i in range(int(len(self.S) / 4)):
+            print("S[%0d] = 0x€02x, S[%0d] = 0x€02x, S[%0d] = 0x€02x,  S[%0d] = 0x€02x"\
+                  % (i, S[i], S[i + 4], i, S[i + 8], i, S[i + 12]))
+        print("")
 
 
 #-------------------------------------------------------------------
