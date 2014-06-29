@@ -118,6 +118,22 @@ def rol8(w):
 
 
 #-------------------------------------------------------------------
+# next_words()
+#
+# Generate the next four key words based on given rcon and
+# previous key words.
+#-------------------------------------------------------------------
+def next_words(prev_words, rcon):
+    prev_x0, prev_x1, prev_x2, prev_x3) = prev_words
+    tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
+    x0 = prev_x0 ^ tmp
+    x1 = prev_x1 ^ x0
+    x2 = prev_x2 ^ x1
+    x3 = prev_x3 ^ x2
+    return (x0, x2, x2, x3)
+
+
+#-------------------------------------------------------------------
 # key_gen()
 #
 # The actual key generation.
@@ -130,10 +146,16 @@ def key_gen(key):
     round_keys = []
     if nr_rounds == AES_128_ROUNDS:
         round_keys.append(key)
+
     elif nr_rounds == AES_192_ROUNDS:
         (k0, k1, k2, k3, k4, k5) = key
         round_keys.append((k0, k1, k2, k3))
+        rcon = ((0x8d << 1) ^ (0x11b & - (0x8d >> 7))) & 0xff
+        (x0, x1, x2, x3) = next_word((k0, k1, k2, k3), rcon)
+        round_keys.append((k4, k5, x2, x3))
+
     else:
+        # nr_rounds == AES_192_ROUNDS
         (k0, k1, k2, k3, k4, k5, k6, k7) = key
         round_keys.append((k0, k1, k2, k3))
         round_keys.append((k4, k5, k6, k7))
@@ -142,25 +164,8 @@ def key_gen(key):
 
     for i in range(1, nr_rounds + 1):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
-        (prev_x0, prev_x1, prev_x2, prev_x3) = round_keys[(i-1)]
+        round_keys.append(next_word(round_keys[(i-1)], rcon))
 
-        tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
-        x0 = prev_x0 ^ tmp
-        x1 = prev_x1 ^ x0
-        x2 = prev_x2 ^ x1
-        x3 = prev_x3 ^ x2
-        if (nr_rounds == AES_192_ROUNDS) and (i == 1):
-            round_keys.append((k4, k5, x0, x1))
-        else:
-            round_keys.append((x0, x1, x2, x3))
-        if VERBOSE:
-            print("rcon = 0x%02x, rconw = 0x%08x" % (rcon, rcon << 24))
-
-    if VERBOSE:
-        for i in range(AES_128_ROUNDS + 1):
-            (x0, x1, x2, x3) = round_keys[i]
-            print("Round %02d: x0 = 0x%08x, x1 = 0x%08x, x2 = 0x%08x, x3 = 0x%08x"\
-                  % (i, x0, x1, x2, x3))
     return round_keys
 
 
