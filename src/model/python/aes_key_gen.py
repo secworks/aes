@@ -309,14 +309,24 @@ def test_key_expansion():
                 (0xde601e78, 0x27bcdf2c, 0xa223800f, 0xd8aeda32),
                 (0xa4970a33, 0x1a78dc09, 0xc418c271, 0xe3a41d5d))
 
+    print("*** Test of 128 bit keys: ***")
     test_key(key128_1, exp128_1)
     test_key(key128_2, exp128_2)
     test_key(key128_3, exp128_3)
     test_key(key128_4, exp128_4)
+    print("")
 
+    print("*** Test of 192 bit keys: ***")
     test_key(key192_1, exp192_1)
     test_key(key192_2, exp192_2)
     test_key(key192_3, exp192_3)
+    print("")
+
+    print("*** Test of 256 bit keys: ***")
+    test_key(key256_1, exp256_1)
+    test_key(key256_2, exp256_2)
+    test_key(key256_3, exp256_3)
+    print("")
 
 
 #-------------------------------------------------------------------
