@@ -153,18 +153,20 @@ def key_gen(key):
         rcon = ((0x8d << 1) ^ (0x11b & - (0x8d >> 7))) & 0xff
         (x0, x1, x2, x3) = next_words((k0, k1, k2, k3), rcon)
         round_keys.append((k4, k5, x2, x3))
+        nr_rounds -= 1
 
     else:
         # nr_rounds == AES_192_ROUNDS
         (k0, k1, k2, k3, k4, k5, k6, k7) = key
         round_keys.append((k0, k1, k2, k3))
         round_keys.append((k4, k5, k6, k7))
+        nr_rounds -= 1
 
     rcon = 0x8d
 
-    for i in range(1, nr_rounds):
+    for i in range(0, nr_rounds):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
-        round_keys.append(next_words(round_keys[(i-1)], rcon))
+        round_keys.append(next_words(round_keys[i], rcon))
 
     return round_keys
 
