@@ -47,7 +47,7 @@ import sys
 #-------------------------------------------------------------------
 # Constants.
 #-------------------------------------------------------------------
-VERBOSE = False
+VERBOSE = True
 
 AES_128_ROUNDS = 10
 AES_192_ROUNDS = 12
@@ -141,7 +141,7 @@ def next_words(prev_words, rcon):
 def key_gen(key):
     nr_rounds = {4:AES_128_ROUNDS, 6:AES_192_ROUNDS, 8:AES_256_ROUNDS}[len(key)]
     if VERBOSE:
-        print("Generating keys for AES-%d." % len(key) * 32)
+        print("Generating keys for AES-%d." % (len(key) * 32))
 
     round_keys = []
     if nr_rounds == AES_128_ROUNDS:
@@ -162,7 +162,7 @@ def key_gen(key):
 
     rcon = 0x8d
 
-    for i in range(1, nr_rounds + 1):
+    for i in range(1, nr_rounds):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
         round_keys.append(next_words(round_keys[(i-1)], rcon))
 
