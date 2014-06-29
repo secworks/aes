@@ -124,7 +124,7 @@ def rol8(w):
 # previous key words.
 #-------------------------------------------------------------------
 def next_words(prev_words, rcon):
-    prev_x0, prev_x1, prev_x2, prev_x3) = prev_words
+    (prev_x0, prev_x1, prev_x2, prev_x3) = prev_words
     tmp = substw(rol8(prev_x3)) ^ (rcon << 24)
     x0 = prev_x0 ^ tmp
     x1 = prev_x1 ^ x0
@@ -151,7 +151,7 @@ def key_gen(key):
         (k0, k1, k2, k3, k4, k5) = key
         round_keys.append((k0, k1, k2, k3))
         rcon = ((0x8d << 1) ^ (0x11b & - (0x8d >> 7))) & 0xff
-        (x0, x1, x2, x3) = next_word((k0, k1, k2, k3), rcon)
+        (x0, x1, x2, x3) = next_words((k0, k1, k2, k3), rcon)
         round_keys.append((k4, k5, x2, x3))
 
     else:
@@ -164,7 +164,7 @@ def key_gen(key):
 
     for i in range(1, nr_rounds + 1):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
-        round_keys.append(next_word(round_keys[(i-1)], rcon))
+        round_keys.append(next_words(round_keys[(i-1)], rcon))
 
     return round_keys
 
