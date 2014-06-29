@@ -130,7 +130,7 @@ def next_words(prev_words, rcon):
     x1 = prev_x1 ^ x0
     x2 = prev_x2 ^ x1
     x3 = prev_x3 ^ x2
-    return (x0, x2, x2, x3)
+    return (x0, x1, x2, x3)
 
 
 #-------------------------------------------------------------------
