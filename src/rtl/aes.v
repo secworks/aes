@@ -66,7 +66,12 @@ module aes(
   parameter CTRL_KEYLEN_LOW  = 3;
   parameter CTRL_KEYLEN_HIGH = 4;
 
-  parameter ADDR_STATUS      = 8'h09;
+  parameter ADDR_CONFIG      = 8'h09;
+  parameter CTRL_ENCDEC_BIT  = 0;
+  parameter CTRL_KEYLEN_LOW  = 1;
+  parameter CTRL_KEYLEN_HIGH = 2;
+
+  parameter ADDR_STATUS      = 8'h0a;
   parameter STATUS_READY_BIT = 0;
   parameter STATUS_VALID_BIT = 1;
 
@@ -97,11 +102,19 @@ module aes(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg encdec_reg;
-  reg next_reg;
   reg init_reg;
-  reg ctrl_we;
+  reg init_new;
+  reg init_we;
+  reg init_set;
+
+  reg next_reg;
+  reg next_new;
+  reg next_we;
+  reg next_set;
+
+  reg encdec_reg;
   reg [1  : 0] keylen_reg;
+  reg config_we;
 
   reg [31 : 0] block0_reg;
   reg          block0_we;
@@ -226,10 +239,18 @@ module aes(
           valid_reg      <= core_valid;
           result_reg     <= core_result;
 
-          if (ctrl_we)
+          if (init_we)
             begin
-              init_reg   <= write_data[CTRL_INIT_BIT];
-              next_reg   <= write_data[CTRL_NEXT_BIT];
+              init_reg <= init_new;
+            end
+
+          if (next_we)
+            begin
+              next_reg <= next_new;
+            end
+
+          if (config_we)
+            begin
               encdec_reg <= write_data[CTRL_ENCDEC_BIT];
               keylen_reg <= write_data[CTRL_KEYLEN_HIGH : CTRL_KEYLEN_LOW];
             end
@@ -298,13 +319,52 @@ module aes(
 
 
   //----------------------------------------------------------------
+  // flag_ctrl
+  //
+  // Logic to set and the automatically reset init- and
+  // next flags that has been set.
+  //----------------------------------------------------------------
+  always @*
+    begin : flag_reset
+      init_new = 0;
+      init_we  = 0;
+      next_new = 0;
+      next_we  = 0;
+
+      if (init_set)
+        begin
+          init_new = 1;
+          init_we  = 1;
+        end
+      else if (init_reg)
+        begin
+          init_new = 0;
+          init_we  = 1;
+        end
+
+      if (next_set)
+        begin
+          next_new = 1;
+          next_we  = 1;
+        end
+      else if (next_reg)
+        begin
+          next_new = 0;
+          next_we  = 1;
+        end
+    end
+
+
+  //----------------------------------------------------------------
   // api
   //
   // The interface command decoding logic.
   //----------------------------------------------------------------
   always @*
     begin : api
-      ctrl_we       = 0;
+      init_set      = 0;
+      next_set      = 0;
+      config_we     = 0;
       key0_we       = 0;
       key1_we       = 0;
       key2_we       = 0;
@@ -328,7 +388,13 @@ module aes(
                 // Write operations.
                 ADDR_CTRL:
                   begin
-                    ctrl_we = 1;
+                    init_set = write_data[CTRL_INIT_BIT];
+                    next_set = write_data[CTRL_NEXT_BIT];
+                  end
+
+                ADDR_CONFIG:
+                  begin
+                    config_we = 1;
                   end
 
                 ADDR_KEY0:
