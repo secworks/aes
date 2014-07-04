@@ -50,7 +50,7 @@ module tb_aes_core();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG = 0;
+  parameter DEBUG = 1;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
@@ -231,6 +231,10 @@ module tb_aes_core();
       while (!tb_ready)
         begin
           #(CLK_PERIOD);
+          if (DEBUG):
+            begin
+              dump_dut_state();
+            end
         end
     end
   endtask // wait_ready
