@@ -50,7 +50,8 @@ module tb_aes_core();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG = 1;
+  parameter DEBUG     = 0;
+  parameter DUMP_WAIT = 1;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
@@ -153,6 +154,11 @@ module tb_aes_core();
       $display("result_valid = 0x%01x, result = 0x%032x",
                dut.result_valid, dut.result);
       $display("");
+
+      $display("Internal states:");
+      $display("round_ctr_reg = 0x%02x, aes_ctr_reg = 0x%02x",
+               dut.round_ctr_reg, dut.aes_ctrl_reg);
+      $display("");
     end
   endtask // dump_dut_state
   
@@ -231,7 +237,7 @@ module tb_aes_core();
       while (!tb_ready)
         begin
           #(CLK_PERIOD);
-          if (DEBUG):
+          if (DUMP_WAIT)
             begin
               dump_dut_state();
             end
