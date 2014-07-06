@@ -39,7 +39,7 @@
 //------------------------------------------------------------------
 // Simulator directives.
 //------------------------------------------------------------------
-`timescale 1ns/10ps
+`timescale 1ns/100ps
 
 
 //------------------------------------------------------------------
@@ -55,7 +55,6 @@ module tb_aes_core();
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
-  
 
   parameter AES_128_BIT_KEY = 2'h0;
   parameter AES_192_BIT_KEY = 2'h1;
