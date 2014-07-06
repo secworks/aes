@@ -66,10 +66,11 @@ module aes_core(
   parameter AES256_ROUNDS = 4'he;
   
   parameter CTRL_IDLE        = 3'h0;
-  parameter CTRL_INIT_ROUND  = 3'h1;
-  parameter CTRL_MAIN_ROUNDS = 3'h2;
-  parameter CTRL_FINAL_ROUND = 3'h3;
-  parameter CTRL_DONE        = 3'h4;
+  parameter CTRL_INIT_KEY    = 3'h1;
+  parameter CTRL_INIT_ROUND  = 3'h2;
+  parameter CTRL_MAIN_ROUNDS = 3'h3;
+  parameter CTRL_FINAL_ROUND = 3'h4;
+  parameter CTRL_DONE        = 3'h5;
   
   parameter INIT_ROUND  = 2'h0;
   parameter MAIN_ROUND  = 2'h1;
@@ -538,6 +539,14 @@ module aes_core(
       case (aes_ctrl_reg)
         CTRL_IDLE:
           begin
+            if (init)
+              begin
+                ready_new        = 0;
+                ready_we         = 1;
+                aes_ctrl_new     = CTRL_INIT_KEY;
+                aes_ctrl_we      = 1;
+              end
+
             if (next)
               begin
                 init_state       = 1;
@@ -547,6 +556,18 @@ module aes_core(
                 result_valid_new = 0;
                 result_valid_we  = 1;
                 aes_ctrl_new     = CTRL_INIT_ROUND;
+                aes_ctrl_we      = 1;
+              end
+          end
+
+
+        CTRL_INIT_KEY:
+          begin
+            if (key_ready)
+              begin
+                ready_new        = 1;
+                ready_we         = 1;
+                aes_ctrl_new     = CTRL_IDLE;
                 aes_ctrl_we      = 1;
               end
           end
