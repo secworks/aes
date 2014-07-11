@@ -172,6 +172,110 @@ def key_gen(key):
 
 
 #-------------------------------------------------------------------
+# sam_128_bit_key_expansion()
+#
+# Byte based key expansion for 128 bit keys by Sam Trenholme:
+# http://www.samiam.org/key-schedule.html
+#-------------------------------------------------------------------
+def sam_128_bit_key_expansion(key):
+    pass
+#void expand_key(unsigned char *in) {
+#        unsigned char t[4];
+#        /* c is 16 because the first sub-key is the user-supplied key */
+#        unsigned char c = 16;
+#	unsigned char i = 1;
+#        unsigned char a;
+#
+#        /* We need 11 sets of sixteen bytes each for 128-bit mode */
+#        while(c < 176) {
+#                /* Copy the temporary variable over from the last 4-byte
+#                 * block */
+#                for(a = 0; a < 4; a++) 
+#                        t[a] = in[a + c - 4];
+#                /* Every four blocks (of four bytes), 
+#                 * do a complex calculation */
+#                if(c % 16 == 0) {
+#			schedule_core(t,i);
+#			i++;
+#		}
+#                for(a = 0; a < 4; a++) {
+#                        in[c] = in[c - 16] ^ t[a];
+#                        c++;
+#                }
+#        }
+#}
+
+
+
+#-------------------------------------------------------------------
+# sam_192_bit_key_expansion()
+#
+# Byte based key expansion for 192 bit keys by Sam Trenholme:
+# http://www.samiam.org/key-schedule.html
+#-------------------------------------------------------------------
+def sam_192_bit_key_expansion(key):
+    pass
+#void expand_key(unsigned char *in) {
+#        unsigned char t[4];
+#        unsigned char c = 24;
+#	unsigned char i = 1;
+#        unsigned char a;
+#        while(c < 208) {
+#                /* Copy the temporary variable over */
+#                for(a = 0; a < 4; a++) 
+#                        t[a] = in[a + c - 4]; 
+#                /* Every six sets, do a complex calculation */
+#                if(c % 24 == 0) {
+#                        schedule_code(t,i);
+#			i++;
+#		}
+#                for(a = 0; a < 4; a++) {
+#                        in[c] = in[c - 24] ^ t[a];
+#                        c++;
+#                }
+#        }
+#}
+
+
+
+
+#-------------------------------------------------------------------
+# sam_256_bit_key_expansion()
+#
+# Byte based key expansion for 256 bit keys by Sam Trenholme:
+# http://www.samiam.org/key-schedule.html
+#-------------------------------------------------------------------
+def sam_256_bit_key_expansion(key):
+    pass
+#void expand_key(unsigned char *in) {
+#        unsigned char t[4];
+#        unsigned char c = 32;
+#	unsigned char i = 1;
+#        unsigned char a;
+#        while(c < 240) {
+#                /* Copy the temporary variable over */
+#                for(a = 0; a < 4; a++) 
+#                        t[a] = in[a + c - 4]; 
+#                /* Every eight sets, do a complex calculation */
+#                if(c % 32 == 0) {
+#                        schedule_core(t,i);
+#			i++;
+#		}
+#                /* For 256-bit keys, we add an extra sbox to the
+#                 * calculation */
+#                if(c % 32 == 16) {
+#                        for(a = 0; a < 4; a++) 
+#                                t[a] = sbox(t[a]);
+#                }
+#                for(a = 0; a < 4; a++) {
+#                        in[c] = in[c - 32] ^ t[a];
+#                        c++;
+#                }
+#        }
+#}
+
+
+#-------------------------------------------------------------------
 # test_key()
 #
 # Generate round keys for a given key and compare them to
