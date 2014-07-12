@@ -179,7 +179,6 @@ def key_gen(key):
 #-------------------------------------------------------------------
 def sam_128_bit_key_expansion(key):
     pass
-#void expand_key(unsigned char *in) {
 #        unsigned char t[4];
 #        /* c is 16 because the first sub-key is the user-supplied key */
 #        unsigned char c = 16;
@@ -191,7 +190,7 @@ def sam_128_bit_key_expansion(key):
 #                /* Copy the temporary variable over from the last 4-byte
 #                 * block */
 #                for(a = 0; a < 4; a++) 
-#                        t[a] = in[a + c - 4];
+#                        t[a] = key[a + c - 4];
 #                /* Every four blocks (of four bytes), 
 #                 * do a complex calculation */
 #                if(c % 16 == 0) {
@@ -199,7 +198,7 @@ def sam_128_bit_key_expansion(key):
 #			i++;
 #		}
 #                for(a = 0; a < 4; a++) {
-#                        in[c] = in[c - 16] ^ t[a];
+#                        key[c] = key[c - 16] ^ t[a];
 #                        c++;
 #                }
 #        }
@@ -215,7 +214,7 @@ def sam_128_bit_key_expansion(key):
 #-------------------------------------------------------------------
 def sam_192_bit_key_expansion(key):
     pass
-#void expand_key(unsigned char *in) {
+#void expand_key(unsigned char *key) {
 #        unsigned char t[4];
 #        unsigned char c = 24;
 #	unsigned char i = 1;
@@ -223,14 +222,14 @@ def sam_192_bit_key_expansion(key):
 #        while(c < 208) {
 #                /* Copy the temporary variable over */
 #                for(a = 0; a < 4; a++) 
-#                        t[a] = in[a + c - 4]; 
+#                        t[a] = key[a + c - 4]; 
 #                /* Every six sets, do a complex calculation */
 #                if(c % 24 == 0) {
 #                        schedule_code(t,i);
 #			i++;
 #		}
 #                for(a = 0; a < 4; a++) {
-#                        in[c] = in[c - 24] ^ t[a];
+#                        key[c] = key[c - 24] ^ t[a];
 #                        c++;
 #                }
 #        }
@@ -247,7 +246,7 @@ def sam_192_bit_key_expansion(key):
 #-------------------------------------------------------------------
 def sam_256_bit_key_expansion(key):
     pass
-#void expand_key(unsigned char *in) {
+#void expand_key(unsigned char *key) {
 #        unsigned char t[4];
 #        unsigned char c = 32;
 #	unsigned char i = 1;
@@ -255,7 +254,7 @@ def sam_256_bit_key_expansion(key):
 #        while(c < 240) {
 #                /* Copy the temporary variable over */
 #                for(a = 0; a < 4; a++) 
-#                        t[a] = in[a + c - 4]; 
+#                        t[a] = key[a + c - 4]; 
 #                /* Every eight sets, do a complex calculation */
 #                if(c % 32 == 0) {
 #                        schedule_core(t,i);
@@ -268,7 +267,7 @@ def sam_256_bit_key_expansion(key):
 #                                t[a] = sbox(t[a]);
 #                }
 #                for(a = 0; a < 4; a++) {
-#                        in[c] = in[c - 32] ^ t[a];
+#                        key[c] = key[c - 32] ^ t[a];
 #                        c++;
 #                }
 #        }
