@@ -178,15 +178,16 @@ def key_gen(key):
 # http://www.samiam.org/key-schedule.html
 #-------------------------------------------------------------------
 def sam_128_bit_key_expansion(key):
-    pass
-#        unsigned char t[4];
-#        /* c is 16 because the first sub-key is the user-supplied key */
-#        unsigned char c = 16;
-#	unsigned char i = 1;
-#        unsigned char a;
-#
-#        /* We need 11 sets of sixteen bytes each for 128-bit mode */
-#        while(c < 176) {
+    t = [0] * 4
+
+    # c is 16 because the first sub-key is the user-supplied key
+    c = 16;
+    i = 1;
+    a = 0;
+
+    # We need 11 sets of sixteen bytes each for 128-bit mode
+    # 11 * 16 = 176
+    while (c < 176):
 #                /* Copy the temporary variable over from the last 4-byte
 #                 * block */
 #                for(a = 0; a < 4; a++) 
