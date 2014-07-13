@@ -193,11 +193,11 @@ def sam_rcon(round):
 #-------------------------------------------------------------------
 def sam_schedule_core(word, i):
     # Rotate one byte left
-    word = word[1 : 4] + word[0]
+    word = word[1 : 4] + [word[0]]
 
     # Perform SubBytes on all bytes in the word.
     for a in range(4):
-        word[i] = sbox[word[i]
+        word[i] = sbox[word[i]]
 
     # XOR with rcon on the first byte
     word[0] = word[0] ^ sam_rcon(i)
@@ -221,7 +221,6 @@ def sam_128_bit_key_expansion(key):
     # c is 16 because the first sub-key is the user-supplied key
     c = 16;
     i = 1;
-    a = 0;
 
     # We need 11 sets of sixteen bytes each for 128-bit mode
     # 11 * 16 = 176
@@ -232,9 +231,11 @@ def sam_128_bit_key_expansion(key):
 
         # Every four blocks (of four bytes), do a complex calculation */
         if (c % 16 == 0):
-            sam_schedule_core(t, i)
-            i += 1
+            t = sam_schedule_core(t, i)
+        i += 1
 
+        # New key is old key xored with the copied and possibly
+        # transformed word.
         for a in range(4):
             key[c] = key[c - 16] ^ t[a]
         c += 1
