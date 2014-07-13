@@ -172,6 +172,25 @@ def key_gen(key):
 
 
 #-------------------------------------------------------------------
+# sam_schedule_core()
+#
+# Perform the rotate and SubBytes operation used in all schedules.
+#-------------------------------------------------------------------
+def sam_schedule_core(word, i):
+    # Rotate one byte left
+    word = word[1 : 4] + word[0]
+
+    # Perform SubBytes on all bytes in the word.
+    for a in range(4):
+        word[i] = sbox[word[i]
+
+    # XOR with rcon on the first byte
+    word[0] = word[0] ^ rcon(i)
+
+    return word
+
+
+#-------------------------------------------------------------------
 # sam_128_bit_key_expansion()
 #
 # Byte based key expansion for 128 bit keys by Sam Trenholme:
