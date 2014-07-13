@@ -172,6 +172,21 @@ def key_gen(key):
 
 
 #-------------------------------------------------------------------
+# sam_rcon()
+#
+# Function implementation of rcon. Calculates rcon for a
+# given round. This could be implemented as an iterator
+#-------------------------------------------------------------------
+def sam_rcon(round):
+    rcon = 0x8d
+
+    for i in range(0, round):
+        rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
+
+    return rcon
+
+
+#-------------------------------------------------------------------
 # sam_schedule_core()
 #
 # Perform the rotate and SubBytes operation used in all schedules.
@@ -185,7 +200,7 @@ def sam_schedule_core(word, i):
         word[i] = sbox[word[i]
 
     # XOR with rcon on the first byte
-    word[0] = word[0] ^ rcon(i)
+    word[0] = word[0] ^ sam_rcon(i)
 
     return word
 
