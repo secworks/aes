@@ -176,9 +176,13 @@ def key_gen(key):
 #
 # Byte based key expansion for 128 bit keys by Sam Trenholme:
 # http://www.samiam.org/key-schedule.html
+#
+# the key here should be supplied as an array of bytes.
+# The array will be updated during processing.
 #-------------------------------------------------------------------
 def sam_128_bit_key_expansion(key):
     t = [0] * 4
+    expkey = key
 
     # c is 16 because the first sub-key is the user-supplied key
     c = 16;
@@ -188,23 +192,20 @@ def sam_128_bit_key_expansion(key):
     # We need 11 sets of sixteen bytes each for 128-bit mode
     # 11 * 16 = 176
     while (c < 176):
-#                /* Copy the temporary variable over from the last 4-byte
-#                 * block */
-#                for(a = 0; a < 4; a++) 
-#                        t[a] = key[a + c - 4];
-#                /* Every four blocks (of four bytes), 
-#                 * do a complex calculation */
-#                if(c % 16 == 0) {
-#			schedule_core(t,i);
-#			i++;
-#		}
-#                for(a = 0; a < 4; a++) {
-#                        key[c] = key[c - 16] ^ t[a];
-#                        c++;
-#                }
-#        }
-#}
+        # Copy the temporary variable over from the last 4-byte block
+        for a in range(4):
+            t[a] = key[a + c - 4]
 
+        # Every four blocks (of four bytes), do a complex calculation */
+        if (c % 16 == 0):
+            sam_schedule_core(t, i)
+            i += 1
+
+        for a in range(4):
+            key[c] = key[c - 16] ^ t[a]
+        c += 1
+
+    return key
 
 
 #-------------------------------------------------------------------
