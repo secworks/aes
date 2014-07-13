@@ -200,7 +200,9 @@ def sam_schedule_core(word, i):
         word[a] = sbox[word[a]]
 
     # XOR with rcon on the first byte
-    word[0] = word[0] ^ sam_rcon(i)
+    rcon = sam_rcon(i)
+    print("rcon = 0x%02x" % rcon)
+    word[0] = word[0] ^ rcon
 
     return word
 
@@ -237,7 +239,6 @@ def sam_128_bit_key_expansion(key):
 
         # New key is old key xored with the copied and possibly
         # transformed word.
-        print("c = %d" % c)
         for a in range(4):
             expkey[c] = expkey[c - 16] ^ t[a]
         c += 1
@@ -320,9 +321,10 @@ def sam_256_bit_key_expansion(key):
 #-------------------------------------------------------------------
 def print_bytekeys(keys):
     i = 0
-    while (i + 16) < len(keys):
+    print("Number of round keys: %d" % (int(len(keys) / 16)))
+    while i < (len(keys) - 1):
         for j in range(16):
-            print("0x%02x" % keys[i + j])
+            print("0x%02x " % keys[i + j], end="")
         print("")
         i += 16
         
@@ -366,6 +368,11 @@ def test_key(key, expected):
 # http://www.samiam.org/key-schedule.html
 #-------------------------------------------------------------------
 def test_key_expansion():
+    # recon-test
+    print("rcon test:")
+    for i in range(20):
+        print("rcon %02d = 0x%02x" % (i, sam_rcon(i)))
+
     # Test of sam-implementations.
     sam_key128_1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
