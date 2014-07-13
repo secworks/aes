@@ -349,6 +349,14 @@ def test_key(key, expected):
 # http://www.samiam.org/key-schedule.html
 #-------------------------------------------------------------------
 def test_key_expansion():
+    # Test of sam-implementations.
+    sam_key128_1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+
+    sam_128_bit_key_expansion(sam_key128_1)
+    print(sam_key128_1)
+
+
     # 128 bit keys.
     key128_1 = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
     exp128_1 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
