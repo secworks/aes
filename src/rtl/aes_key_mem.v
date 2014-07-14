@@ -46,7 +46,16 @@ module aes_key_mem(
 
                    input wire    [3 : 0] round,
                    output wire [127 : 0] round_key,
-                   output wire           ready
+                   output wire           ready,
+
+                   output_wire |7 : 0 ]  sbox0_addr,
+                   input_wire  |7 : 0 ]  sbox0_addr,
+                   output_wire |7 : 0 ]  sbox1_addr,
+                   input_wire  |7 : 0 ]  sbox1_addr,
+                   output_wire |7 : 0 ]  sbox2_addr,
+                   input_wire  |7 : 0 ]  sbox2_addr,
+                   output_wire |7 : 0 ]  sbox3_addr,
+                   input_wire  |7 : 0 ]  sbox3_addr
                   );
 
   
