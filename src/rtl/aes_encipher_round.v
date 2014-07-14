@@ -80,7 +80,16 @@ module aes_encipher_round(
                           output wire [7 : 0]  s30_new,
                           output wire [7 : 0]  s31_new,
                           output wire [7 : 0]  s32_new,
-                          output wire [7 : 0]  s33_new
+                          output wire [7 : 0]  s33_new,
+
+                          output wire [7 : 0]  sbox0_addr,
+                          input wire  [7 : 0]  sbox0_data,
+                          output wire [7 : 0]  sbox1_addr,
+                          input wire  [7 : 0]  sbox1_data,
+                          output wire [7 : 0]  sbox2_addr,
+                          input wire  [7 : 0]  sbox2_data,
+                          output wire [7 : 0]  sbox3_addr,
+                          input wire  [7 : 0]  sbox3_data
                          );
 
 
