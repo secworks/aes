@@ -172,12 +172,12 @@ def key_gen(key):
 
 
 #-------------------------------------------------------------------
-# sam_rcon()
+# get_rcon()
 #
 # Function implementation of rcon. Calculates rcon for a
-# given round. This could be implemented as an iterator
+# given round. This could be implemented as an iterator.
 #-------------------------------------------------------------------
-def sam_rcon(round):
+def get_rcon(round):
     rcon = 0x8d
 
     for i in range(0, round):
@@ -200,8 +200,8 @@ def sam_schedule_core(word, i):
         word[a] = sbox[word[a]]
 
     # XOR with rcon on the first byte
-    rcon = sam_rcon(i)
-    print("rcon = 0x%02x" % rcon)
+    rcon = get_rcon(i)
+    print("Inside schedule_core: rcon %02d = 0x%02x" % (i, rcon))
     word[0] = word[0] ^ rcon
 
     return word
@@ -330,6 +330,17 @@ def print_bytekeys(keys):
         
 
 #-------------------------------------------------------------------
+# test_rcon()
+#
+# Test of the rcon function.
+#-------------------------------------------------------------------
+def test_rcon():
+    print("Testing rcon:")
+    for i in range(20):
+        print("rcon %02d = 0x%02x" % (i, get_rcon(i)))
+
+
+#-------------------------------------------------------------------
 # test_key()
 #
 # Generate round keys for a given key and compare them to
@@ -368,10 +379,8 @@ def test_key(key, expected):
 # http://www.samiam.org/key-schedule.html
 #-------------------------------------------------------------------
 def test_key_expansion():
-    # recon-test
-    print("rcon test:")
-    for i in range(20):
-        print("rcon %02d = 0x%02x" % (i, sam_rcon(i)))
+
+    test_rcon()
 
     # Test of sam-implementations.
     sam_key128_1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
