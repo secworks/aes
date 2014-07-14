@@ -141,6 +141,7 @@ module aes_core(
   //----------------------------------------------------------------
   reg [7 : 0]    tmp_data;
   
+  reg            key_init;
   reg            init_state;
   reg            update_state;
 
@@ -165,6 +166,10 @@ module aes_core(
   wire [7 : 0]   enc_s31_new;
   wire [7 : 0]   enc_s32_new;
   wire [7 : 0]   enc_s33_new;
+  wire [7 : 0]   enc_sbox0_addr;
+  wire [7 : 0]   enc_sbox1_addr;
+  wire [7 : 0]   enc_sbox2_addr;
+  wire [7 : 0]   enc_sbox3_addr;
 
   wire [7 : 0]   dec_s00_new;
   wire [7 : 0]   dec_s01_new;
@@ -182,7 +187,21 @@ module aes_core(
   wire [7 : 0]   dec_s31_new;
   wire [7 : 0]   dec_s32_new;
   wire [7 : 0]   dec_s33_new;
+
+  wire [7 : 0]   keymem_sbox0_addr;
+  wire [7 : 0]   keymem_sbox1_addr;
+  wire [7 : 0]   keymem_sbox2_addr;
+  wire [7 : 0]   keymem_sbox3_addr;
   
+  reg [7 : 0]    sbox0_addr;
+  reg [7 : 0]    sbox1_addr;
+  reg [7 : 0]    sbox2_addr;
+  reg [7 : 0]    sbox3_addr;
+  wire [7 : 0]   sbox0_data;
+  wire [7 : 0]   sbox1_data;
+  wire [7 : 0]   sbox2_data;
+  wire [7 : 0]   sbox3_data;
+
   
   //----------------------------------------------------------------
   // Instantiations.
@@ -221,7 +240,15 @@ module aes_core(
                                .s30_new(enc_s30_new),
                                .s31_new(enc_s31_new),
                                .s32_new(enc_s32_new),
-                               .s33_new(enc_s33_new)
+                               .s33_new(enc_s33_new),
+                               .sbox0_addr(enc_sbox0_addr),
+                               .sbox0_data(sbox0_data),
+                               .sbox1_addr(enc_sbox1_addr),
+                               .sbox1_data(sbox1_data),
+                               .sbox2_addr(enc_sbox2_addr),
+                               .sbox2_data(sbox2_data),
+                               .sbox3_addr(enc_sbox3_addr),
+                               .sbox3_daat(sbox3_data)
                               );
 
 
@@ -273,8 +300,23 @@ module aes_core(
 
                      .round(round_ctr_reg),
                      .round_key(round_key),
-                     .ready(key_ready)
+                     .ready(key_ready),
+
+                     .sbox0_addr(keymem_sbox0_addr),
+                     .sbox0_data(sbox0_data),
+                     .sbox1_addr(keymem_sbox1_addr),
+                     .sbox1_data(sbox1_data),
+                     .sbox2_addr(keymem_sbox2_addr),
+                     .sbox2_data(sbox2_data),
+                     .sbox3_addr(keymem_sbox3_addr),
+                     .sbox3_daat(sbox3_data)
                     );
+
+
+  aes_sbox sbox0(.addr(sbox0_addr), .data(sbox0_data));
+  aes_sbox sbox1(.addr(sbox1_addr), .data(sbox1_data));
+  aes_sbox sbox2(.addr(sbox2_addr), .data(sbox2_data));
+  aes_sbox sbox2(.addr(sbox3_addr), .data(sbox3_data));
 
 
   //----------------------------------------------------------------
@@ -474,6 +516,31 @@ module aes_core(
 
 
   //----------------------------------------------------------------
+  // sbox_mux
+  //
+  // Controls which of the encipher datapath or the key memory
+  // that gets access to the four sboxes.
+  //----------------------------------------------------------------
+  always @*
+    begin : sbox_mux
+      if (init_state)
+        begin
+          sbox0_addr = keymem_sbox0_addr;
+          sbox1_addr = keymem_sbox1_addr;
+          sbox2_addr = keymem_sbox2_addr;
+          sbox3_addr = keymem_sbox3_addr;
+        end
+      else
+        begin
+          sbox0_addr = enc_sbox0_addr;
+          sbox1_addr = enc_sbox1_addr;
+          sbox2_addr = enc_sbox2_addr;
+          sbox3_addr = enc_sbox3_addr;
+        end
+    end // sbox_mux
+
+
+  //----------------------------------------------------------------
   // rounds_select
   //
   // Simple logic that selects number of rounds based on the given
@@ -528,6 +595,7 @@ module aes_core(
       ready_we         = 0;
       result_valid_new = 0;
       result_valid_we  = 0;
+      key_init         = 0;
       init_state       = 0;
       update_state     = 0;
       round_ctr_rst    = 0;
@@ -541,10 +609,11 @@ module aes_core(
           begin
             if (init)
               begin
-                ready_new        = 0;
-                ready_we         = 1;
-                aes_ctrl_new     = CTRL_INIT_KEY;
-                aes_ctrl_we      = 1;
+                key_init     = 1;
+                ready_new    = 0;
+                ready_we     = 1;
+                aes_ctrl_new = CTRL_INIT_KEY;
+                aes_ctrl_we  = 1;
               end
 
             if (next)
@@ -563,12 +632,13 @@ module aes_core(
 
         CTRL_INIT_KEY:
           begin
+            key_init = 1;
             if (key_ready)
               begin
-                ready_new        = 1;
-                ready_we         = 1;
-                aes_ctrl_new     = CTRL_IDLE;
-                aes_ctrl_we      = 1;
+                ready_new    = 1;
+                ready_we     = 1;
+                aes_ctrl_new = CTRL_IDLE;
+                aes_ctrl_we  = 1;
               end
           end
 
