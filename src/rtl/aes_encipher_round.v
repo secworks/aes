@@ -120,22 +120,10 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  wire [7 : 0] sbox00_data;
-  wire [7 : 0] sbox01_data;
-  wire [7 : 0] sbox02_data;
-  wire [7 : 0] sbox03_data;
-  wire [7 : 0] sbox10_data;
-  wire [7 : 0] sbox11_data;
-  wire [7 : 0] sbox12_data;
-  wire [7 : 0] sbox13_data;
-  wire [7 : 0] sbox20_data;
-  wire [7 : 0] sbox21_data;
-  wire [7 : 0] sbox22_data;
-  wire [7 : 0] sbox23_data;
-  wire [7 : 0] sbox30_data;
-  wire [7 : 0] sbox31_data;
-  wire [7 : 0] sbox32_data;
-  wire [7 : 0] sbox33_data;
+  reg [7 : 0] tmp_s0_new;
+  reg [7 : 0] tmp_s1_new;
+  reg [7 : 0] tmp_s2_new;
+  reg [7 : 0] tmp_s3_new;
 
   reg [7 : 0] tmp_s00_new;
   reg [7 : 0] tmp_s01_new;
@@ -153,27 +141,6 @@ module aes_encipher_round(
   reg [7 : 0] tmp_s31_new;
   reg [7 : 0] tmp_s32_new;
   reg [7 : 0] tmp_s33_new;
-
-  
-  //----------------------------------------------------------------
-  // Instantiations.
-  //----------------------------------------------------------------
-  aes_sbox sbox00(.addr(s00), .data(sbox00_data));
-  aes_sbox sbox01(.addr(s01), .data(sbox01_data));
-  aes_sbox sbox02(.addr(s02), .data(sbox02_data));
-  aes_sbox sbox03(.addr(s03), .data(sbox03_data));
-  aes_sbox sbox10(.addr(s10), .data(sbox10_data));
-  aes_sbox sbox11(.addr(s11), .data(sbox11_data));
-  aes_sbox sbox12(.addr(s12), .data(sbox12_data));
-  aes_sbox sbox13(.addr(s13), .data(sbox13_data));
-  aes_sbox sbox20(.addr(s20), .data(sbox20_data));
-  aes_sbox sbox21(.addr(s21), .data(sbox21_data));
-  aes_sbox sbox22(.addr(s22), .data(sbox22_data));
-  aes_sbox sbox23(.addr(s23), .data(sbox23_data));
-  aes_sbox sbox30(.addr(s30), .data(sbox30_data));
-  aes_sbox sbox31(.addr(s31), .data(sbox31_data));
-  aes_sbox sbox32(.addr(s32), .data(sbox32_data));
-  aes_sbox sbox33(.addr(s33), .data(sbox33_data));
 
 
   //----------------------------------------------------------------
@@ -195,6 +162,11 @@ module aes_encipher_round(
   assign s31_new = tmp_s31_new;
   assign s32_new = tmp_s32_new;
   assign s33_new = tmp_s33_new;
+
+  assign sbox0_addr = tmp_sbox0_addr;
+  assign sbox1_addr = tmp_sbox1_addr;
+  assign sbox2_addr = tmp_sbox2_addr;
+  assign sbox3_addr = tmp_sbox3_addr;
 
 
   //----------------------------------------------------------------
@@ -242,24 +214,70 @@ module aes_encipher_round(
 
       // SubBytes - Done through connectivity of sbox instances.
       // sbox_data00-33 wires contains the substitute values.
+      case (sbox_mux_ctrl_reg)
+        2'h0:
+          begin
+            tmp_sbox0_addr = s00;
+            tmp_sbox1_addr = s01;
+            tmp_sbox2_addr = s02;
+            tmp_sbox3_addr = s03;
+            tmp_s00_new = sbox0_data;
+            tmp_s01_new = sbox1_data;
+            tmp_s02_new = sbox2_data;
+            tmp_s03_new = sbox3_data;
+          end
+        2'h1:
+          begin
+            tmp_sbox0_addr = s10;
+            tmp_sbox1_addr = s11;
+            tmp_sbox2_addr = s12;
+            tmp_sbox3_addr = s13;
+            tmp_s10_new = sbox0_data;
+            tmp_s11_new = sbox1_data;
+            tmp_s12_new = sbox2_data;
+            tmp_s13_new = sbox3_data;
+          end
+        2'h2:
+          begin
+            tmp_sbox0_addr = s20;
+            tmp_sbox1_addr = s21;
+            tmp_sbox2_addr = s22;
+            tmp_sbox3_addr = s23;
+            tmp_s20_new = sbox0_data;
+            tmp_s21_new = sbox1_data;
+            tmp_s22_new = sbox2_data;
+            tmp_s23_new = sbox3_data;
+          end
+        2'h3:
+          begin
+            tmp_sbox0_addr = s30;
+            tmp_sbox1_addr = s31;
+            tmp_sbox2_addr = s32;
+            tmp_sbox3_addr = s33;
+            tmp_s30_new = sbox0_data;
+            tmp_s31_new = sbox1_data;
+            tmp_s32_new = sbox2_data;
+            tmp_s33_new = sbox3_data;
+          end
+      endcase // case (sbox_mux_ctrl_reg)
 
       // Shiftrows
-      s00_0 = sbox00_data;
-      s01_0 = sbox01_data;
-      s02_0 = sbox02_data;
-      s03_0 = sbox03_data;
-      s10_0 = sbox11_data;
-      s11_0 = sbox12_data;
-      s12_0 = sbox13_data;
-      s13_0 = sbox10_data;
-      s20_0 = sbox22_data;
-      s21_0 = sbox23_data;
-      s22_0 = sbox20_data;
-      s23_0 = sbox21_data;
-      s30_0 = sbox33_data;
-      s31_0 = sbox30_data;
-      s32_0 = sbox31_data;
-      s33_0 = sbox32_data;
+      s00_0 = s00;
+      s01_0 = s01;
+      s02_0 = s02;
+      s03_0 = s03;
+      s10_0 = s11;
+      s11_0 = s12;
+      s12_0 = s13;
+      s13_0 = s10;
+      s20_0 = s22;
+      s21_0 = s23;
+      s22_0 = s20;
+      s23_0 = s21;
+      s30_0 = s33;
+      s31_0 = s30;
+      s32_0 = s31;
+      s33_0 = s32;
 
       // MixColumns
       s00_1 = gm2(s00_0) ^ gm3(s10_0) ^ s20_0      ^ s30_0;
