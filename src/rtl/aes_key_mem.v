@@ -109,30 +109,16 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [7 : 0] sbox0_addr;
-  reg [7 : 0] sbox1_addr;
-  reg [7 : 0] sbox2_addr;
-  reg [7 : 0] sbox3_addr;
-
-  wire [7 : 0] sbox0_data;
-  wire [7 : 0] sbox1_data;
-  wire [7 : 0] sbox2_data;
-  wire [7 : 0] sbox3_data;
+  reg [7 : 0] tmp_sbox0_addr;
+  reg [7 : 0] tmp_sbox1_addr;
+  reg [7 : 0] tmp_sbox2_addr;
+  reg [7 : 0] tmp_sbox3_addr;
 
   reg           round_key_update;
   reg [3 : 0]   num_rounds;
 
   reg [127 : 0] tmp_round_key;
   reg           tmp_ready;
-  
-
-  //----------------------------------------------------------------
-  // Instantiations.
-  //----------------------------------------------------------------
-  aes_sbox sbox0(.addr(sbox0_addr), .data(sbox0_data));
-  aes_sbox sbox1(.addr(sbox1_addr), .data(sbox1_data));
-  aes_sbox sbox2(.addr(sbox2_addr), .data(sbox2_data));
-  aes_sbox sbox3(.addr(sbox3_addr), .data(sbox3_data));
 
   
   //----------------------------------------------------------------
@@ -140,7 +126,11 @@ module aes_key_mem(
   //----------------------------------------------------------------
   assign round_key = tmp_round_key;
   assign ready     = ready_reg;
-  
+  sbox0_addr       = tmp_sbox0_addr;
+  sbox1_addr       = tmp_sbox1_addr;
+  sbox2_addr       = tmp_sbox2_addr;
+  sbox3_addr       = tmp_sbox3_addr;
+
     
   //----------------------------------------------------------------
   // reg_update
@@ -225,13 +215,15 @@ module aes_key_mem(
     begin: round_key_gen
       reg [31 : 0] w0, w1, w2, w3, subw, rconw;
 
-      sbox0_addr = prev_key_reg[007 : 000];
-      sbox1_addr = prev_key_reg[015 : 008];
-      sbox2_addr = prev_key_reg[023 : 016];
-      sbox3_addr = prev_key_reg[031 : 024];
-      subw       = {sbox2_data, sbox1_data, sbox0_data, sbox3_data};
-      rconw      = {rcon_reg, 24'h000000};
+      tmp_sbox0_addr = prev_key_reg[007 : 000];
+      tmp_sbox1_addr = prev_key_reg[015 : 008];
+      tmp_sbox2_addr = prev_key_reg[023 : 016];
+      tmp_sbox3_addr = prev_key_reg[031 : 024];
+      rconw          = {rcon_reg, 24'h000000};
 
+      // Note that we do the row rotation operation here
+      // by the concatenation order of the sbox results.
+      subw           = {sbox2_data, sbox1_data, sbox0_data, sbox3_data};
       
       // Default assignments.
       key_mem_new = 128'h00000000000000000000000000000000;
