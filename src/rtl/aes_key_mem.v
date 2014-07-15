@@ -49,13 +49,13 @@ module aes_key_mem(
                    output wire           ready,
 
                    output_wire |7 : 0 ]  sbox0_addr,
-                   input_wire  |7 : 0 ]  sbox0_addr,
+                   input_wire  |7 : 0 ]  sbox0_data,
                    output_wire |7 : 0 ]  sbox1_addr,
-                   input_wire  |7 : 0 ]  sbox1_addr,
+                   input_wire  |7 : 0 ]  sbox1_data,
                    output_wire |7 : 0 ]  sbox2_addr,
-                   input_wire  |7 : 0 ]  sbox2_addr,
+                   input_wire  |7 : 0 ]  sbox2_data,
                    output_wire |7 : 0 ]  sbox3_addr,
-                   input_wire  |7 : 0 ]  sbox3_addr
+                   input_wire  |7 : 0 ]  sbox3_data
                   );
 
   
