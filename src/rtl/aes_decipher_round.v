@@ -145,18 +145,6 @@ module aes_decipher_round(
   wire [7 : 0] sbox01_data;
   wire [7 : 0] sbox02_data;
   wire [7 : 0] sbox03_data;
-  wire [7 : 0] sbox10_data;
-  wire [7 : 0] sbox11_data;
-  wire [7 : 0] sbox12_data;
-  wire [7 : 0] sbox13_data;
-  wire [7 : 0] sbox20_data;
-  wire [7 : 0] sbox21_data;
-  wire [7 : 0] sbox22_data;
-  wire [7 : 0] sbox23_data;
-  wire [7 : 0] sbox30_data;
-  wire [7 : 0] sbox31_data;
-  wire [7 : 0] sbox32_data;
-  wire [7 : 0] sbox33_data;
 
   reg [7 : 0] tmp_s00_new;
   reg [7 : 0] tmp_s01_new;
@@ -183,18 +171,6 @@ module aes_decipher_round(
   aes_inv_sbox inv_sbox01(.addr(s01), .data(sbox01_data));
   aes_inv_sbox inv_sbox02(.addr(s02), .data(sbox02_data));
   aes_inv_sbox inv_sbox03(.addr(s03), .data(sbox03_data));
-  aes_inv_sbox inv_sbox10(.addr(s10), .data(sbox10_data));
-  aes_inv_sbox inv_sbox11(.addr(s11), .data(sbox11_data));
-  aes_inv_sbox inv_sbox12(.addr(s12), .data(sbox12_data));
-  aes_inv_sbox inv_sbox13(.addr(s13), .data(sbox13_data));
-  aes_inv_sbox inv_sbox20(.addr(s20), .data(sbox20_data));
-  aes_inv_sbox inv_sbox21(.addr(s21), .data(sbox21_data));
-  aes_inv_sbox inv_sbox22(.addr(s22), .data(sbox22_data));
-  aes_inv_sbox inv_sbox23(.addr(s23), .data(sbox23_data));
-  aes_inv_sbox inv_sbox30(.addr(s30), .data(sbox30_data));
-  aes_inv_sbox inv_sbox31(.addr(s31), .data(sbox31_data));
-  aes_inv_sbox inv_sbox32(.addr(s32), .data(sbox32_data));
-  aes_inv_sbox inv_sbox33(.addr(s33), .data(sbox33_data));
 
 
   //----------------------------------------------------------------
@@ -267,18 +243,18 @@ module aes_decipher_round(
       s01_0 = sbox01_data;
       s02_0 = sbox02_data;
       s03_0 = sbox03_data;
-      s10_0 = sbox11_data;
-      s11_0 = sbox12_data;
-      s12_0 = sbox13_data;
-      s13_0 = sbox10_data;
-      s20_0 = sbox22_data;
-      s21_0 = sbox23_data;
-      s22_0 = sbox20_data;
-      s23_0 = sbox21_data;
-      s30_0 = sbox33_data;
-      s31_0 = sbox30_data;
-      s32_0 = sbox31_data;
-      s33_0 = sbox32_data;
+      s10_0 = sbox01_data;
+      s11_0 = sbox02_data;
+      s12_0 = sbox03_data;
+      s13_0 = sbox00_data;
+      s20_0 = sbox02_data;
+      s21_0 = sbox03_data;
+      s22_0 = sbox00_data;
+      s23_0 = sbox01_data;
+      s30_0 = sbox03_data;
+      s31_0 = sbox00_data;
+      s32_0 = sbox01_data;
+      s33_0 = sbox02_data;
 
       // MixColumns
       s00_1 = gm14(s00_0) ^ gm11(s10_0) ^ gm13(s20_0) ^ gm09(s30_0);
