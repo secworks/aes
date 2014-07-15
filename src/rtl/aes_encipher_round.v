@@ -39,57 +39,26 @@
 //======================================================================
  
 module aes_encipher_round(
-                          input wire [127 : 0] round_key,
-                          input wire [1 : 0]   round_type,
+                          input wire            clk,
+                          input wire            reset_n,
 
-                          input wire [7 : 0]   s00,
-                          input wire [7 : 0]   s01,
-                          input wire [7 : 0]   s02,
-                          input wire [7 : 0]   s03,
+                          input wire            next,
 
-                          input wire [7 : 0]   s10,
-                          input wire [7 : 0]   s11,
-                          input wire [7 : 0]   s12,
-                          input wire [7 : 0]   s13,
+                          input wire [3 : 0]    round_key_addr,
+                          input wire [127 : 0]  round_key,
 
-                          input wire [7 : 0]   s20,
-                          input wire [7 : 0]   s21,
-                          input wire [7 : 0]   s22,
-                          input wire [7 : 0]   s23,
+                          output wire [7 : 0]   sbox0_addr,
+                          input wire  [7 : 0]   sbox0_data,
+                          output wire [7 : 0]   sbox1_addr,
+                          input wire  [7 : 0]   sbox1_data,
+                          output wire [7 : 0]   sbox2_addr,
+                          input wire  [7 : 0]   sbox2_data,
+                          output wire [7 : 0]   sbox3_addr,
+                          input wire  [7 : 0]   sbox3_data,
 
-                          input wire [7 : 0]   s30,
-                          input wire [7 : 0]   s31,
-                          input wire [7 : 0]   s32,
-                          input wire [7 : 0]   s33,
-
-                          output wire [7 : 0]  s00_new,
-                          output wire [7 : 0]  s01_new,
-                          output wire [7 : 0]  s02_new,
-                          output wire [7 : 0]  s03_new,
-
-                          output wire [7 : 0]  s10_new,
-                          output wire [7 : 0]  s11_new,
-                          output wire [7 : 0]  s12_new,
-                          output wire [7 : 0]  s13_new,
-
-                          output wire [7 : 0]  s20_new,
-                          output wire [7 : 0]  s21_new,
-                          output wire [7 : 0]  s22_new,
-                          output wire [7 : 0]  s23_new,
-
-                          output wire [7 : 0]  s30_new,
-                          output wire [7 : 0]  s31_new,
-                          output wire [7 : 0]  s32_new,
-                          output wire [7 : 0]  s33_new,
-
-                          output wire [7 : 0]  sbox0_addr,
-                          input wire  [7 : 0]  sbox0_data,
-                          output wire [7 : 0]  sbox1_addr,
-                          input wire  [7 : 0]  sbox1_data,
-                          output wire [7 : 0]  sbox2_addr,
-                          input wire  [7 : 0]  sbox2_data,
-                          output wire [7 : 0]  sbox3_addr,
-                          input wire  [7 : 0]  sbox3_data
+                          input wire [127 : 0]  block,
+                          output wire [127 : 0] new_block,
+                          output wire [127 : 0] ready
                          );
 
 
