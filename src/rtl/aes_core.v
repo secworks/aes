@@ -179,9 +179,10 @@ module aes_core(
   aes_encipher_round enc_round(
                                .clk(clk),
                                .reset_n(reset_n),
-                               .next(enc_next),
 
-                               .round_key_addr(enc_round_key_addr),
+                               .next(enc_next),
+                               
+                               .round(enc_round),
                                .round_key(round_key),
 
                                .sboxw(enc_sboxw),
@@ -196,11 +197,15 @@ module aes_core(
   aes_decipher_round dec_round(
                                .clk(clk),
                                .reset_n(reset_n),
-                               .round_type(round_type),
+
+                               .next(dec_next),
+                               
+                               .round(dec_round),
                                .round_key(round_key),
+
                                .block(block),
                                .new_block(dec_new_block),
-                               .new_block_valid(dec_new_block_valid)
+                               .ready(dec_ready)
                               );
   
   
