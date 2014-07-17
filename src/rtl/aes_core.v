@@ -150,26 +150,10 @@ module aes_core(
   wire [127 : 0] round_key;
   wire           key_ready;
 
-  wire [7 : 0]   enc_s00_new;
-  wire [7 : 0]   enc_s01_new;
-  wire [7 : 0]   enc_s02_new;
-  wire [7 : 0]   enc_s03_new;
-  wire [7 : 0]   enc_s10_new;
-  wire [7 : 0]   enc_s11_new;
-  wire [7 : 0]   enc_s12_new;
-  wire [7 : 0]   enc_s13_new;
-  wire [7 : 0]   enc_s20_new;
-  wire [7 : 0]   enc_s21_new;
-  wire [7 : 0]   enc_s22_new;
-  wire [7 : 0]   enc_s23_new;
-  wire [7 : 0]   enc_s30_new;
-  wire [7 : 0]   enc_s31_new;
-  wire [7 : 0]   enc_s32_new;
-  wire [7 : 0]   enc_s33_new;
-  wire [7 : 0]   enc_sbox0_addr;
-  wire [7 : 0]   enc_sbox1_addr;
-  wire [7 : 0]   enc_sbox2_addr;
-  wire [7 : 0]   enc_sbox3_addr;
+  wire [31 : 0]  enc_sboxw;
+  wire [31 : 0]  keymem_sboxw;
+  reg [31 : 0]   sboxw;
+  wire [31 : 0]  new_sboxw;
 
   wire [7 : 0]   dec_s00_new;
   wire [7 : 0]   dec_s01_new;
@@ -188,105 +172,29 @@ module aes_core(
   wire [7 : 0]   dec_s32_new;
   wire [7 : 0]   dec_s33_new;
 
-  wire [7 : 0]   keymem_sbox0_addr;
-  wire [7 : 0]   keymem_sbox1_addr;
-  wire [7 : 0]   keymem_sbox2_addr;
-  wire [7 : 0]   keymem_sbox3_addr;
-  
-  reg [7 : 0]    sbox0_addr;
-  reg [7 : 0]    sbox1_addr;
-  reg [7 : 0]    sbox2_addr;
-  reg [7 : 0]    sbox3_addr;
-  wire [7 : 0]   sbox0_data;
-  wire [7 : 0]   sbox1_data;
-  wire [7 : 0]   sbox2_data;
-  wire [7 : 0]   sbox3_data;
-
   
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
   aes_encipher_round enc_round(
+                               .clk(clk),
+                               .reset_n(reset_n),
                                .round_type(round_type),
                                .round_key(round_key),
-                               .s00(s00_reg),
-                               .s01(s01_reg),
-                               .s02(s02_reg),
-                               .s03(s03_reg),
-                               .s10(s10_reg),
-                               .s11(s11_reg),
-                               .s12(s12_reg),
-                               .s13(s13_reg),
-                               .s20(s20_reg),
-                               .s21(s21_reg),
-                               .s22(s22_reg),
-                               .s23(s23_reg),
-                               .s30(s30_reg),
-                               .s31(s31_reg),
-                               .s32(s32_reg),
-                               .s33(s33_reg),
-                               .s00_new(enc_s00_new),
-                               .s01_new(enc_s01_new),
-                               .s02_new(enc_s02_new),
-                               .s03_new(enc_s03_new),
-                               .s10_new(enc_s10_new),
-                               .s11_new(enc_s11_new),
-                               .s12_new(enc_s12_new),
-                               .s13_new(enc_s13_new),
-                               .s20_new(enc_s20_new),
-                               .s21_new(enc_s21_new),
-                               .s22_new(enc_s22_new),
-                               .s23_new(enc_s23_new),
-                               .s30_new(enc_s30_new),
-                               .s31_new(enc_s31_new),
-                               .s32_new(enc_s32_new),
-                               .s33_new(enc_s33_new),
-                               .sbox0_addr(enc_sbox0_addr),
-                               .sbox0_data(sbox0_data),
-                               .sbox1_addr(enc_sbox1_addr),
-                               .sbox1_data(sbox1_data),
-                               .sbox2_addr(enc_sbox2_addr),
-                               .sbox2_data(sbox2_data),
-                               .sbox3_addr(enc_sbox3_addr),
-                               .sbox3_daat(sbox3_data)
+                               .block(block),
+                               .new_block(dec_new_block),
+                               .new_block_valid(dec_new_block_valid)
                               );
 
 
   aes_decipher_round dec_round(
+                               .clk(clk),
+                               .reset_n(reset_n),
                                .round_type(round_type),
                                .round_key(round_key),
-                               .s00(s00_reg),
-                               .s01(s01_reg),
-                               .s02(s02_reg),
-                               .s03(s03_reg),
-                               .s10(s10_reg),
-                               .s11(s11_reg),
-                               .s12(s12_reg),
-                               .s13(s13_reg),
-                               .s20(s20_reg),
-                               .s21(s21_reg),
-                               .s22(s22_reg),
-                               .s23(s23_reg),
-                               .s30(s30_reg),
-                               .s31(s31_reg),
-                               .s32(s32_reg),
-                               .s33(s33_reg),
-                               .s00_new(dec_s00_new),
-                               .s01_new(dec_s01_new),
-                               .s02_new(dec_s02_new),
-                               .s03_new(dec_s03_new),
-                               .s10_new(dec_s10_new),
-                               .s11_new(dec_s11_new),
-                               .s12_new(dec_s12_new),
-                               .s13_new(dec_s13_new),
-                               .s20_new(dec_s20_new),
-                               .s21_new(dec_s21_new),
-                               .s22_new(dec_s22_new),
-                               .s23_new(dec_s23_new),
-                               .s30_new(dec_s30_new),
-                               .s31_new(dec_s31_new),
-                               .s32_new(dec_s32_new),
-                               .s33_new(dec_s33_new)
+                               .block(block),
+                               .new_block(dec_new_block),
+                               .new_block_valid(dec_new_block_valid)
                               );
   
   
@@ -302,21 +210,12 @@ module aes_core(
                      .round_key(round_key),
                      .ready(key_ready),
 
-                     .sbox0_addr(keymem_sbox0_addr),
-                     .sbox0_data(sbox0_data),
-                     .sbox1_addr(keymem_sbox1_addr),
-                     .sbox1_data(sbox1_data),
-                     .sbox2_addr(keymem_sbox2_addr),
-                     .sbox2_data(sbox2_data),
-                     .sbox3_addr(keymem_sbox3_addr),
-                     .sbox3_daat(sbox3_data)
+                     .sboxw(keymem_sboxw),
+                     .new_sboxw(new_sboxw)
                     );
 
 
-  aes_sbox sbox0(.addr(sbox0_addr), .data(sbox0_data));
-  aes_sbox sbox1(.addr(sbox1_addr), .data(sbox1_data));
-  aes_sbox sbox2(.addr(sbox2_addr), .data(sbox2_data));
-  aes_sbox sbox2(.addr(sbox3_addr), .data(sbox3_data));
+  aes_sbox sbox(.sboxw(sboxw), new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
@@ -525,17 +424,11 @@ module aes_core(
     begin : sbox_mux
       if (init_state)
         begin
-          sbox0_addr = keymem_sbox0_addr;
-          sbox1_addr = keymem_sbox1_addr;
-          sbox2_addr = keymem_sbox2_addr;
-          sbox3_addr = keymem_sbox3_addr;
+          sboxw = keymem_sboxw;
         end
       else
         begin
-          sbox0_addr = enc_sbox0_addr;
-          sbox1_addr = enc_sbox1_addr;
-          sbox2_addr = enc_sbox2_addr;
-          sbox3_addr = enc_sbox3_addr;
+          sboxw = enc_sboxw;
         end
     end // sbox_mux
 
