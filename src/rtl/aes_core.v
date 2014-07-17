@@ -179,11 +179,17 @@ module aes_core(
   aes_encipher_round enc_round(
                                .clk(clk),
                                .reset_n(reset_n),
-                               .round_type(round_type),
+                               .next(enc_next),
+
+                               .round_key_addr(enc_round_key_addr),
                                .round_key(round_key),
+
+                               .sboxw(enc_sboxw),
+                               .new_sboxw(new_sboxw)
+
                                .block(block),
-                               .new_block(dec_new_block),
-                               .new_block_valid(dec_new_block_valid)
+                               .new_block(enc_new_block),
+                               .ready(enc_ready)
                               );
 
 
