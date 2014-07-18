@@ -78,7 +78,33 @@ module aes_encipher_round(
       gm3 = gm2(op) ^ op;
     end
   endfunction // gm3
+
   
+  //----------------------------------------------------------------
+  // Registers including update variables and write enable.
+  //----------------------------------------------------------------
+  reg [1 : 0]   sword_ctr_reg;
+  reg [1 : 0]   sword_ctr_new;
+  reg           sword_ctr_we;
+  reg           sword_ctr_inc;
+  reg           sword_ctr_rst;
+  
+  reg [31 : 0]  block_w0_reg;
+  reg [31 : 0]  block_w0_new;
+  reg           block_w0_we;
+  
+  reg [31 : 0]  block_w1_reg;
+  reg [31 : 0]  block_w1_new;
+  reg           block_w1_we;
+  
+  reg [31 : 0]  block_w2_reg;
+  reg [31 : 0]  block_w2_new;
+  reg           block_w2_we;
+  
+  reg [31 : 0]  block_w3_reg;
+  reg [31 : 0]  block_w3_new;
+  reg           block_w3_we;
+
   
   //----------------------------------------------------------------
   // Wires.
