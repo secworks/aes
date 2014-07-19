@@ -80,7 +80,7 @@ module aes_encipher_round(
     end
   endfunction // gm3
 
-  
+
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
@@ -89,19 +89,25 @@ module aes_encipher_round(
   reg           sword_ctr_we;
   reg           sword_ctr_inc;
   reg           sword_ctr_rst;
-  
+
+  reg [3 : 0]   round_ctr_reg;
+  reg [3 : 0]   round_ctr_new;
+  reg           round_ctr_we;
+  reg           round_ctr_rst;
+  reg           round_ctr_inc;
+
   reg [31 : 0]  block_w0_reg;
   reg [31 : 0]  block_w0_new;
   reg           block_w0_we;
-  
+
   reg [31 : 0]  block_w1_reg;
   reg [31 : 0]  block_w1_new;
   reg           block_w1_we;
-  
+
   reg [31 : 0]  block_w2_reg;
   reg [31 : 0]  block_w2_new;
   reg           block_w2_we;
-  
+
   reg [31 : 0]  block_w3_reg;
   reg [31 : 0]  block_w3_new;
   reg           block_w3_we;
