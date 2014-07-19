@@ -61,6 +61,26 @@ module aes_decipher_round(
   parameter MAIN_ROUND  = 1;
   parameter FINAL_ROUND = 2;
 
+
+  //----------------------------------------------------------------
+  // Registers including update variables and write enable.
+  //----------------------------------------------------------------
+  reg [31 : 0]  block_w0_reg;
+  reg [31 : 0]  block_w0_new;
+  reg           block_w0_we;
+
+  reg [31 : 0]  block_w1_reg;
+  reg [31 : 0]  block_w1_new;
+  reg           block_w1_we;
+
+  reg [31 : 0]  block_w2_reg;
+  reg [31 : 0]  block_w2_new;
+  reg           block_w2_we;
+
+  reg [31 : 0]  block_w3_reg;
+  reg [31 : 0]  block_w3_new;
+  reg           block_w3_we;
+
  
   //----------------------------------------------------------------
   // Gaolis multiplication functions for Inverse MixColumn.
