@@ -44,6 +44,7 @@ module aes_encipher_round(
 
                           input wire            next,
 
+                          input wire [1 : 0]    keylen,
                           input wire [3 : 0]    round,
                           input wire [127 : 0]  round_key,
 
