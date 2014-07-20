@@ -408,6 +408,28 @@ module aes_encipher_round(
 
 
   //----------------------------------------------------------------
+  // sword_ctr
+  //
+  // The subbytes word counter with reset and increase logic.
+  //----------------------------------------------------------------
+  always @*
+    begin : sword_ctr
+      sword_ctr_new = 2'h0;
+      sword_ctr_we  = 1'b0;
+
+      if (sword_ctr_rst)
+        begin
+          sword_ctr_we  = 1'b1;
+        end
+      else if (sword_ctr_inc)
+        begin
+          sword_ctr_new = sword_ctr_reg + 1'b1;
+          sword_ctr_we  = 1'b0;
+        end
+    end // sword_ctr
+
+
+  //----------------------------------------------------------------
   // round_ctr
   //
   // The round counter with reset and increase logic.
