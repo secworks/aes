@@ -60,6 +60,14 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
+  parameter AES_128_BIT_KEY = 2'h0;
+  parameter AES_192_BIT_KEY = 2'h1;
+  parameter AES_256_BIT_KEY = 2'h2;
+
+  parameter AES128_ROUNDS = 4'ha;
+  parameter AES192_ROUNDS = 4'hc;
+  parameter AES256_ROUNDS = 4'he;
+
   parameter INIT_ROUND  = 0;
   parameter MAIN_ROUND  = 1;
   parameter FINAL_ROUND = 2;
@@ -397,6 +405,30 @@ module aes_encipher_round(
           end
       endcase // case (round_type)
     end // round_logic
+
+
+  //----------------------------------------------------------------
+  // round_ctr
+  //
+  // The round counter with reset and increase logic.
+  //----------------------------------------------------------------
+  always @*
+    begin : round_ctr
+      round_ctr_new = 4'h0;
+      round_ctr_we  = 1'b0;
+
+      if (round_ctr_rst)
+        begin
+          round_ctr_we  = 1'b1;
+        end
+      else if (round_ctr_inc)
+        begin
+          round_ctr_new = round_ctr_reg + 1'b1;
+          round_ctr_we  = 1'b0;
+        end
+    end // round_ctr
+
+
 endmodule // aes_encipher_round
 
 //======================================================================
