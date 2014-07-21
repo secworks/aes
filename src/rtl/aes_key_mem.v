@@ -41,7 +41,7 @@ module aes_key_mem(
                    input wire            reset_n,
 
                    input wire [255 : 0]  key,
-                   input wire [1   : 0]  keylen,
+                   input wire            keylen,
                    input wire            init,
 
                    input wire    [3 : 0] round,
@@ -57,12 +57,10 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Parameters.
   //----------------------------------------------------------------
-  parameter AES_128_BIT_KEY = 2'h0;
-  parameter AES_192_BIT_KEY = 2'h1;
-  parameter AES_256_BIT_KEY = 2'h2;
+  parameter AES_128_BIT_KEY = 1'h0;
+  parameter AES_256_BIT_KEY = 1'h1;
 
   parameter AES_128_NUM_ROUNDS = 4'ha;
-  parameter AES_192_NUM_ROUNDS = 4'hc;
   parameter AES_256_NUM_ROUNDS = 4'he;
   
   parameter CTRL_IDLE     = 3'h0;
@@ -241,21 +239,6 @@ module aes_key_mem(
                     w2 = prev_key_reg[063 : 032] ^ w1;
                     w3 = prev_key_reg[031 : 000] ^ w2;
                     key_mem_new = {w0, w1, w2, w3};
-                  end
-              end
-
-            AES_192_BIT_KEY:
-              begin
-                if (round_ctr_reg == 0)
-                  begin
-                    key_mem_new = key[191 : 64];
-                  end
-                
-                if (round_ctr_reg == 1)
-                  begin
-                    w0 = prev_key_reg[127 : 096] ^ subw ^ rconw;
-                    w1 = prev_key_reg[063 : 032] ^ w0;
-                    key_mem_new = {key[63 : 0], w0, w1};
                   end
               end
 

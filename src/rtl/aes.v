@@ -69,7 +69,7 @@ module aes(
   parameter ADDR_CONFIG      = 8'h09;
   parameter CTRL_ENCDEC_BIT  = 0;
   parameter CTRL_KEYLEN_LOW  = 1;
-  parameter CTRL_KEYLEN_HIGH = 2;
+  parameter CTRL_KEYLEN_HIGH = 1;
 
   parameter ADDR_STATUS      = 8'h0a;
   parameter STATUS_READY_BIT = 0;
@@ -113,7 +113,7 @@ module aes(
   reg next_set;
 
   reg encdec_reg;
-  reg [1  : 0] keylen_reg;
+  reg keylen_reg;
   reg config_we;
 
   reg [31 : 0] block0_reg;
@@ -158,7 +158,7 @@ module aes(
   wire           core_next;
   wire           core_ready;
   wire [255 : 0] core_key;
-  wire [1   : 0] core_keylen;
+  wire           core_keylen;
   wire [127 : 0] core_block;
   wire [127 : 0] core_result;
   wire           core_valid;
@@ -227,7 +227,7 @@ module aes(
           init_reg   <= 0;
           next_reg   <= 0;
           encdec_reg <= 0;
-          keylen_reg <= 2'h0;
+          keylen_reg <= 0;
 
           result_reg <= 128'h00000000000000000000000000000000;
           valid_reg  <= 0;
@@ -485,7 +485,7 @@ module aes(
 
                 ADDR_CTRL:
                   begin
-                    tmp_read_data = {27'h0000000, keylen_reg, encdec_reg,
+                    tmp_read_data = {28'h0000000, keylen_reg, encdec_reg,
                                      next_reg, init_reg};
                   end
 

@@ -44,7 +44,7 @@ module aes_encipher_round(
 
                           input wire            next,
 
-                          input wire [1 : 0]    keylen,
+                          input wire            keylen,
                           input wire [3 : 0]    round,
                           input wire [127 : 0]  round_key,
 
@@ -60,12 +60,10 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter AES_128_BIT_KEY = 2'h0;
-  parameter AES_192_BIT_KEY = 2'h1;
-  parameter AES_256_BIT_KEY = 2'h2;
+  parameter AES_128_BIT_KEY = 1'h0;
+  parameter AES_256_BIT_KEY = 1'h1;
 
   parameter AES128_ROUNDS = 4'ha;
-  parameter AES192_ROUNDS = 4'hc;
   parameter AES256_ROUNDS = 4'he;
 
   parameter INIT_ROUND  = 0;
