@@ -175,10 +175,7 @@ module aes_decipher_round(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_inv_sbox inv_sbox00(.addr(s00), .data(sbox00_data));
-  aes_inv_sbox inv_sbox01(.addr(s01), .data(sbox01_data));
-  aes_inv_sbox inv_sbox02(.addr(s02), .data(sbox02_data));
-  aes_inv_sbox inv_sbox03(.addr(s03), .data(sbox03_data));
+  aes_inv_sbox inv_sbox(.sword(inv_sword), .new_sword(new_inv_sword));
 
 
   //----------------------------------------------------------------
