@@ -44,7 +44,7 @@ module aes_decipher_round(
 
                           input wire            next,
 
-                          input wire [1 : 0]    keylen,
+                          input wire            keylen,
                           input wire [3 : 0]    round_key_addr,
                           input wire [127 : 0]  round_key,
 
