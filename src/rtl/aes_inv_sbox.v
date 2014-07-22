@@ -36,7 +36,7 @@
 //======================================================================
 
 module aes_inv_sbox(
-                    input wirex [31 : 0] sword,
+                    input wire [31 : 0] sword,
                     output wire [31 : 0] new_sword
                    );
 
