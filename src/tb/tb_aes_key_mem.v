@@ -77,7 +77,7 @@ module tb_aes_key_mem();
   reg            tb_clk;
   reg            tb_reset_n;
   reg [255 : 0]  tb_key;
-  reg [1 : 0]    tb_keylen;
+  reg            tb_keylen;
   reg            tb_init;
   reg [3 : 0]    tb_round;
   wire [127 : 0] tb_round_key;
@@ -207,7 +207,7 @@ module tb_aes_key_mem();
       tb_clk     = 0;
       tb_reset_n = 1;
       tb_key     = {8{32'h00000000}};
-      tb_keylen  = 2'h0;
+      tb_keylen  = 0;
       tb_init    = 0;
       tb_round   = 4'h0;
     end
