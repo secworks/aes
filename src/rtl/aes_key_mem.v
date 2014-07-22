@@ -117,12 +117,12 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
-  assign round_key = tmp_round_key;
-  assign ready     = ready_reg;
-  sbox0_addr       = tmp_sbox0_addr;
-  sbox1_addr       = tmp_sbox1_addr;
-  sbox2_addr       = tmp_sbox2_addr;
-  sbox3_addr       = tmp_sbox3_addr;
+  assign round_key  = tmp_round_key;
+  assign ready      = ready_reg;
+  assign sbox0_addr = tmp_sbox0_addr;
+  assign sbox1_addr = tmp_sbox1_addr;
+  assign sbox2_addr = tmp_sbox2_addr;
+  assign sbox3_addr = tmp_sbox3_addr;
 
     
   //----------------------------------------------------------------
