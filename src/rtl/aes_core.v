@@ -150,6 +150,7 @@ module aes_core(
 
   wire [31 : 0]  enc_sboxw;
   wire [31 : 0]  keymem_sboxw;
+
   reg [31 : 0]   sboxw;
   wire [31 : 0]  new_sboxw;
 
@@ -184,7 +185,7 @@ module aes_core(
                                .round_key(round_key),
 
                                .sboxw(enc_sboxw),
-                               .new_sboxw(new_sboxw)
+                               .new_sboxw(new_sboxw),
 
                                .block(block),
                                .new_block(enc_new_block),
@@ -224,7 +225,7 @@ module aes_core(
                     );
 
 
-  aes_sbox sbox(.sboxw(sboxw), new_sboxw(new_sboxw));
+  aes_sbox sbox(.sboxw(sboxw), .new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
