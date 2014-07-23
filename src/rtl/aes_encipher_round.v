@@ -70,6 +70,10 @@ module aes_encipher_round(
   parameter MAIN_ROUND  = 1;
   parameter FINAL_ROUND = 2;
 
+  parameter CTRL_IDLE = 2'h0;
+  parameter CTRL_INIT = 2'h1;
+  parameter CTRL_DONE = 2'h2;
+  
  
   //----------------------------------------------------------------
   // Gaolis multiplication functions for MixColumn.
@@ -90,34 +94,38 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg [1 : 0]   sword_ctr_reg;
-  reg [1 : 0]   sword_ctr_new;
-  reg           sword_ctr_we;
-  reg           sword_ctr_inc;
-  reg           sword_ctr_rst;
+  reg [1 : 0]  sword_ctr_reg;
+  reg [1 : 0]  sword_ctr_new;
+  reg          sword_ctr_we;
+  reg          sword_ctr_inc;
+  reg          sword_ctr_rst;
 
-  reg [3 : 0]   round_ctr_reg;
-  reg [3 : 0]   round_ctr_new;
-  reg           round_ctr_we;
-  reg           round_ctr_rst;
-  reg           round_ctr_inc;
+  reg [3 : 0]  round_ctr_reg;
+  reg [3 : 0]  round_ctr_new;
+  reg          round_ctr_we;
+  reg          round_ctr_rst;
+  reg          round_ctr_inc;
 
-  reg [31 : 0]  block_w0_reg;
-  reg [31 : 0]  block_w0_new;
-  reg           block_w0_we;
+  reg [31 : 0] block_w0_reg;
+  reg [31 : 0] block_w0_new;
+  reg          block_w0_we;
 
-  reg [31 : 0]  block_w1_reg;
-  reg [31 : 0]  block_w1_new;
-  reg           block_w1_we;
+  reg [31 : 0] block_w1_reg;
+  reg [31 : 0] block_w1_new;
+  reg          block_w1_we;
 
-  reg [31 : 0]  block_w2_reg;
-  reg [31 : 0]  block_w2_new;
-  reg           block_w2_we;
+  reg [31 : 0] block_w2_reg;
+  reg [31 : 0] block_w2_new;
+  reg          block_w2_we;
 
-  reg [31 : 0]  block_w3_reg;
-  reg [31 : 0]  block_w3_new;
-  reg           block_w3_we;
+  reg [31 : 0] block_w3_reg;
+  reg [31 : 0] block_w3_new;
+  reg          block_w3_we;
 
+  reg [1 : 0]  enc_ctrl_reg;
+  reg [1 : 0]  enc_ctrl_new;
+  reg          enc_ctrl_we;
+  
   
   //----------------------------------------------------------------
   // Wires.
@@ -148,27 +156,149 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign s00_new = tmp_s00_new;
-  assign s01_new = tmp_s01_new;
-  assign s02_new = tmp_s02_new;
-  assign s03_new = tmp_s03_new;
-  assign s10_new = tmp_s10_new;
-  assign s11_new = tmp_s11_new;
-  assign s12_new = tmp_s12_new;
-  assign s13_new = tmp_s13_new;
-  assign s20_new = tmp_s20_new;
-  assign s21_new = tmp_s21_new;
-  assign s22_new = tmp_s22_new;
-  assign s23_new = tmp_s23_new;
-  assign s30_new = tmp_s30_new;
-  assign s31_new = tmp_s31_new;
-  assign s32_new = tmp_s32_new;
-  assign s33_new = tmp_s33_new;
+//  assign s00_new = tmp_s00_new;
+//  assign s01_new = tmp_s01_new;
+//  assign s02_new = tmp_s02_new;
+//  assign s03_new = tmp_s03_new;
+//  assign s10_new = tmp_s10_new;
+//  assign s11_new = tmp_s11_new;
+//  assign s12_new = tmp_s12_new;
+//  assign s13_new = tmp_s13_new;
+//  assign s20_new = tmp_s20_new;
+//  assign s21_new = tmp_s21_new;
+//  assign s22_new = tmp_s22_new;
+//  assign s23_new = tmp_s23_new;
+//  assign s30_new = tmp_s30_new;
+//  assign s31_new = tmp_s31_new;
+//  assign s32_new = tmp_s32_new;
+//  assign s33_new = tmp_s33_new;
+//
+//  assign sbox0_addr = tmp_sbox0_addr;
+//  assign sbox1_addr = tmp_sbox1_addr;
+//  assign sbox2_addr = tmp_sbox2_addr;
+//  assign sbox3_addr = tmp_sbox3_addr;
 
-  assign sbox0_addr = tmp_sbox0_addr;
-  assign sbox1_addr = tmp_sbox1_addr;
-  assign sbox2_addr = tmp_sbox2_addr;
-  assign sbox3_addr = tmp_sbox3_addr;
+  //----------------------------------------------------------------
+  // reg_update
+  //
+  // Update functionality for all registers in the core.
+  // All registers are positive edge triggered with synchronous
+  // active low reset. All registers have write enable.
+  //----------------------------------------------------------------
+  always @ (posedge clk)
+    begin: reg_update
+      if (!reset_n)
+        begin
+          enc_ctr_reg  <= 4'h0;
+          enc_ctrl_reg <= CTRL_IDLE;
+        end
+      else
+        begin
+          if (sword_ctr_we)
+            begin
+              sword_ctr_reg <= sword_ctr_new;
+            end
+          if (enc_ctrl_we)
+            begin
+              enc_ctrl_reg <= enc_ctrl_new;
+            end
+        end
+    end // reg_update
+
+  
+  //----------------------------------------------------------------
+  // state_logic
+  //
+  // The logic needed to initalize as well as update the internal
+  // state during round processing. Basically either store the
+  // block in the state registers or select the state update
+  // values depending on if we are enciphering or deciphering.
+  //----------------------------------------------------------------
+  // always @*
+  //   begin : state_logic
+  //     s00_new = 8'h00;
+  //     s10_new = 8'h00;
+  //     s20_new = 8'h00;
+  //     s30_new = 8'h00;
+  //     s01_new = 8'h00;
+  //     s11_new = 8'h00;
+  //     s21_new = 8'h00;
+  //     s31_new = 8'h00;
+  //     s02_new = 8'h00;
+  //     s12_new = 8'h00;
+  //     s22_new = 8'h00;
+  //     s32_new = 8'h00;
+  //     s03_new = 8'h00;
+  //     s13_new = 8'h00;
+  //     s23_new = 8'h00;
+  //     s33_new = 8'h00;
+  //     s_we    = 1'b0;
+
+  //     if (init_state)
+  //       begin
+  //         s00_new = block[127 : 120];
+  //         s10_new = block[119 : 112];
+  //         s20_new = block[111 : 104];
+  //         s30_new = block[103 : 096];
+  //         s01_new = block[095 : 088];
+  //         s11_new = block[087 : 080];
+  //         s21_new = block[079 : 072];
+  //         s31_new = block[071 : 064];
+  //         s02_new = block[063 : 056];
+  //         s12_new = block[055 : 048];
+  //         s22_new = block[047 : 040];
+  //         s32_new = block[039 : 032];
+  //         s03_new = block[031 : 024];
+  //         s13_new = block[023 : 016];
+  //         s23_new = block[015 : 008];
+  //         s33_new = block[007 : 000];
+  //         s_we    = 1'b1;
+  //       end
+
+  //     else if (update_state)
+  //       begin
+  //         if (encdec_reg)
+  //           begin
+  //             s00_new = enc_s00_new;
+  //             s10_new = enc_s01_new;
+  //             s20_new = enc_s02_new;
+  //             s30_new = enc_s03_new;
+  //             s01_new = enc_s10_new;
+  //             s11_new = enc_s11_new;
+  //             s21_new = enc_s12_new;
+  //             s31_new = enc_s13_new;
+  //             s02_new = enc_s20_new;
+  //             s12_new = enc_s21_new;
+  //             s22_new = enc_s22_new;
+  //             s32_new = enc_s23_new;
+  //             s03_new = enc_s30_new;
+  //             s13_new = enc_s31_new;
+  //             s23_new = enc_s32_new;
+  //             s33_new = enc_s33_new;
+  //             s_we    = 1'b1;
+  //           end
+  //         else
+  //           begin
+  //             s00_new = enc_s00_new;
+  //             s10_new = enc_s01_new;
+  //             s20_new = enc_s02_new;
+  //             s30_new = enc_s03_new;
+  //             s01_new = enc_s10_new;
+  //             s11_new = enc_s11_new;
+  //             s21_new = enc_s12_new;
+  //             s31_new = enc_s13_new;
+  //             s02_new = enc_s20_new;
+  //             s12_new = enc_s21_new;
+  //             s22_new = enc_s22_new;
+  //             s32_new = enc_s23_new;
+  //             s03_new = enc_s30_new;
+  //             s13_new = enc_s31_new;
+  //             s23_new = enc_s32_new;
+  //             s33_new = enc_s33_new;
+  //             s_we    = 1'b1;
+  //           end
+  //       end
+//    end // state_logic
 
 
   //----------------------------------------------------------------
@@ -448,6 +578,35 @@ module aes_encipher_round(
         end
     end // round_ctr
 
+
+
+  //----------------------------------------------------------------
+  // encipher_ctrl
+  //
+  //
+  // The FSM that controls the encipher operations.
+  //----------------------------------------------------------------
+  always @*
+    begin: encipher_ctrl
+      // Default assignments.
+      sword_ctr_inc = 0;
+      sword_ctr_rst = 0;
+      round_ctr_rst = 0;
+      round_ctr_inc = 0;
+      enc_ctrl_new  = CTRL_IDLE;
+      enc_ctrl_we   = 0;
+    
+      case(enc_ctrl_reg)
+        CTRL_IDLE:
+          begin
+          end
+
+        default:
+          begin
+          end
+      endcase // case (enc_ctrl_reg)
+
+    end // encipher_ctrl
 
 endmodule // aes_encipher_round
 
