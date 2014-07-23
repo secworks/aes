@@ -2,7 +2,8 @@
 //
 // aes.core.v
 // ----------
-// The AES core. This core supports key size of 128, 192 and 256 bits.
+// The AES core. This core supports key size of 128, and 256 bits.
+// Most of the functionality is within the submodules.
 //
 //
 // Author: Joachim Strombergson
@@ -57,81 +58,11 @@ module aes_core(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter AES_128_BIT_KEY = 1'h0;
-  parameter AES_256_BIT_KEY = 1'h1;
-
-  parameter AES128_ROUNDS = 4'ha;
-  parameter AES256_ROUNDS = 4'he;
-  
-  parameter CTRL_IDLE        = 3'h0;
-  parameter CTRL_INIT_KEY    = 3'h1;
-  parameter CTRL_INIT_ROUND  = 3'h2;
-  parameter CTRL_MAIN_ROUNDS = 3'h3;
-  parameter CTRL_FINAL_ROUND = 3'h4;
-  parameter CTRL_DONE        = 3'h5;
-  
-  parameter INIT_ROUND  = 2'h0;
-  parameter MAIN_ROUND  = 2'h1;
-  parameter FINAL_ROUND = 2'h2;
 
   
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg [1 : 0]   keylen_reg;
-  reg           encdec_reg;
-
-  reg [7 : 0]   s00_reg;
-  reg [7 : 0]   s00_new;
-  reg [7 : 0]   s01_reg;
-  reg [7 : 0]   s01_new;
-  reg [7 : 0]   s02_reg;
-  reg [7 : 0]   s02_new;
-  reg [7 : 0]   s03_reg;
-  reg [7 : 0]   s03_new;
-  reg [7 : 0]   s10_reg;
-  reg [7 : 0]   s10_new;
-  reg [7 : 0]   s11_reg;
-  reg [7 : 0]   s11_new;
-  reg [7 : 0]   s12_reg;
-  reg [7 : 0]   s12_new;
-  reg [7 : 0]   s13_reg;
-  reg [7 : 0]   s13_new;
-  reg [7 : 0]   s20_reg;
-  reg [7 : 0]   s20_new;
-  reg [7 : 0]   s21_reg;
-  reg [7 : 0]   s21_new;
-  reg [7 : 0]   s22_reg;
-  reg [7 : 0]   s22_new;
-  reg [7 : 0]   s23_reg;
-  reg [7 : 0]   s23_new;
-  reg [7 : 0]   s30_reg;
-  reg [7 : 0]   s30_new;
-  reg [7 : 0]   s31_reg;
-  reg [7 : 0]   s31_new;
-  reg [7 : 0]   s32_reg;
-  reg [7 : 0]   s32_new;
-  reg [7 : 0]   s33_reg;
-  reg [7 : 0]   s33_new;
-  reg           s_we;
-  
-  reg           ready_reg;
-  reg           ready_new;
-  reg           ready_we;
-
-  reg           result_valid_reg;
-  reg           result_valid_new;
-  reg           result_valid_we;
-
-  reg [3 : 0]   round_ctr_reg;
-  reg [3 : 0]   round_ctr_new;
-  reg           round_ctr_we;
-  reg           round_ctr_rst;
-  reg           round_ctr_inc;
-  
-  reg [2 : 0]   aes_ctrl_reg;
-  reg [2 : 0]   aes_ctrl_new;
-  reg           aes_ctrl_we;
   
   
   //----------------------------------------------------------------
@@ -148,28 +79,21 @@ module aes_core(
   wire [127 : 0] round_key;
   wire           key_ready;
 
+  wire           enc_next;
+  wire [3 : 0]   enc_round_nr;
+  wire [127 : 0] enc_new_block;
+  wire           enc_ready;
   wire [31 : 0]  enc_sboxw;
+
+  wire           dec_next;
+  wire [3 : 0]   dec_round_nr;
+  wire [127 : 0] dec_new_block;
+  wire           dec_ready;
+    
   wire [31 : 0]  keymem_sboxw;
 
   reg [31 : 0]   sboxw;
   wire [31 : 0]  new_sboxw;
-
-  wire [7 : 0]   dec_s00_new;
-  wire [7 : 0]   dec_s01_new;
-  wire [7 : 0]   dec_s02_new;
-  wire [7 : 0]   dec_s03_new;
-  wire [7 : 0]   dec_s10_new;
-  wire [7 : 0]   dec_s11_new;
-  wire [7 : 0]   dec_s12_new;
-  wire [7 : 0]   dec_s13_new;
-  wire [7 : 0]   dec_s20_new;
-  wire [7 : 0]   dec_s21_new;
-  wire [7 : 0]   dec_s22_new;
-  wire [7 : 0]   dec_s23_new;
-  wire [7 : 0]   dec_s30_new;
-  wire [7 : 0]   dec_s31_new;
-  wire [7 : 0]   dec_s32_new;
-  wire [7 : 0]   dec_s33_new;
 
   
   //----------------------------------------------------------------
@@ -182,7 +106,7 @@ module aes_core(
                                .next(enc_next),
                                
                                .keylen(keylen),
-                               .round(enc_round),
+                               .round(enc_round_nr),
                                .round_key(round_key),
 
                                .sboxw(enc_sboxw),
@@ -201,7 +125,7 @@ module aes_core(
                                .next(dec_next),
                                
                                .keylen(keylen),
-                               .round(dec_round),
+                               .round(dec_round_nr),
                                .round_key(round_key),
 
                                .block(block),
@@ -218,7 +142,7 @@ module aes_core(
                      .keylen(keylen),
                      .init(init),
 
-                     .round(round_ctr_reg),
+                     .round(round_nr),
                      .round_key(round_key),
                      .ready(key_ready),
 
@@ -233,197 +157,10 @@ module aes_core(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign ready        = ready_reg;
+  assign ready        = enc_ready & dec_ready & key_ready;
 
-  assign result       = {s00_reg, s10_reg, s20_reg, s30_reg,
-                         s01_reg, s11_reg, s21_reg, s31_reg,
-                         s02_reg, s12_reg, s22_reg, s32_reg,
-                         s03_reg, s13_reg, s23_reg, s33_reg};
-
-  assign result_valid = result_valid_reg;
-  
-  
-  //----------------------------------------------------------------
-  // reg_update
-  //
-  // Update functionality for all registers in the core.
-  // All registers are positive edge triggered with synchronous
-  // active low reset. All registers have write enable.
-  //----------------------------------------------------------------
-  always @ (posedge clk)
-    begin: reg_update
-      if (!reset_n)
-        begin
-          ready_reg        <= 1'b0;
-          result_valid_reg <= 1'b0;
-          keylen_reg       <= 2'h0;
-          encdec_reg       <= 1'b0;
-          s00_reg          <= 8'h00;
-          s01_reg          <= 8'h00;
-          s02_reg          <= 8'h00;
-          s03_reg          <= 8'h00;
-          s10_reg          <= 8'h00;
-          s11_reg          <= 8'h00;
-          s12_reg          <= 8'h00;
-          s13_reg          <= 8'h00;
-          s20_reg          <= 8'h00;
-          s21_reg          <= 8'h00;
-          s22_reg          <= 8'h00;
-          s23_reg          <= 8'h00;
-          s30_reg          <= 8'h00;
-          s31_reg          <= 8'h00;
-          s32_reg          <= 8'h00;
-          s33_reg          <= 8'h00;
-          round_ctr_reg    <= 4'h0;
-          aes_ctrl_reg     <= CTRL_IDLE;
-        end
-      else
-        begin
-          if (ready_we)
-            begin
-              ready_reg <= ready_new;
-            end
-
-          if (result_valid_we)
-            begin
-              result_valid_reg <= result_valid_new;
-            end
-          
-          if (init)
-            begin
-              keylen_reg <= keylen;
-              encdec_reg <= encdec;
-            end
-
-          if (s_we)
-            begin
-              s00_reg <= s00_new;
-              s01_reg <= s01_new;
-              s02_reg <= s02_new;
-              s03_reg <= s03_new;
-
-              s10_reg <= s10_new;
-              s11_reg <= s11_new;
-              s12_reg <= s12_new;
-              s13_reg <= s13_new;
-
-              s20_reg <= s20_new;
-              s21_reg <= s21_new;
-              s22_reg <= s22_new;
-              s23_reg <= s23_new;
-
-              s30_reg <= s30_new;
-              s31_reg <= s31_new;
-              s32_reg <= s32_new;
-              s33_reg <= s33_new;
-            end
-
-          if (round_ctr_we)
-            begin
-              round_ctr_reg <= round_ctr_new;
-            end
-          
-          if (aes_ctrl_we)
-            begin
-              aes_ctrl_reg <= aes_ctrl_new;
-            end
-        end
-    end // reg_update
-
-
-  //----------------------------------------------------------------
-  // state_logic
-  //
-  // The logic needed to initalize as well as update the internal
-  // state during round processing. Basically either store the
-  // block in the state registers or select the state update
-  // values depending on if we are enciphering or deciphering.
-  //----------------------------------------------------------------
-  always @*
-    begin : state_logic
-      s00_new = 8'h00;
-      s10_new = 8'h00;
-      s20_new = 8'h00;
-      s30_new = 8'h00;
-      s01_new = 8'h00;
-      s11_new = 8'h00;
-      s21_new = 8'h00;
-      s31_new = 8'h00;
-      s02_new = 8'h00;
-      s12_new = 8'h00;
-      s22_new = 8'h00;
-      s32_new = 8'h00;
-      s03_new = 8'h00;
-      s13_new = 8'h00;
-      s23_new = 8'h00;
-      s33_new = 8'h00;
-      s_we    = 1'b0;
-
-      if (init_state)
-        begin
-          s00_new = block[127 : 120];
-          s10_new = block[119 : 112];
-          s20_new = block[111 : 104];
-          s30_new = block[103 : 096];
-          s01_new = block[095 : 088];
-          s11_new = block[087 : 080];
-          s21_new = block[079 : 072];
-          s31_new = block[071 : 064];
-          s02_new = block[063 : 056];
-          s12_new = block[055 : 048];
-          s22_new = block[047 : 040];
-          s32_new = block[039 : 032];
-          s03_new = block[031 : 024];
-          s13_new = block[023 : 016];
-          s23_new = block[015 : 008];
-          s33_new = block[007 : 000];
-          s_we    = 1'b1;
-        end
-
-      else if (update_state)
-        begin
-          if (encdec_reg)
-            begin
-              s00_new = enc_s00_new;
-              s10_new = enc_s01_new;
-              s20_new = enc_s02_new;
-              s30_new = enc_s03_new;
-              s01_new = enc_s10_new;
-              s11_new = enc_s11_new;
-              s21_new = enc_s12_new;
-              s31_new = enc_s13_new;
-              s02_new = enc_s20_new;
-              s12_new = enc_s21_new;
-              s22_new = enc_s22_new;
-              s32_new = enc_s23_new;
-              s03_new = enc_s30_new;
-              s13_new = enc_s31_new;
-              s23_new = enc_s32_new;
-              s33_new = enc_s33_new;
-              s_we    = 1'b1;
-            end
-          else
-            begin
-              s00_new = enc_s00_new;
-              s10_new = enc_s01_new;
-              s20_new = enc_s02_new;
-              s30_new = enc_s03_new;
-              s01_new = enc_s10_new;
-              s11_new = enc_s11_new;
-              s21_new = enc_s12_new;
-              s31_new = enc_s13_new;
-              s02_new = enc_s20_new;
-              s12_new = enc_s21_new;
-              s22_new = enc_s22_new;
-              s32_new = enc_s23_new;
-              s03_new = enc_s30_new;
-              s13_new = enc_s31_new;
-              s23_new = enc_s32_new;
-              s33_new = enc_s33_new;
-              s_we    = 1'b1;
-            end
-        end
-    end // state_logic
+  assign result       = tmp_result;
+  assign result_valid = tmp_result_valid;
 
 
   //----------------------------------------------------------------
@@ -446,149 +183,33 @@ module aes_core(
 
 
   //----------------------------------------------------------------
-  // rounds_select
+  // encdex_mux
   //
-  // Simple logic that selects number of rounds based on the given
-  // key length.
+  // Controls which of the datapaths that get the next signal, have 
+  // access to the memory as well as the block processing result.
   //----------------------------------------------------------------
   always @*
-    begin : rounds_select
-      case (keylen_reg)
-        AES_128_BIT_KEY: num_rounds = AES128_ROUNDS;
-        AES_192_BIT_KEY: num_rounds = AES192_ROUNDS;
-        AES_256_BIT_KEY: num_rounds = AES256_ROUNDS;
-        default:         num_rounds = 4'h0;
-      endcase // case (keylen_reg)
-    end // rounds_select
-
-
-  //----------------------------------------------------------------
-  // round_ctr
-  //
-  // The round counter with reset and increase logic.
-  //----------------------------------------------------------------
-  always @*
-    begin : round_ctr
-      round_ctr_new = 4'h0;
-      round_ctr_we  = 1'b0;
-
-      if (round_ctr_rst)
-        begin
-          round_ctr_we  = 1'b1;
-        end
-      else if (round_ctr_inc)
-        begin
-          round_ctr_new = round_ctr_reg + 1'b1;
-          round_ctr_we  = 1'b0;
-        end
-    end // round_ctr
-
-  
-  //----------------------------------------------------------------
-  // aes_ctrl_fsm
-  //
-  // The control FSM that runs the core.
-  //
-  // Note that the control FSM assumes that the core user has
-  // pulled init previously to initialize the cipher with the
-  // given key. Pulling init also sampled encdec flag and keylen
-  // which are used during round processing.
-  //----------------------------------------------------------------
-  always @*
-    begin : aes_ctrl_fsm
-      ready_new        = 0;
-      ready_we         = 0;
-      result_valid_new = 0;
-      result_valid_we  = 0;
-      key_init         = 0;
-      init_state       = 0;
-      update_state     = 0;
-      round_ctr_rst    = 0;
-      round_ctr_inc    = 0;
-      round_type       = 2'h0;
-      aes_ctrl_new     = CTRL_IDLE;
-      aes_ctrl_we      = 0;
+    begin : encdec_mux
+      enc_next = 0;
+      dec_next = 0;
       
-      case (aes_ctrl_reg)
-        CTRL_IDLE:
-          begin
-            if (init)
-              begin
-                key_init     = 1;
-                ready_new    = 0;
-                ready_we     = 1;
-                aes_ctrl_new = CTRL_INIT_KEY;
-                aes_ctrl_we  = 1;
-              end
+      if (encdec)
+        begin
+          // encipher operations
+          enc_next         = next;
+          round_nr         = enc_round_nr;
+          tmp_result       = enc_result;
+          tmp_result_valid = enc_result_valid;
+        end
+      else
+        begin
+          dec_next         = next;
+          round_nr         = dec_round_nr;
+          tmp_result       = dec_result;
+          tmp_result_valid = dec_result_valid;
+        end
+    end // encdec_mux
 
-            if (next)
-              begin
-                init_state       = 1;
-                round_ctr_rst    = 1;
-                ready_new        = 0;
-                ready_we         = 1;
-                result_valid_new = 0;
-                result_valid_we  = 1;
-                aes_ctrl_new     = CTRL_INIT_ROUND;
-                aes_ctrl_we      = 1;
-              end
-          end
-
-
-        CTRL_INIT_KEY:
-          begin
-            key_init = 1;
-            if (key_ready)
-              begin
-                ready_new    = 1;
-                ready_we     = 1;
-                aes_ctrl_new = CTRL_IDLE;
-                aes_ctrl_we  = 1;
-              end
-          end
-
-
-        CTRL_INIT_ROUND:
-          begin
-            round_type   = INIT_ROUND;
-            update_state = 1;
-            aes_ctrl_new = CTRL_MAIN_ROUNDS;
-            aes_ctrl_we  = 1;
-          end
-
-
-        CTRL_MAIN_ROUNDS:
-          begin
-            round_type    = MAIN_ROUND;
-            update_state  = 1;
-            round_ctr_inc = 1;
-
-            if (round_ctr_reg < num_rounds)
-              begin
-                aes_ctrl_new = CTRL_FINAL_ROUND;
-                aes_ctrl_we  = 1;
-              end
-          end
-
-
-        CTRL_FINAL_ROUND:
-          begin
-            round_type       = FINAL_ROUND;
-            update_state     = 1;
-            ready_new        = 1;
-            ready_we         = 1;
-            result_valid_new = 1;
-            result_valid_we  = 1;
-            aes_ctrl_new     = CTRL_IDLE;
-            aes_ctrl_we      = 1;
-          end
-        
-        default:
-          begin
-
-          end
-      endcase // case (aes_ctrl_reg)
-    end // aes_ctrl_fsm
 endmodule // aes_core
 
 //======================================================================
