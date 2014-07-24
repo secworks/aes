@@ -189,8 +189,9 @@ module aes_encipher_round(
     begin: reg_update
       if (!reset_n)
         begin
-          enc_ctr_reg  <= 4'h0;
-          enc_ctrl_reg <= CTRL_IDLE;
+          sword_ctr_reg <= 2'h0;
+          round_ctr_reg <= 4'h0;
+          enc_ctrl_reg  <= CTRL_IDLE;
         end
       else
         begin
