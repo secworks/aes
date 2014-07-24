@@ -167,7 +167,7 @@ module aes_core(
   // sbox_mux
   //
   // Controls which of the encipher datapath or the key memory
-  // that gets access to the four sboxes.
+  // that gets access to the sbox.
   //----------------------------------------------------------------
   always @*
     begin : sbox_mux
@@ -195,7 +195,7 @@ module aes_core(
       
       if (encdec)
         begin
-          // encipher operations
+          // Encipher operations
           enc_next         = next;
           round_nr         = enc_round_nr;
           tmp_result       = enc_new_block
@@ -203,6 +203,7 @@ module aes_core(
         end
       else
         begin
+          // Decipher operations
           dec_next         = next;
           round_nr         = dec_round_nr;
           tmp_result       = dec_result;
