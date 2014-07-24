@@ -67,39 +67,11 @@ module aes_decipher_round(
   parameter MAIN_ROUND  = 1;
   parameter FINAL_ROUND = 2;
 
+  parameter CTRL_IDLE = 2'h0;
+  parameter CTRL_INIT = 2'h1;
+  parameter CTRL_DONE = 2'h2;
 
-  //----------------------------------------------------------------
-  // Registers including update variables and write enable.
-  //----------------------------------------------------------------
-  reg [1 : 0]   sword_ctr_reg;
-  reg [1 : 0]   sword_ctr_new;
-  reg           sword_ctr_we;
-  reg           sword_ctr_inc;
-  reg           sword_ctr_rst;
 
-  reg [3 : 0]   round_ctr_reg;
-  reg [3 : 0]   round_ctr_new;
-  reg           round_ctr_we;
-  reg           round_ctr_rst;
-  reg           round_ctr_inc;
-
-  reg [31 : 0]  block_w0_reg;
-  reg [31 : 0]  block_w0_new;
-  reg           block_w0_we;
-
-  reg [31 : 0]  block_w1_reg;
-  reg [31 : 0]  block_w1_new;
-  reg           block_w1_we;
-
-  reg [31 : 0]  block_w2_reg;
-  reg [31 : 0]  block_w2_new;
-  reg           block_w2_we;
-
-  reg [31 : 0]  block_w3_reg;
-  reg [31 : 0]  block_w3_new;
-  reg           block_w3_we;
-
- 
   //----------------------------------------------------------------
   // Gaolis multiplication functions for Inverse MixColumn.
   //----------------------------------------------------------------
@@ -146,6 +118,42 @@ module aes_decipher_round(
   endfunction // gm14
 
   
+  //----------------------------------------------------------------
+  // Registers including update variables and write enable.
+  //----------------------------------------------------------------
+  reg [1 : 0]  sword_ctr_reg;
+  reg [1 : 0]  sword_ctr_new;
+  reg          sword_ctr_we;
+  reg          sword_ctr_inc;
+  reg          sword_ctr_rst;
+
+  reg [3 : 0]  round_ctr_reg;
+  reg [3 : 0]  round_ctr_new;
+  reg          round_ctr_we;
+  reg          round_ctr_rst;
+  reg          round_ctr_inc;
+
+  reg [31 : 0] block_w0_reg;
+  reg [31 : 0] block_w0_new;
+  reg          block_w0_we;
+
+  reg [31 : 0] block_w1_reg;
+  reg [31 : 0] block_w1_new;
+  reg          block_w1_we;
+
+  reg [31 : 0] block_w2_reg;
+  reg [31 : 0] block_w2_new;
+  reg          block_w2_we;
+
+  reg [31 : 0] block_w3_reg;
+  reg [31 : 0] block_w3_new;
+  reg          block_w3_we;
+
+  reg [1 : 0]  dec_ctrl_reg;
+  reg [1 : 0]  dec_ctrl_new;
+  reg          dec_ctrl_we;
+
+
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
@@ -197,6 +205,34 @@ module aes_decipher_round(
   assign s31_new = tmp_s31_new;
   assign s32_new = tmp_s32_new;
   assign s33_new = tmp_s33_new;
+
+
+  //----------------------------------------------------------------
+  // reg_update
+  //
+  // Update functionality for all registers in the core.
+  // All registers are positive edge triggered with synchronous
+  // active low reset. All registers have write enable.
+  //----------------------------------------------------------------
+  always @ (posedge clk)
+    begin: reg_update
+      if (!reset_n)
+        begin
+          dec_ctr_reg  <= 4'h0;
+          dec_ctrl_reg <= CTRL_IDLE;
+        end
+      else
+        begin
+          if (sword_ctr_we)
+            begin
+              sword_ctr_reg <= sword_ctr_new;
+            end
+          if (dec_ctrl_we)
+            begin
+              dec_ctrl_reg <= dec_ctrl_new;
+            end
+        end
+    end // reg_update
 
 
   //----------------------------------------------------------------
@@ -423,6 +459,35 @@ module aes_decipher_round(
           round_ctr_we  = 1'b0;
         end
     end // round_ctr
+
+
+  //----------------------------------------------------------------
+  // decipher_ctrl
+  //
+  //
+  // The FSM that controls the decipher operations.
+  //----------------------------------------------------------------
+  always @*
+    begin: decipher_ctrl
+      // Default assignments.
+      sword_ctr_inc = 0;
+      sword_ctr_rst = 0;
+      round_ctr_rst = 0;
+      round_ctr_inc = 0;
+      dec_ctrl_new  = CTRL_IDLE;
+      dec_ctrl_we   = 0;
+
+      case(dec_ctrl_reg)
+        CTRL_IDLE:
+          begin
+          end
+
+        default:
+          begin
+          end
+      endcase // case (dec_ctrl_reg)
+
+    end // decipher_ctrl
 
 endmodule // aes_decipher_round
 
