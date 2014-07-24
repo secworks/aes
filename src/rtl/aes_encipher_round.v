@@ -579,7 +579,6 @@ module aes_encipher_round(
     end // round_ctr
 
 
-
   //----------------------------------------------------------------
   // encipher_ctrl
   //
