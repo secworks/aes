@@ -198,7 +198,7 @@ module aes_core(
           // Encipher operations
           enc_next         = next;
           round_nr         = enc_round_nr;
-          tmp_result       = enc_new_block
+          tmp_result       = enc_new_block;
           tmp_result_valid = enc_result_valid;
         end
       else
