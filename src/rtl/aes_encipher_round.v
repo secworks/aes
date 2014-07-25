@@ -362,6 +362,9 @@ module aes_encipher_round(
       reg [7 : 0] init_s32, s32_0, s32_1, s32_2;
       reg [7 : 0] init_s33, s33_0, s33_1, s33_2;
 
+      // Default assignments
+      tmp_sboxw = 32'h00000000;
+
       // InitRound
       init_s00 = s00_1 ^ round_key[127 : 120];
       init_s10 = s01_1 ^ round_key[119 : 112];
@@ -384,22 +387,22 @@ module aes_encipher_round(
       case (sword_ctr_reg)
         2'h0:
           begin
-            sboxw = {s00, s01, s02, s03};
+            tmp_sboxw = {s00, s01, s02, s03};
           end
 
         2'h1:
           begin
-            sboxw = {s10, s11, 12, s13};
+            tmp_sboxw = {s10, s11, 12, s13};
           end
 
         2'h2:
           begin
-            sboxw = {s20, s21, 22, s23};
+            tmp_sboxw = {s20, s21, 22, s23};
           end
 
         2'h3:
           begin
-            sboxw = {s20, s21, 22, s23};
+            tmp_sboxw = {s20, s21, 22, s23};
           end
       endcase // case (sbox_mux_ctrl_reg)
 
