@@ -194,12 +194,36 @@ module aes_encipher_round(
     begin: reg_update
       if (!reset_n)
         begin
+          block_w0_reg  <= 32'h00000000;
+          block_w1_reg  <= 32'h00000000;
+          block_w2_reg  <= 32'h00000000;
+          block_w3_reg  <= 32'h00000000;
           sword_ctr_reg <= 2'h0;
           round_ctr_reg <= 4'h0;
           enc_ctrl_reg  <= CTRL_IDLE;
         end
       else
         begin
+          if (block_w0_we)
+            begin
+              block_w0_reg <= block_w0_new;
+            end
+
+          if (block_w1_we)
+            begin
+              block_w1_reg <= block_w1_new;
+            end
+
+          if (block_w2_we)
+            begin
+              block_w2_reg <= block_w2_new;
+            end
+
+          if (block_w3_we)
+            begin
+              block_w3_reg <= block_w3_new;
+            end
+
           if (sword_ctr_we)
             begin
               sword_ctr_reg <= sword_ctr_new;
