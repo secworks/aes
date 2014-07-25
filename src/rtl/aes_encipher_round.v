@@ -130,6 +130,10 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
+  reg init_block;
+  reg update_block;
+
+
   reg [31 : 0 ] tmp_sboxw;
 
   reg [7 : 0] tmp_s0_new;
@@ -363,8 +367,34 @@ module aes_encipher_round(
       reg [7 : 0] init_s33, s33_0, s33_1, s33_2;
 
       // Default assignments
-      tmp_sboxw = 32'h00000000;
+      tmp_sboxw    = 32'h00000000;
+      block_w0_new = 32'h00000000;
+      block_w0_we  = 0;
+      block_w1_new = 32'h00000000;
+      block_w1_we  = 0;
+      block_w2_new = 32'h00000000;
+      block_w2_we  = 0;
+      block_w3_new = 32'h00000000;
+      block_w3_we  = 0;
 
+
+      if (init_block)
+        begin
+          block_w0_new = block[127 : 096];
+          block_w0_we  = 1;
+          block_w1_new = block[095 : 064];
+          block_w1_we  = 1;
+          block_w2_new = block[063 : 032];
+          block_w2_we  = 1;
+          block_w3_new = block[031 : 000];
+          block_w3_we  = 1;
+        end
+
+//      else if (update_block)
+//        begin
+//
+//        end
+      
       // InitRound
       init_s00 = s00_1 ^ round_key[127 : 120];
       init_s10 = s01_1 ^ round_key[119 : 112];
@@ -387,22 +417,30 @@ module aes_encipher_round(
       case (sword_ctr_reg)
         2'h0:
           begin
-            tmp_sboxw = {s00, s01, s02, s03};
+            tmp_sboxw   = sbox_w0_reg;
+            sbox_w0_new = new_sboxw;
+            sbow_w0_we  = 1;
           end
 
         2'h1:
           begin
-            tmp_sboxw = {s10, s11, 12, s13};
+            tmp_sboxw   = sbox_w1_reg;
+            sbox_w0_new = new_sboxw;
+            sbow_w0_we  = 1;
           end
 
         2'h2:
           begin
-            tmp_sboxw = {s20, s21, 22, s23};
+            tmp_sboxw   = sbox_w2_reg;
+            sbox_w2_new = new_sboxw;
+            sbow_w2_we  = 1;
           end
 
         2'h3:
           begin
-            tmp_sboxw = {s20, s21, 22, s23};
+            tmp_sboxw   = sbox_w3_reg;
+            sbox_w3_new = new_sboxw;
+            sbow_w3_we  = 1;
           end
       endcase // case (sbox_mux_ctrl_reg)
 
@@ -605,6 +643,9 @@ module aes_encipher_round(
       sword_ctr_rst = 0;
       round_ctr_rst = 0;
       round_ctr_inc = 0;
+      init_block    = 0;
+      update_block  = 0;
+
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 0;
     
