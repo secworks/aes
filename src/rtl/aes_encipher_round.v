@@ -204,6 +204,12 @@ module aes_encipher_round(
             begin
               sword_ctr_reg <= sword_ctr_new;
             end
+
+          if (round_ctr_we)
+            begin
+              round_ctr_reg <= round_ctr_new;
+            end
+
           if (enc_ctrl_we)
             begin
               enc_ctrl_reg <= enc_ctrl_new;
