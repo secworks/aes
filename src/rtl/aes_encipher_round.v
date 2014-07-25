@@ -347,7 +347,7 @@ module aes_encipher_round(
 
       // SubBytes - Done through connectivity of sbox instances.
       // sbox_data00-33 wires contains the substitute values.
-      case (sbox_mux_ctrl_reg)
+      case (sword_ctr_reg)
         2'h0:
           begin
             tmp_sbox0_addr = s00;
@@ -359,6 +359,7 @@ module aes_encipher_round(
             tmp_s02_new = sbox2_data;
             tmp_s03_new = sbox3_data;
           end
+
         2'h1:
           begin
             tmp_sbox0_addr = s10;
@@ -370,6 +371,7 @@ module aes_encipher_round(
             tmp_s12_new = sbox2_data;
             tmp_s13_new = sbox3_data;
           end
+
         2'h2:
           begin
             tmp_sbox0_addr = s20;
@@ -381,6 +383,7 @@ module aes_encipher_round(
             tmp_s22_new = sbox2_data;
             tmp_s23_new = sbox3_data;
           end
+
         2'h3:
           begin
             tmp_sbox0_addr = s30;
