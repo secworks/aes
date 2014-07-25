@@ -130,6 +130,8 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
+  reg [31 : 0 ] tmp_sboxw;
+
   reg [7 : 0] tmp_s0_new;
   reg [7 : 0] tmp_s1_new;
   reg [7 : 0] tmp_s2_new;
@@ -177,6 +179,9 @@ module aes_encipher_round(
 //  assign sbox1_addr = tmp_sbox1_addr;
 //  assign sbox2_addr = tmp_sbox2_addr;
 //  assign sbox3_addr = tmp_sbox3_addr;
+
+  assign sboxw = tmp_sboxw;
+
 
   //----------------------------------------------------------------
   // reg_update
@@ -345,55 +350,26 @@ module aes_encipher_round(
       init_s23 = s32_1 ^ round_key[15  :   8];
       init_s33 = s33_1 ^ round_key[7   :   0];
 
-      // SubBytes - Done through connectivity of sbox instances.
-      // sbox_data00-33 wires contains the substitute values.
+      // SubBytes - Done through connectivity to the sbox.
       case (sword_ctr_reg)
         2'h0:
           begin
-            tmp_sbox0_addr = s00;
-            tmp_sbox1_addr = s01;
-            tmp_sbox2_addr = s02;
-            tmp_sbox3_addr = s03;
-            tmp_s00_new = sbox0_data;
-            tmp_s01_new = sbox1_data;
-            tmp_s02_new = sbox2_data;
-            tmp_s03_new = sbox3_data;
+            sboxw = {s00, s01, s02, s03};
           end
 
         2'h1:
           begin
-            tmp_sbox0_addr = s10;
-            tmp_sbox1_addr = s11;
-            tmp_sbox2_addr = s12;
-            tmp_sbox3_addr = s13;
-            tmp_s10_new = sbox0_data;
-            tmp_s11_new = sbox1_data;
-            tmp_s12_new = sbox2_data;
-            tmp_s13_new = sbox3_data;
+            sboxw = {s10, s11, 12, s13};
           end
 
         2'h2:
           begin
-            tmp_sbox0_addr = s20;
-            tmp_sbox1_addr = s21;
-            tmp_sbox2_addr = s22;
-            tmp_sbox3_addr = s23;
-            tmp_s20_new = sbox0_data;
-            tmp_s21_new = sbox1_data;
-            tmp_s22_new = sbox2_data;
-            tmp_s23_new = sbox3_data;
+            sboxw = {s20, s21, 22, s23};
           end
 
         2'h3:
           begin
-            tmp_sbox0_addr = s30;
-            tmp_sbox1_addr = s31;
-            tmp_sbox2_addr = s32;
-            tmp_sbox3_addr = s33;
-            tmp_s30_new = sbox0_data;
-            tmp_s31_new = sbox1_data;
-            tmp_s32_new = sbox2_data;
-            tmp_s33_new = sbox3_data;
+            sboxw = {s20, s21, 22, s23};
           end
       endcase // case (sbox_mux_ctrl_reg)
 
