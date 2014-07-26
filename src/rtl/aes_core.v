@@ -50,8 +50,7 @@ module aes_core(
                 input wire            keylen,
                    
                 input wire [127 : 0]  block,
-                output wire [127 : 0] result,
-                output wire           result_valid
+                output wire [127 : 0] result
                );
 
 
@@ -204,15 +203,13 @@ module aes_core(
           enc_next         = next;
           round_nr         = enc_round_nr;
           tmp_result       = enc_new_block;
-          tmp_result_valid = enc_result_valid;
         end
       else
         begin
           // Decipher operations
           dec_next         = next;
           round_nr         = dec_round_nr;
-          tmp_result       = dec_result;
-          tmp_result_valid = dec_result_valid;
+          tmp_result       = dec_new_block;
         end
     end // encdec_mux
 
