@@ -258,101 +258,6 @@ module aes_encipher_round(
         end
     end // reg_update
 
-  
-  //----------------------------------------------------------------
-  // state_logic
-  //
-  // The logic needed to initalize as well as update the internal
-  // state during round processing. Basically either store the
-  // block in the state registers or select the state update
-  // values depending on if we are enciphering or deciphering.
-  //----------------------------------------------------------------
-  // always @*
-  //   begin : state_logic
-  //     s00_new = 8'h00;
-  //     s10_new = 8'h00;
-  //     s20_new = 8'h00;
-  //     s30_new = 8'h00;
-  //     s01_new = 8'h00;
-  //     s11_new = 8'h00;
-  //     s21_new = 8'h00;
-  //     s31_new = 8'h00;
-  //     s02_new = 8'h00;
-  //     s12_new = 8'h00;
-  //     s22_new = 8'h00;
-  //     s32_new = 8'h00;
-  //     s03_new = 8'h00;
-  //     s13_new = 8'h00;
-  //     s23_new = 8'h00;
-  //     s33_new = 8'h00;
-  //     s_we    = 1'b0;
-
-  //     if (init_state)
-  //       begin
-  //         s00_new = block[127 : 120];
-  //         s10_new = block[119 : 112];
-  //         s20_new = block[111 : 104];
-  //         s30_new = block[103 : 096];
-  //         s01_new = block[095 : 088];
-  //         s11_new = block[087 : 080];
-  //         s21_new = block[079 : 072];
-  //         s31_new = block[071 : 064];
-  //         s02_new = block[063 : 056];
-  //         s12_new = block[055 : 048];
-  //         s22_new = block[047 : 040];
-  //         s32_new = block[039 : 032];
-  //         s03_new = block[031 : 024];
-  //         s13_new = block[023 : 016];
-  //         s23_new = block[015 : 008];
-  //         s33_new = block[007 : 000];
-  //         s_we    = 1'b1;
-  //       end
-
-  //     else if (update_state)
-  //       begin
-  //         if (encdec_reg)
-  //           begin
-  //             s00_new = enc_s00_new;
-  //             s10_new = enc_s01_new;
-  //             s20_new = enc_s02_new;
-  //             s30_new = enc_s03_new;
-  //             s01_new = enc_s10_new;
-  //             s11_new = enc_s11_new;
-  //             s21_new = enc_s12_new;
-  //             s31_new = enc_s13_new;
-  //             s02_new = enc_s20_new;
-  //             s12_new = enc_s21_new;
-  //             s22_new = enc_s22_new;
-  //             s32_new = enc_s23_new;
-  //             s03_new = enc_s30_new;
-  //             s13_new = enc_s31_new;
-  //             s23_new = enc_s32_new;
-  //             s33_new = enc_s33_new;
-  //             s_we    = 1'b1;
-  //           end
-  //         else
-  //           begin
-  //             s00_new = enc_s00_new;
-  //             s10_new = enc_s01_new;
-  //             s20_new = enc_s02_new;
-  //             s30_new = enc_s03_new;
-  //             s01_new = enc_s10_new;
-  //             s11_new = enc_s11_new;
-  //             s21_new = enc_s12_new;
-  //             s31_new = enc_s13_new;
-  //             s02_new = enc_s20_new;
-  //             s12_new = enc_s21_new;
-  //             s22_new = enc_s22_new;
-  //             s32_new = enc_s23_new;
-  //             s03_new = enc_s30_new;
-  //             s13_new = enc_s31_new;
-  //             s23_new = enc_s32_new;
-  //             s33_new = enc_s33_new;
-  //             s_we    = 1'b1;
-  //           end
-  //       end
-//    end // state_logic
-
 
   //----------------------------------------------------------------
   // round_logic
@@ -362,129 +267,45 @@ module aes_encipher_round(
   always @*
     begin : round_logic
       // Wires for internal intermediate values.
-      reg [7 : 0] init_s00, s00_0, s00_1, s00_2;
-      reg [7 : 0] init_s01, s01_0, s01_1, s01_2;
-      reg [7 : 0] init_s02, s02_0, s02_1, s02_2;
-      reg [7 : 0] init_s03, s03_0, s03_1, s03_2;
-      reg [7 : 0] init_s10, s10_0, s10_1, s10_2;
-      reg [7 : 0] init_s11, s11_0, s11_1, s11_2;
-      reg [7 : 0] init_s12, s12_0, s12_1, s12_2;
-      reg [7 : 0] init_s13, s13_0, s13_1, s13_2;
-      reg [7 : 0] init_s20, s20_0, s20_1, s20_2;
-      reg [7 : 0] init_s21, s21_0, s21_1, s21_2;
-      reg [7 : 0] init_s22, s22_0, s22_1, s22_2;
-      reg [7 : 0] init_s23, s23_0, s23_1, s23_2;
-      reg [7 : 0] init_s30, s30_0, s30_1, s30_2;
-      reg [7 : 0] init_s31, s31_0, s31_1, s31_2;
-      reg [7 : 0] init_s32, s32_0, s32_1, s32_2;
-      reg [7 : 0] init_s33, s33_0, s33_1, s33_2;
+      reg [7 : 0] s00_0, s00_1, s00_2;
+      reg [7 : 0] s01_0, s01_1, s01_2;
+      reg [7 : 0] s02_0, s02_1, s02_2;
+      reg [7 : 0] s03_0, s03_1, s03_2;
+      reg [7 : 0] s10_0, s10_1, s10_2;
+      reg [7 : 0] s11_0, s11_1, s11_2;
+      reg [7 : 0] s12_0, s12_1, s12_2;
+      reg [7 : 0] s13_0, s13_1, s13_2;
+      reg [7 : 0] s20_0, s20_1, s20_2;
+      reg [7 : 0] s21_0, s21_1, s21_2;
+      reg [7 : 0] s22_0, s22_1, s22_2;
+      reg [7 : 0] s23_0, s23_1, s23_2;
+      reg [7 : 0] s30_0, s30_1, s30_2;
+      reg [7 : 0] s31_0, s31_1, s31_2;
+      reg [7 : 0] s32_0, s32_1, s32_2;
+      reg [7 : 0] s33_0, s33_1, s33_2;
 
-      case (update_type)
-        NO_UPDATE:
-          begin
-            tmp_sboxw    = 32'h00000000;
-            block_w0_new = 32'h00000000;
-            block_w0_we  = 0;
-            block_w1_new = 32'h00000000;
-            block_w1_we  = 0;
-            block_w2_new = 32'h00000000;
-            block_w2_we  = 0;
-            block_w3_new = 32'h00000000;
-            block_w3_we  = 0;
-          end
-
-        // InitRound
-        INIT_UPDATE:
-          begin
-//            init_s00 = s00_1 ^ round_key[127 : 120];
-//            init_s10 = s01_1 ^ round_key[119 : 112];
-//            init_s20 = s02_1 ^ round_key[111 : 104];
-//            init_s30 = s03_1 ^ round_key[103 :  96];
-//            init_s01 = s10_1 ^ round_key[95  :  88];
-//            init_s11 = s11_1 ^ round_key[87  :  80];
-//            init_s21 = s12_1 ^ round_key[79  :  72];
-//            init_s31 = s13_1 ^ round_key[71  :  64];
-//            init_s02 = s20_1 ^ round_key[63  :  56];
-//            init_s12 = s21_1 ^ round_key[55  :  48];
-//            init_s22 = s22_1 ^ round_key[47  :  40];
-//            init_s32 = s23_1 ^ round_key[39  :  32];
-//            init_s03 = s30_1 ^ round_key[31  :  24];
-//            init_s13 = s31_1 ^ round_key[23  :  16];
-//            init_s23 = s32_1 ^ round_key[15  :   8];
-//            init_s33 = s33_1 ^ round_key[7   :   0];
-
-            block_w0_new = block[127 : 096];
-            block_w0_we  = 1;
-            block_w1_new = block[095 : 064];
-            block_w1_we  = 1;
-            block_w2_new = block[063 : 032];
-            block_w2_we  = 1;
-            block_w3_new = block[031 : 000];
-            block_w3_we  = 1;
-          end
-
-        // SubBytes update using the module external Sboxes.
-        SBOX_UPDATE:
-          begin
-            case (sword_ctr_reg)
-              2'h0:
-                begin
-                  tmp_sboxw    = block_w0_reg;
-                  block_w0_new = new_sboxw;
-                  block_w0_we  = 1;
-                end
-
-              2'h1:
-                begin
-                  tmp_sboxw    = block_w1_reg;
-                  block_w1_new = new_sboxw;
-                  block_w1_we  = 1;
-                end
-
-              2'h2:
-                begin
-                  tmp_sboxw    = block_w2_reg;
-                  block_w2_new = new_sboxw;
-                  block_w2_we  = 1;
-                end
-
-              2'h3:
-                begin
-                  tmp_sboxw    = block_w3_reg;
-                  block_w3_new = new_sboxw;
-                  block_w3_we  = 1;
-                end
-            endcase // case (sbox_mux_ctrl_reg)
-          end
-
-        MAIN_UPDATE:
-          begin
-          end
-
-        FINAL_UPDATE:
-          begin
-          end
-      endcase // case (update_type)
-      
-
-
+      // Logic common to normal round updates
+      // as well as final round update.
       // Shiftrows
-      s00_0 = s00;
-      s01_0 = s01;
-      s02_0 = s02;
-      s03_0 = s03;
-      s10_0 = s11;
-      s11_0 = s12;
-      s12_0 = s13;
-      s13_0 = s10;
-      s20_0 = s22;
-      s21_0 = s23;
-      s22_0 = s20;
-      s23_0 = s21;
-      s30_0 = s33;
-      s31_0 = s30;
-      s32_0 = s31;
-      s33_0 = s32;
+      s00_0 = block_w0_reg[031 : 024];
+      s01_0 = block_w0_reg[023 : 016];
+      s02_0 = block_w0_reg[015 : 008];
+      s03_0 = block_w0_reg[007 : 000];
+
+      s10_0 = block_w1_reg[023 : 016];
+      s11_0 = block_w1_reg[015 : 008];
+      s12_0 = block_w1_reg[007 : 000];
+      s13_0 = block_w1_reg[031 : 024];
+
+      s20_0 = block_w2_reg[015 : 008];
+      s21_0 = block_w2_reg[007 : 000];
+      s22_0 = block_w2_reg[031 : 024];
+      s23_0 = block_w2_reg[023 : 016];
+
+      s30_0 = block_w3_reg[007 : 000];
+      s31_0 = block_w3_reg[031 : 024];
+      s32_0 = block_w3_reg[023 : 016];
+      s33_0 = block_w3_reg[015 : 008];
 
       // MixColumns
       s00_1 = gm2(s00_0) ^ gm3(s10_0) ^ s20_0      ^ s30_0;
@@ -525,88 +346,92 @@ module aes_encipher_round(
       s32_2 = s32_1 ^ round_key[15  :   8];
       s33_2 = s33_1 ^ round_key[7   :   0];
 
-      case (round_type)
-        INIT_ROUND:
+      // Update based on update type.
+      case (update_type)
+        NO_UPDATE:
           begin
-            tmp_s00_new = init_s00;
-            tmp_s01_new = init_s01;
-            tmp_s02_new = init_s02;
-            tmp_s03_new = init_s03;
-            tmp_s10_new = init_s10;
-            tmp_s11_new = init_s11;
-            tmp_s12_new = init_s12;
-            tmp_s13_new = init_s13;
-            tmp_s20_new = init_s20;
-            tmp_s21_new = init_s21;
-            tmp_s22_new = init_s22;
-            tmp_s23_new = init_s23;
-            tmp_s30_new = init_s30;
-            tmp_s31_new = init_s31;
-            tmp_s32_new = init_s32;
-            tmp_s33_new = init_s33;
+            tmp_sboxw    = 32'h00000000;
+            block_w0_new = 32'h00000000;
+            block_w0_we  = 0;
+            block_w1_new = 32'h00000000;
+            block_w1_we  = 0;
+            block_w2_new = 32'h00000000;
+            block_w2_we  = 0;
+            block_w3_new = 32'h00000000;
+            block_w3_we  = 0;
           end
 
-        MAIN_ROUND:
+        // InitRound
+        INIT_UPDATE:
           begin
-            tmp_s00_new = s00_2;
-            tmp_s01_new = s01_2;
-            tmp_s02_new = s02_2;
-            tmp_s03_new = s03_2;
-            tmp_s10_new = s10_2;
-            tmp_s11_new = s11_2;
-            tmp_s12_new = s12_2;
-            tmp_s13_new = s13_2;
-            tmp_s20_new = s20_2;
-            tmp_s21_new = s21_2;
-            tmp_s22_new = s22_2;
-            tmp_s23_new = s23_2;
-            tmp_s30_new = s30_2;
-            tmp_s31_new = s31_2;
-            tmp_s32_new = s32_2;
-            tmp_s33_new = s33_2;
+            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
+            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
+            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
+            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
           end
 
-        FINAL_ROUND:
+        // SubBytes update using the module external Sboxes.
+        SBOX_UPDATE:
           begin
-            tmp_s00_new = s00_1;
-            tmp_s01_new = s01_1;
-            tmp_s02_new = s02_1;
-            tmp_s03_new = s03_1;
-            tmp_s10_new = s10_1;
-            tmp_s11_new = s11_1;
-            tmp_s12_new = s12_1;
-            tmp_s13_new = s13_1;
-            tmp_s20_new = s20_1;
-            tmp_s21_new = s21_1;
-            tmp_s22_new = s22_1;
-            tmp_s23_new = s23_1;
-            tmp_s30_new = s30_1;
-            tmp_s31_new = s31_1;
-            tmp_s32_new = s32_1;
-            tmp_s33_new = s33_1;
+            case (sword_ctr_reg)
+              2'h0:
+                begin
+                  tmp_sboxw    = block_w0_reg;
+                  block_w0_new = new_sboxw;
+                  block_w0_we  = 1;
+                end
+
+              2'h1:
+                begin
+                  tmp_sboxw    = block_w1_reg;
+                  block_w1_new = new_sboxw;
+                  block_w1_we  = 1;
+                end
+
+              2'h2:
+                begin
+                  tmp_sboxw    = block_w2_reg;
+                  block_w2_new = new_sboxw;
+                  block_w2_we  = 1;
+                end
+
+              2'h3:
+                begin
+                  tmp_sboxw    = block_w3_reg;
+                  block_w3_new = new_sboxw;
+                  block_w3_we  = 1;
+                end
+            endcase // case (sbox_mux_ctrl_reg)
           end
 
-        default:
+        MAIN_UPDATE:
           begin
-            // Default assignments.
-            tmp_s00_new = 8'h00;
-            tmp_s01_new = 8'h00;
-            tmp_s02_new = 8'h00;
-            tmp_s03_new = 8'h00;
-            tmp_s10_new = 8'h00;
-            tmp_s11_new = 8'h00;
-            tmp_s12_new = 8'h00;
-            tmp_s13_new = 8'h00;
-            tmp_s20_new = 8'h00;
-            tmp_s21_new = 8'h00;
-            tmp_s22_new = 8'h00;
-            tmp_s23_new = 8'h00;
-            tmp_s30_new = 8'h00;
-            tmp_s31_new = 8'h00;
-            tmp_s32_new = 8'h00;
-            tmp_s33_new = 8'h00;
+            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
+            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
+            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
+            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
           end
-      endcase // case (round_type)
+
+        FINAL_UPDATE:
+          begin
+            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
+            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
+            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
+            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
+          end
+      endcase // case (update_type)
     end // round_logic
 
 
