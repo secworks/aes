@@ -188,7 +188,8 @@ module aes_encipher_round(
 //  assign sbox3_addr = tmp_sbox3_addr;
 
   assign sboxw = tmp_sboxw;
-  assign ready = ready_reg
+  assign ready = ready_reg;
+
 
   //----------------------------------------------------------------
   // reg_update
@@ -207,7 +208,7 @@ module aes_encipher_round(
           block_w3_reg  <= 32'h00000000;
           sword_ctr_reg <= 2'h0;
           round_ctr_reg <= 4'h0;
-          ready_reg     <= 0;
+          ready_reg     <= 1;
           enc_ctrl_reg  <= CTRL_IDLE;
         end
       else
