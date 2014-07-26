@@ -149,13 +149,13 @@ module aes_decipher_round(
   reg [31 : 0] block_w3_new;
   reg          block_w3_we;
 
-  reg [1 : 0]  dec_ctrl_reg;
-  reg [1 : 0]  dec_ctrl_new;
-  reg          dec_ctrl_we;
-
   reg          ready_reg;
   reg          ready_new;
   reg          ready_we;
+
+  reg [1 : 0]  dec_ctrl_reg;
+  reg [1 : 0]  dec_ctrl_new;
+  reg          dec_ctrl_we;
 
 
   //----------------------------------------------------------------
@@ -227,15 +227,45 @@ module aes_decipher_round(
     begin: reg_update
       if (!reset_n)
         begin
-          ready_reg    <= 1;
-          dec_ctr_reg  <= 4'h0;
+          sword_ctr_reg <= 2'h0;
+          round_ctr_reg <= 4'h0;
+          block_w0_reg  <= 32'h00000000;
+          block_w1_reg  <= 32'h00000000;
+          block_w2_reg  <= 32'h00000000;
+          block_w3_reg  <= 32'h00000000;
+          ready_reg     <= 1;
           dec_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
+          if (block_w0_we)
+            begin
+              block_w0_reg <= block_w0_new;
+            end
+
+          if (block_w1_we)
+            begin
+              block_w1_reg <= block_w1_new;
+            end
+
+          if (block_w2_we)
+            begin
+              block_w2_reg <= block_w2_new;
+            end
+
+          if (block_w3_we)
+            begin
+              block_w3_reg <= block_w3_new;
+            end
+
           if (sword_ctr_we)
             begin
               sword_ctr_reg <= sword_ctr_new;
+            end
+
+          if (round_ctr_we)
+            begin
+              round_ctr_reg <= round_ctr_new;
             end
 
           if (ready_we)
