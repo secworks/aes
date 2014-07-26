@@ -329,11 +329,6 @@ module aes_key_mem(
             num_rounds = AES_128_NUM_ROUNDS;
           end
 
-        AES_192_BIT_KEY:
-          begin
-            num_rounds = AES_192_NUM_ROUNDS;
-          end
-
         AES_256_BIT_KEY:
           begin
             num_rounds = AES_256_NUM_ROUNDS;
