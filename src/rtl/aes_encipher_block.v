@@ -66,15 +66,17 @@ module aes_encipher_block(
   parameter AES128_ROUNDS = 4'ha;
   parameter AES256_ROUNDS = 4'he;
 
-  parameter NO_UPDATE    = 0;
-  parameter INIT_UPDATE  = 1;
-  parameter SBOX_UPDATE  = 2;
-  parameter MAIN_UPDATE  = 3;
-  parameter FINAL_UPDATE = 4;
+  parameter NO_UPDATE    = 3'h0;
+  parameter INIT_UPDATE  = 3'h1;
+  parameter SBOX_UPDATE  = 3'h2;
+  parameter MAIN_UPDATE  = 3'h3;
+  parameter FINAL_UPDATE = 3'h4;
 
-  parameter CTRL_IDLE = 2'h0;
-  parameter CTRL_INIT = 2'h1;
-  parameter CTRL_DONE = 2'h2;
+  parameter CTRL_IDLE  = 3'h0;
+  parameter CTRL_INIT  = 3'h1;
+  parameter CTRL_SBOX  = 3'h2;
+  parameter CTRL_MAIN  = 3'h3;
+  parameter CTRL_FINAL = 3'h4;
   
  
   //----------------------------------------------------------------
@@ -128,19 +130,17 @@ module aes_encipher_block(
   reg          ready_new;
   reg          ready_we;
 
-  reg [1 : 0]  enc_ctrl_reg;
-  reg [1 : 0]  enc_ctrl_new;
+  reg [2 : 0]  enc_ctrl_reg;
+  reg [2 : 0]  enc_ctrl_new;
   reg          enc_ctrl_we;
 
 
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [31 : 0]  sword;
-  wire [31 : 0] new_sword;
-  reg [2 : 0]   update_type;
-
-  reg [31 : 0 ] tmp_sboxw;
+  reg [2 : 0]  update_type;
+  reg [3 : 0]  num_rounds;
+  reg [31 : 0] tmp_sboxw;
 
 
   //----------------------------------------------------------------
@@ -436,8 +436,26 @@ module aes_encipher_block(
 
 
   //----------------------------------------------------------------
-  // encipher_ctrl
+  // num_rounds_mux
   //
+  // Simple mux that selects the number of rouns used to process
+  // the block based on the give key length.
+  //----------------------------------------------------------------
+  always @*
+    begin : num_rounds_mux
+      if (keylen == AES_256_BIT_KEY)
+        begin
+          num_rounds = AES256_ROUNDS;
+        end
+      else
+        begin
+          num_rounds = AES128_ROUNDS;
+        end
+    end // num_rounds_mux
+
+
+  //----------------------------------------------------------------
+  // encipher_ctrl
   //
   // The FSM that controls the encipher operations.
   //----------------------------------------------------------------
@@ -446,8 +464,8 @@ module aes_encipher_block(
       // Default assignments.
       sword_ctr_inc = 0;
       sword_ctr_rst = 0;
-      round_ctr_rst = 0;
       round_ctr_inc = 0;
+      round_ctr_rst = 0;
       ready_new     = 0;
       ready_we      = 0;
       update_type   = NO_UPDATE;
@@ -457,10 +475,64 @@ module aes_encipher_block(
       case(enc_ctrl_reg)
         CTRL_IDLE:
           begin
+            if (next)
+              begin
+                round_ctr_rst = 1;
+                ready_new     = 0;
+                ready_we      = 1;
+                enc_ctrl_new  = CTRL_INIT;
+                enc_ctrl_we   = 1;
+              end
+          end
+
+        CTRL_INIT:
+          begin
+            sword_ctr_rst = 1;
+            update_type   = INIT_UPDATE;
+            enc_ctrl_new  = CTRL_INIT;
+            enc_ctrl_we   = 1;
+          end
+
+        CTRL_SBOX:
+          begin
+            sword_ctr_inc = 1;
+            update_type   = SBOX_UPDATE;
+            if (sword_ctr_reg == 2'h3)
+              begin
+                enc_ctrl_new  = CTRL_MAIN;
+                enc_ctrl_we   = 1;
+              end
+          end
+
+        CTRL_MAIN:
+          begin
+            sword_ctr_rst = 1;
+            update_type   = MAIN_UPDATE;
+            round_ctr_inc = 1;
+            if (round_ctr_reg == num_rounds)
+              begin
+                enc_ctrl_new  = CTRL_FINAL;
+                enc_ctrl_we   = 1;
+              end
+            else
+              begin
+                enc_ctrl_new  = CTRL_SBOX;
+                enc_ctrl_we   = 1;
+              end
+          end
+
+        CTRL_FINAL:
+          begin
+            update_type  = FINAL_UPDATE;
+            ready_new    = 1;
+            ready_we     = 1;
+            enc_ctrl_new = CTRL_IDLE;
+            enc_ctrl_we  = 1;
           end
 
         default:
           begin
+            // Empty. Just here to make the synthesis tool happy.
           end
       endcase // case (enc_ctrl_reg)
 
