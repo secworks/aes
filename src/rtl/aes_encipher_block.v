@@ -392,6 +392,25 @@ module aes_encipher_block(
 
 
   //----------------------------------------------------------------
+  // num_rounds_mux
+  //
+  // Simple mux that selects the number of rouns used to process
+  // the block based on the give key length.
+  //----------------------------------------------------------------
+  always @*
+    begin : num_rounds_mux
+      if (keylen == AES_256_BIT_KEY)
+        begin
+          num_rounds = AES256_ROUNDS;
+        end
+      else
+        begin
+          num_rounds = AES128_ROUNDS;
+        end
+    end // num_rounds_mux
+
+
+  //----------------------------------------------------------------
   // sword_ctr
   //
   // The subbytes word counter with reset and increase logic.
@@ -433,25 +452,6 @@ module aes_encipher_block(
           round_ctr_we  = 1'b0;
         end
     end // round_ctr
-
-
-  //----------------------------------------------------------------
-  // num_rounds_mux
-  //
-  // Simple mux that selects the number of rouns used to process
-  // the block based on the give key length.
-  //----------------------------------------------------------------
-  always @*
-    begin : num_rounds_mux
-      if (keylen == AES_256_BIT_KEY)
-        begin
-          num_rounds = AES256_ROUNDS;
-        end
-      else
-        begin
-          num_rounds = AES128_ROUNDS;
-        end
-    end // num_rounds_mux
 
 
   //----------------------------------------------------------------
