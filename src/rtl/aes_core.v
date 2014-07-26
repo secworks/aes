@@ -81,13 +81,13 @@ module aes_core(
 
   reg [3 : 0]    round_nr;
   
-  wire           enc_next;
+  reg            enc_next;
   wire [3 : 0]   enc_round_nr;
   wire [127 : 0] enc_new_block;
   wire           enc_ready;
   wire [31 : 0]  enc_sboxw;
 
-  wire           dec_next;
+  reg            dec_next;
   wire [3 : 0]   dec_round_nr;
   wire [127 : 0] dec_new_block;
   wire           dec_ready;
@@ -96,6 +96,9 @@ module aes_core(
 
   reg [31 : 0]   sboxw;
   wire [31 : 0]  new_sboxw;
+
+  reg [127 : 000] tmp_result;
+  reg             tmp_result_valid;
 
   
   //----------------------------------------------------------------
