@@ -142,54 +142,10 @@ module aes_encipher_round(
 
   reg [31 : 0 ] tmp_sboxw;
 
-  reg [7 : 0] tmp_s0_new;
-  reg [7 : 0] tmp_s1_new;
-  reg [7 : 0] tmp_s2_new;
-  reg [7 : 0] tmp_s3_new;
-
-  reg [7 : 0] tmp_s00_new;
-  reg [7 : 0] tmp_s01_new;
-  reg [7 : 0] tmp_s02_new;
-  reg [7 : 0] tmp_s03_new;
-  reg [7 : 0] tmp_s10_new;
-  reg [7 : 0] tmp_s11_new;
-  reg [7 : 0] tmp_s12_new;
-  reg [7 : 0] tmp_s13_new;
-  reg [7 : 0] tmp_s20_new;
-  reg [7 : 0] tmp_s21_new;
-  reg [7 : 0] tmp_s22_new;
-  reg [7 : 0] tmp_s23_new;
-  reg [7 : 0] tmp_s30_new;
-  reg [7 : 0] tmp_s31_new;
-  reg [7 : 0] tmp_s32_new;
-  reg [7 : 0] tmp_s33_new;
-
 
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-//  assign s00_new = tmp_s00_new;
-//  assign s01_new = tmp_s01_new;
-//  assign s02_new = tmp_s02_new;
-//  assign s03_new = tmp_s03_new;
-//  assign s10_new = tmp_s10_new;
-//  assign s11_new = tmp_s11_new;
-//  assign s12_new = tmp_s12_new;
-//  assign s13_new = tmp_s13_new;
-//  assign s20_new = tmp_s20_new;
-//  assign s21_new = tmp_s21_new;
-//  assign s22_new = tmp_s22_new;
-//  assign s23_new = tmp_s23_new;
-//  assign s30_new = tmp_s30_new;
-//  assign s31_new = tmp_s31_new;
-//  assign s32_new = tmp_s32_new;
-//  assign s33_new = tmp_s33_new;
-//
-//  assign sbox0_addr = tmp_sbox0_addr;
-//  assign sbox1_addr = tmp_sbox1_addr;
-//  assign sbox2_addr = tmp_sbox2_addr;
-//  assign sbox3_addr = tmp_sbox3_addr;
-
   assign sboxw = tmp_sboxw;
   assign ready = ready_reg;
 
