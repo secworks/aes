@@ -103,7 +103,7 @@ module aes_core(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_encipher_round enc_round(
+  aes_encipher_block enc_block(
                                .clk(clk),
                                .reset_n(reset_n),
 
@@ -122,7 +122,7 @@ module aes_core(
                               );
 
 
-  aes_decipher_round dec_round(
+  aes_decipher_block dec_block(
                                .clk(clk),
                                .reset_n(reset_n),
 
