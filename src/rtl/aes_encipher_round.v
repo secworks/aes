@@ -53,7 +53,7 @@ module aes_encipher_round(
 
                           input wire [127 : 0]  block,
                           output wire [127 : 0] new_block,
-                          output wire [127 : 0] ready
+                          output wire           ready
                          );
 
 
@@ -125,14 +125,17 @@ module aes_encipher_round(
   reg [1 : 0]  enc_ctrl_reg;
   reg [1 : 0]  enc_ctrl_new;
   reg          enc_ctrl_we;
-  
-  
+
+  reg          ready_reg;
+  reg          ready_new;
+  reg          ready_we;
+
+
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
   reg init_block;
   reg update_block;
-
 
   reg [31 : 0 ] tmp_sboxw;
 
@@ -185,7 +188,7 @@ module aes_encipher_round(
 //  assign sbox3_addr = tmp_sbox3_addr;
 
   assign sboxw = tmp_sboxw;
-
+  assign ready = ready_reg
 
   //----------------------------------------------------------------
   // reg_update
@@ -204,6 +207,7 @@ module aes_encipher_round(
           block_w3_reg  <= 32'h00000000;
           sword_ctr_reg <= 2'h0;
           round_ctr_reg <= 4'h0;
+          ready_reg     <= 0;
           enc_ctrl_reg  <= CTRL_IDLE;
         end
       else
@@ -236,6 +240,11 @@ module aes_encipher_round(
           if (round_ctr_we)
             begin
               round_ctr_reg <= round_ctr_new;
+            end
+
+          if (ready_we)
+            begin
+              ready_reg <= ready_new;
             end
 
           if (enc_ctrl_we)
@@ -645,6 +654,8 @@ module aes_encipher_round(
       round_ctr_inc = 0;
       init_block    = 0;
       update_block  = 0;
+      ready_new     = 0;
+      ready_we      = 0;
 
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 0;
