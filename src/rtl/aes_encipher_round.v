@@ -124,13 +124,13 @@ module aes_encipher_round(
   reg [31 : 0] block_w3_new;
   reg          block_w3_we;
 
-  reg [1 : 0]  enc_ctrl_reg;
-  reg [1 : 0]  enc_ctrl_new;
-  reg          enc_ctrl_we;
-
   reg          ready_reg;
   reg          ready_new;
   reg          ready_we;
+
+  reg [1 : 0]  enc_ctrl_reg;
+  reg [1 : 0]  enc_ctrl_new;
+  reg          enc_ctrl_we;
 
 
   //----------------------------------------------------------------
