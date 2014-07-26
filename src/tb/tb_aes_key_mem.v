@@ -154,8 +154,8 @@ module tb_aes_key_mem();
       $display("w0 = 0x%04x, w1 = 0x%04x, w2 = 0x%04x, w3 = 0x%04x",
                dut.round_key_gen.w0, dut.round_key_gen.w1, 
                dut.round_key_gen.w2, dut.round_key_gen.w3);
-      $display("subw = 0x%04x, rconw = 0x%04x", 
-               dut.round_key_gen.subw, dut.round_key_gen.rconw);
+      $display("sboxw = 0x%04x, new_sboxw = 0x%04x, rconw = 0x%04x",
+               dut.tmp_sboxw, dut.new_sboxw, dut.round_key_gen.rconw);
       $display("key_mem_new = 0x%016x", dut.key_mem_new);
       $display("");
     end
