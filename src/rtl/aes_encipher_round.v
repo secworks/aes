@@ -417,30 +417,30 @@ module aes_encipher_round(
       case (sword_ctr_reg)
         2'h0:
           begin
-            tmp_sboxw   = sbox_w0_reg;
-            sbox_w0_new = new_sboxw;
-            sbow_w0_we  = 1;
+            tmp_sboxw    = block_w0_reg;
+            block_w0_new = new_sboxw;
+            block_w0_we  = 1;
           end
 
         2'h1:
           begin
-            tmp_sboxw   = sbox_w1_reg;
-            sbox_w0_new = new_sboxw;
-            sbow_w0_we  = 1;
+            tmp_sboxw    = block_w1_reg;
+            block_w1_new = new_sboxw;
+            block_w1_we  = 1;
           end
 
         2'h2:
           begin
-            tmp_sboxw   = sbox_w2_reg;
-            sbox_w2_new = new_sboxw;
-            sbow_w2_we  = 1;
+            tmp_sboxw    = block_w2_reg;
+            block_w2_new = new_sboxw;
+            block_w2_we  = 1;
           end
 
         2'h3:
           begin
-            tmp_sboxw   = sbox_w3_reg;
-            sbox_w3_new = new_sboxw;
-            sbow_w3_we  = 1;
+            tmp_sboxw    = block_w3_reg;
+            block_w3_new = new_sboxw;
+            block_w3_we  = 1;
           end
       endcase // case (sbox_mux_ctrl_reg)
 
