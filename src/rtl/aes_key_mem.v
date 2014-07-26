@@ -102,6 +102,8 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
+  reg [31 : 0] tmp_sboxw;
+
   reg [7 : 0] tmp_sbox0_addr;
   reg [7 : 0] tmp_sbox1_addr;
   reg [7 : 0] tmp_sbox2_addr;
@@ -206,17 +208,14 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin: round_key_gen
-      reg [31 : 0] w0, w1, w2, w3, subw, rconw;
+      reg [31 : 0] w0, w1, w2, w3, rconw;
 
-      tmp_sbox0_addr = prev_key_reg[007 : 000];
-      tmp_sbox1_addr = prev_key_reg[015 : 008];
-      tmp_sbox2_addr = prev_key_reg[023 : 016];
-      tmp_sbox3_addr = prev_key_reg[031 : 024];
       rconw          = {rcon_reg, 24'h000000};
 
       // Note that we do the row rotation operation here
       // by the concatenation order of the sbox results.
-      subw           = {sbox2_data, sbox1_data, sbox0_data, sbox3_data};
+      tmp_sboxw = {prev_key_reg[007 : 000], prev_key_reg[015 : 008],
+                   prev_key_reg[023 : 016], prev_key_reg[031 : 024]};
       
       // Default assignments.
       key_mem_new = 128'h00000000000000000000000000000000;
@@ -234,7 +233,7 @@ module aes_key_mem(
                   end
                 else
                   begin
-                    w0 = prev_key_reg[127 : 096] ^ subw ^ rconw;
+                    w0 = prev_key_reg[127 : 096] ^ new_sboxw ^ rconw;
                     w1 = prev_key_reg[095 : 064] ^ w0;
                     w2 = prev_key_reg[063 : 032] ^ w1;
                     w3 = prev_key_reg[031 : 000] ^ w2;
