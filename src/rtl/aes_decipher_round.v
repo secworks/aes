@@ -45,7 +45,7 @@ module aes_decipher_round(
                           input wire            next,
 
                           input wire            keylen,
-                          input wire [3 : 0]    round_key_addr,
+                          input wire [3 : 0]    round,
                           input wire [127 : 0]  round_key,
 
                           input wire [127 : 0]  block,
@@ -161,6 +161,9 @@ module aes_decipher_round(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
+  reg [31 : 0]  sword;
+  wire [31 : 0] new_sword;
+
   wire [7 : 0] sbox00_data;
   wire [7 : 0] sbox01_data;
   wire [7 : 0] sbox02_data;
@@ -187,7 +190,7 @@ module aes_decipher_round(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_inv_sbox inv_sbox(.sword(inv_sword), .new_sword(new_inv_sword));
+  aes_inv_sbox inv_sbox(.sword(sword), .new_sword(new_sword));
 
 
   //----------------------------------------------------------------
