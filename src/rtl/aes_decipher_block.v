@@ -1,6 +1,6 @@
 //======================================================================
 //
-// aes_decipher_round.v
+// aes_decipher_block.v
 // --------------------
 // The AES decipher round. A pure combinational module that implements
 // the initial round, main round and final round logic for
@@ -38,7 +38,7 @@
 //
 //======================================================================
 
-module aes_decipher_round(
+module aes_decipher_block(
                           input wire            clk,
                           input wire            reset_n,
 
@@ -492,8 +492,8 @@ module aes_decipher_round(
 
     end // decipher_ctrl
 
-endmodule // aes_decipher_round
+endmodule // aes_decipher_block
 
 //======================================================================
-// EOF aes_decipher_round.v
+// EOF aes_decipher_block.v
 //======================================================================

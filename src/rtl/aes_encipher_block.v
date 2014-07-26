@@ -1,6 +1,6 @@
 //======================================================================
 //
-// aes_encipher_round.v
+// aes_encipher_block.v
 // --------------------
 // The AES encipher round. A pure combinational module that implements
 // the initial round, main round and final round logic for
@@ -38,7 +38,7 @@
 //
 //======================================================================
  
-module aes_encipher_round(
+module aes_encipher_block(
                           input wire            clk,
                           input wire            reset_n,
 
@@ -466,8 +466,8 @@ module aes_encipher_round(
 
     end // encipher_ctrl
 
-endmodule // aes_encipher_round
+endmodule // aes_encipher_block
 
 //======================================================================
-// EOF aes_encipher_round.v
+// EOF aes_encipher_block.v
 //======================================================================
