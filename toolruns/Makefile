@@ -39,8 +39,8 @@
 SBOX_SRC=../src/rtl/aes_sbox.v
 INV_SBOX_SRC=../src/rtl/aes_inv_sbox.v
 KEYMEM_SRC=../src/rtl/aes_key_mem.v
-ENCIPHER_SRC=../src/rtl/aes_encipher_round.v
-DECIPHER_SRC=../src/rtl/aes_decipher_round.v
+ENCIPHER_SRC=../src/rtl/aes_encipher_block.v
+DECIPHER_SRC=../src/rtl/aes_decipher_block.v
 CORE_SRC=../src/rtl/aes_core.v $(KEYMEM_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC) $(DECIPHER_SRC)
 TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
