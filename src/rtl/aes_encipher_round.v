@@ -446,8 +446,6 @@ module aes_encipher_round(
       sword_ctr_rst = 0;
       round_ctr_rst = 0;
       round_ctr_inc = 0;
-      init_block    = 0;
-      update_block  = 0;
       ready_new     = 0;
       ready_we      = 0;
       update_type   = NO_UPDATE;
