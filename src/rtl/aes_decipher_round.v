@@ -63,9 +63,11 @@ module aes_decipher_round(
   parameter AES128_ROUNDS = 4'ha;
   parameter AES256_ROUNDS = 4'he;
 
-  parameter INIT_ROUND  = 0;
-  parameter MAIN_ROUND  = 1;
-  parameter FINAL_ROUND = 2;
+  parameter NO_UPDATE    = 0;
+  parameter INIT_UPDATE  = 1;
+  parameter SBOX_UPDATE  = 2;
+  parameter MAIN_UPDATE  = 3;
+  parameter FINAL_UPDATE = 4;
 
   parameter CTRL_IDLE = 2'h0;
   parameter CTRL_INIT = 2'h1;
@@ -164,27 +166,7 @@ module aes_decipher_round(
   reg [31 : 0]  sword;
   wire [31 : 0] new_sword;
 
-  wire [7 : 0] sbox00_data;
-  wire [7 : 0] sbox01_data;
-  wire [7 : 0] sbox02_data;
-  wire [7 : 0] sbox03_data;
-
-  reg [7 : 0] tmp_s00_new;
-  reg [7 : 0] tmp_s01_new;
-  reg [7 : 0] tmp_s02_new;
-  reg [7 : 0] tmp_s03_new;
-  reg [7 : 0] tmp_s10_new;
-  reg [7 : 0] tmp_s11_new;
-  reg [7 : 0] tmp_s12_new;
-  reg [7 : 0] tmp_s13_new;
-  reg [7 : 0] tmp_s20_new;
-  reg [7 : 0] tmp_s21_new;
-  reg [7 : 0] tmp_s22_new;
-  reg [7 : 0] tmp_s23_new;
-  reg [7 : 0] tmp_s30_new;
-  reg [7 : 0] tmp_s31_new;
-  reg [7 : 0] tmp_s32_new;
-  reg [7 : 0] tmp_s33_new;
+  reg [2 : 0] update_type;
 
   
   //----------------------------------------------------------------
@@ -196,23 +178,6 @@ module aes_decipher_round(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign s00_new = tmp_s00_new;
-  assign s01_new = tmp_s01_new;
-  assign s02_new = tmp_s02_new;
-  assign s03_new = tmp_s03_new;
-  assign s10_new = tmp_s10_new;
-  assign s11_new = tmp_s11_new;
-  assign s12_new = tmp_s12_new;
-  assign s13_new = tmp_s13_new;
-  assign s20_new = tmp_s20_new;
-  assign s21_new = tmp_s21_new;
-  assign s22_new = tmp_s22_new;
-  assign s23_new = tmp_s23_new;
-  assign s30_new = tmp_s30_new;
-  assign s31_new = tmp_s31_new;
-  assign s32_new = tmp_s32_new;
-  assign s33_new = tmp_s33_new;
-
   assign ready = ready_reg;
 
 
@@ -306,42 +271,28 @@ module aes_decipher_round(
       reg [7 : 0] init_s32, s32_0, s32_1, s32_2;
       reg [7 : 0] init_s33, s33_0, s33_1, s33_2;
 
-      // InitRound
-      init_s00 = s00 ^ round_key[127 : 120];
-      init_s10 = s01 ^ round_key[119 : 112];
-      init_s20 = s02 ^ round_key[111 : 104];
-      init_s30 = s03 ^ round_key[103 :  96];
-      init_s01 = s10 ^ round_key[95  :  88];
-      init_s11 = s11 ^ round_key[87  :  80];
-      init_s21 = s12 ^ round_key[79  :  72];
-      init_s31 = s13 ^ round_key[71  :  64];
-      init_s02 = s20 ^ round_key[63  :  56];
-      init_s12 = s21 ^ round_key[55  :  48];
-      init_s22 = s22 ^ round_key[47  :  40];
-      init_s32 = s23 ^ round_key[39  :  32];
-      init_s03 = s30 ^ round_key[31  :  24];
-      init_s13 = s31 ^ round_key[23  :  16];
-      init_s23 = s32 ^ round_key[15  :   8];
-      init_s33 = s33 ^ round_key[7   :   0];
+      // Logic common to normal round updates
+      // as well as final round update.
+      // Shiftrows
+      s00_0 = block_w0_reg[031 : 024];
+      s01_0 = block_w0_reg[023 : 016];
+      s02_0 = block_w0_reg[015 : 008];
+      s03_0 = block_w0_reg[007 : 000];
 
-      // SubBytes and ShiftRows
-      // SubBytes is done through connectivity of sbox instances.
-      s00_0 = sbox00_data;
-      s01_0 = sbox01_data;
-      s02_0 = sbox02_data;
-      s03_0 = sbox03_data;
-      s10_0 = sbox01_data;
-      s11_0 = sbox02_data;
-      s12_0 = sbox03_data;
-      s13_0 = sbox00_data;
-      s20_0 = sbox02_data;
-      s21_0 = sbox03_data;
-      s22_0 = sbox00_data;
-      s23_0 = sbox01_data;
-      s30_0 = sbox03_data;
-      s31_0 = sbox00_data;
-      s32_0 = sbox01_data;
-      s33_0 = sbox02_data;
+      s10_0 = block_w1_reg[023 : 016];
+      s11_0 = block_w1_reg[015 : 008];
+      s12_0 = block_w1_reg[007 : 000];
+      s13_0 = block_w1_reg[031 : 024];
+
+      s20_0 = block_w2_reg[015 : 008];
+      s21_0 = block_w2_reg[007 : 000];
+      s22_0 = block_w2_reg[031 : 024];
+      s23_0 = block_w2_reg[023 : 016];
+
+      s30_0 = block_w3_reg[007 : 000];
+      s31_0 = block_w3_reg[031 : 024];
+      s32_0 = block_w3_reg[023 : 016];
+      s33_0 = block_w3_reg[015 : 008];
 
       // MixColumns
       s00_1 = gm14(s00_0) ^ gm11(s10_0) ^ gm13(s20_0) ^ gm09(s30_0);
@@ -379,89 +330,92 @@ module aes_decipher_round(
       s32_2 = s32_1 ^ round_key[15  :   8];
       s33_2 = s33_1 ^ round_key[7   :   0];
 
-      case (round_type)
-        INIT_ROUND:
+      case (update_type)
+        NO_UPDATE:
           begin
-            tmp_s00_new = init_s00;
-            tmp_s01_new = init_s10;
-            tmp_s02_new = init_s20;
-            tmp_s03_new = init_s30;
-            tmp_s10_new = init_s01;
-            tmp_s11_new = init_s11;
-            tmp_s12_new = init_s21;
-            tmp_s13_new = init_s31;
-            tmp_s20_new = init_s02;
-            tmp_s21_new = init_s12;
-            tmp_s22_new = init_s22;
-            tmp_s23_new = init_s32;
-            tmp_s30_new = init_s03;
-            tmp_s31_new = init_s13;
-            tmp_s32_new = init_s23;
-            tmp_s33_new = init_s33;
+            sword = 32'h00000000;
+            block_w0_new = 32'h00000000;
+            block_w0_we  = 0;
+            block_w1_new = 32'h00000000;
+            block_w1_we  = 0;
+            block_w2_new = 32'h00000000;
+            block_w2_we  = 0;
+            block_w3_new = 32'h00000000;
+            block_w3_we  = 0;
           end
 
-        MAIN_ROUND:
+        INIT_UPDATE:
           begin
-            tmp_s00_new = s00_2;
-            tmp_s01_new = s01_2;
-            tmp_s02_new = s02_2;
-            tmp_s03_new = s03_2;
-            tmp_s10_new = s10_2;
-            tmp_s11_new = s11_2;
-            tmp_s12_new = s12_2;
-            tmp_s13_new = s13_2;
-            tmp_s20_new = s20_2;
-            tmp_s21_new = s21_2;
-            tmp_s22_new = s22_2;
-            tmp_s23_new = s23_2;
-            tmp_s30_new = s30_2;
-            tmp_s31_new = s31_2;
-            tmp_s32_new = s32_2;
-            tmp_s33_new = s33_2;
+            // InitRound
+            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
+            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
+            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
+            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
           end
 
-        FINAL_ROUND:
+        SBOX_UPDATE:
           begin
-            tmp_s00_new = s00_1;
-            tmp_s01_new = s01_1;
-            tmp_s02_new = s02_1;
-            tmp_s03_new = s03_1;
-            tmp_s10_new = s10_1;
-            tmp_s11_new = s11_1;
-            tmp_s12_new = s12_1;
-            tmp_s13_new = s13_1;
-            tmp_s20_new = s20_1;
-            tmp_s21_new = s21_1;
-            tmp_s22_new = s22_1;
-            tmp_s23_new = s23_1;
-            tmp_s30_new = s30_1;
-            tmp_s31_new = s31_1;
-            tmp_s32_new = s32_1;
-            tmp_s33_new = s33_1;
+            case (sword_ctr_reg)
+              2'h0:
+                begin
+                  sword        = block_w0_reg;
+                  block_w0_new = new_sword;
+                  block_w0_we  = 1;
+                end
+
+              2'h1:
+                begin
+                  sword        = block_w1_reg;
+                  block_w1_new = new_sword;
+                  block_w1_we  = 1;
+                end
+
+              2'h2:
+                begin
+                  sword        = block_w2_reg;
+                  block_w2_new = new_sword;
+                  block_w2_we  = 1;
+                end
+
+              2'h3:
+                begin
+                  sword        = block_w3_reg;
+                  block_w3_new = new_sword;
+                  block_w3_we  = 1;
+                end
+            endcase // case (sbox_mux_ctrl_reg)
           end
 
-        default:
+        MAIN_UPDATE:
           begin
-            tmp_s00_new = 8'h00;
-            tmp_s01_new = 8'h00;
-            tmp_s02_new = 8'h00;
-            tmp_s03_new = 8'h00;
-            tmp_s10_new = 8'h00;
-            tmp_s11_new = 8'h00;
-            tmp_s12_new = 8'h00;
-            tmp_s13_new = 8'h00;
-            tmp_s20_new = 8'h00;
-            tmp_s21_new = 8'h00;
-            tmp_s22_new = 8'h00;
-            tmp_s23_new = 8'h00;
-            tmp_s30_new = 8'h00;
-            tmp_s31_new = 8'h00;
-            tmp_s32_new = 8'h00;
-            tmp_s33_new = 8'h00;
+            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
+            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
+            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
+            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
           end
-      endcase // case (round_type)
-    end // round_logic
 
+        FINAL_UPDATE:
+          begin
+            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
+            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
+            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
+            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
+          end
+      endcase // case (update_type)
+    end // block: round_logic
+  
 
   //----------------------------------------------------------------
   // sword_ctr
@@ -520,6 +474,7 @@ module aes_decipher_round(
       sword_ctr_rst = 0;
       round_ctr_rst = 0;
       round_ctr_inc = 0;
+      update_type   = NO_UPDATE;
       ready_new     = 0;
       ready_we      = 0;
       dec_ctrl_new  = CTRL_IDLE;
