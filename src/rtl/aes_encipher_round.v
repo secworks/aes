@@ -136,8 +136,6 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg init_block;
-  reg update_block;
   reg [2 : 0] update_type;
 
   reg [31 : 0 ] tmp_sboxw;
