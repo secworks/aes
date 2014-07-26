@@ -69,9 +69,11 @@ module aes_decipher_block(
   parameter MAIN_UPDATE  = 3;
   parameter FINAL_UPDATE = 4;
 
-  parameter CTRL_IDLE = 2'h0;
-  parameter CTRL_INIT = 2'h1;
-  parameter CTRL_DONE = 2'h2;
+  parameter CTRL_IDLE  = 3'h0;
+  parameter CTRL_INIT  = 3'h1;
+  parameter CTRL_SBOX  = 3'h2;
+  parameter CTRL_MAIN  = 3'h3;
+  parameter CTRL_FINAL = 3'h4;
 
 
   //----------------------------------------------------------------
@@ -155,8 +157,8 @@ module aes_decipher_block(
   reg          ready_new;
   reg          ready_we;
 
-  reg [1 : 0]  dec_ctrl_reg;
-  reg [1 : 0]  dec_ctrl_new;
+  reg [2 : 0]  dec_ctrl_reg;
+  reg [2 : 0]  dec_ctrl_new;
   reg          dec_ctrl_we;
 
 
@@ -165,8 +167,8 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   reg [31 : 0]  sword;
   wire [31 : 0] new_sword;
-
-  reg [2 : 0] update_type;
+  reg [2 : 0]   update_type;
+  reg [3 : 0]   num_rounds;
 
   
   //----------------------------------------------------------------
@@ -254,22 +256,22 @@ module aes_decipher_block(
   always @*
     begin : round_logic
       // Wires for internal intermediate values.
-      reg [7 : 0] init_s00, s00_0, s00_1, s00_2;
-      reg [7 : 0] init_s01, s01_0, s01_1, s01_2;
-      reg [7 : 0] init_s02, s02_0, s02_1, s02_2;
-      reg [7 : 0] init_s03, s03_0, s03_1, s03_2;
-      reg [7 : 0] init_s10, s10_0, s10_1, s10_2;
-      reg [7 : 0] init_s11, s11_0, s11_1, s11_2;
-      reg [7 : 0] init_s12, s12_0, s12_1, s12_2;
-      reg [7 : 0] init_s13, s13_0, s13_1, s13_2;
-      reg [7 : 0] init_s20, s20_0, s20_1, s20_2;
-      reg [7 : 0] init_s21, s21_0, s21_1, s21_2;
-      reg [7 : 0] init_s22, s22_0, s22_1, s22_2;
-      reg [7 : 0] init_s23, s23_0, s23_1, s23_2;
-      reg [7 : 0] init_s30, s30_0, s30_1, s30_2;
-      reg [7 : 0] init_s31, s31_0, s31_1, s31_2;
-      reg [7 : 0] init_s32, s32_0, s32_1, s32_2;
-      reg [7 : 0] init_s33, s33_0, s33_1, s33_2;
+      reg [7 : 0] s00_0, s00_1, s00_2;
+      reg [7 : 0] s01_0, s01_1, s01_2;
+      reg [7 : 0] s02_0, s02_1, s02_2;
+      reg [7 : 0] s03_0, s03_1, s03_2;
+      reg [7 : 0] s10_0, s10_1, s10_2;
+      reg [7 : 0] s11_0, s11_1, s11_2;
+      reg [7 : 0] s12_0, s12_1, s12_2;
+      reg [7 : 0] s13_0, s13_1, s13_2;
+      reg [7 : 0] s20_0, s20_1, s20_2;
+      reg [7 : 0] s21_0, s21_1, s21_2;
+      reg [7 : 0] s22_0, s22_1, s22_2;
+      reg [7 : 0] s23_0, s23_1, s23_2;
+      reg [7 : 0] s30_0, s30_1, s30_2;
+      reg [7 : 0] s31_0, s31_1, s31_2;
+      reg [7 : 0] s32_0, s32_1, s32_2;
+      reg [7 : 0] s33_0, s33_1, s33_2;
 
       // Logic common to normal round updates
       // as well as final round update.
@@ -415,6 +417,25 @@ module aes_decipher_block(
           end
       endcase // case (update_type)
     end // block: round_logic
+
+
+  //----------------------------------------------------------------
+  // num_rounds_mux
+  //
+  // Simple mux that selects the number of rouns used to process
+  // the block based on the give key length.
+  //----------------------------------------------------------------
+  always @*
+    begin : num_rounds_mux
+      if (keylen == AES_256_BIT_KEY)
+        begin
+          num_rounds = AES256_ROUNDS;
+        end
+      else
+        begin
+          num_rounds = AES128_ROUNDS;
+        end
+    end // num_rounds_mux
   
 
   //----------------------------------------------------------------
@@ -483,10 +504,64 @@ module aes_decipher_block(
       case(dec_ctrl_reg)
         CTRL_IDLE:
           begin
+            if (next)
+              begin
+                round_ctr_rst = 1;
+                ready_new     = 0;
+                ready_we      = 1;
+                dec_ctrl_new  = CTRL_INIT;
+                dec_ctrl_we   = 1;
+              end
+          end
+
+        CTRL_INIT:
+          begin
+            sword_ctr_rst = 1;
+            update_type   = INIT_UPDATE;
+            dec_ctrl_new  = CTRL_INIT;
+            dec_ctrl_we   = 1;
+          end
+
+        CTRL_SBOX:
+          begin
+            sword_ctr_inc = 1;
+            update_type   = SBOX_UPDATE;
+            if (sword_ctr_reg == 2'h3)
+              begin
+                dec_ctrl_new  = CTRL_MAIN;
+                dec_ctrl_we   = 1;
+              end
+          end
+
+        CTRL_MAIN:
+          begin
+            sword_ctr_rst = 1;
+            update_type   = MAIN_UPDATE;
+            round_ctr_inc = 1;
+            if (round_ctr_reg == num_rounds)
+              begin
+                dec_ctrl_new  = CTRL_FINAL;
+                dec_ctrl_we   = 1;
+              end
+            else
+              begin
+                dec_ctrl_new  = CTRL_SBOX;
+                dec_ctrl_we   = 1;
+              end
+          end
+
+        CTRL_FINAL:
+          begin
+            update_type  = FINAL_UPDATE;
+            ready_new    = 1;
+            ready_we     = 1;
+            dec_ctrl_new = CTRL_IDLE;
+            dec_ctrl_we  = 1;
           end
 
         default:
           begin
+            // Empty. Just here to make the synthesis tool happy.
           end
       endcase // case (dec_ctrl_reg)
 
