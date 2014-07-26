@@ -50,7 +50,7 @@ module aes_decipher_round(
 
                           input wire [127 : 0]  block,
                           output wire [127 : 0] new_block,
-                          output wire [127 : 0] ready
+                          output wire           ready
                          );
 
 
@@ -153,6 +153,10 @@ module aes_decipher_round(
   reg [1 : 0]  dec_ctrl_new;
   reg          dec_ctrl_we;
 
+  reg          ready_reg;
+  reg          ready_new;
+  reg          ready_we;
+
 
   //----------------------------------------------------------------
   // Wires.
@@ -206,6 +210,8 @@ module aes_decipher_round(
   assign s32_new = tmp_s32_new;
   assign s33_new = tmp_s33_new;
 
+  assign ready = ready_reg;
+
 
   //----------------------------------------------------------------
   // reg_update
@@ -218,6 +224,7 @@ module aes_decipher_round(
     begin: reg_update
       if (!reset_n)
         begin
+          ready_reg    <= 1;
           dec_ctr_reg  <= 4'h0;
           dec_ctrl_reg <= CTRL_IDLE;
         end
@@ -227,6 +234,12 @@ module aes_decipher_round(
             begin
               sword_ctr_reg <= sword_ctr_new;
             end
+
+          if (ready_we)
+            begin
+              ready_reg <= ready_new;
+            end
+
           if (dec_ctrl_we)
             begin
               dec_ctrl_reg <= dec_ctrl_new;
@@ -474,6 +487,8 @@ module aes_decipher_round(
       sword_ctr_rst = 0;
       round_ctr_rst = 0;
       round_ctr_inc = 0;
+      ready_new     = 0;
+      ready_we      = 0;
       dec_ctrl_new  = CTRL_IDLE;
       dec_ctrl_we   = 0;
 
