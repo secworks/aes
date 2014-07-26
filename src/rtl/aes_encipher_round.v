@@ -66,9 +66,11 @@ module aes_encipher_round(
   parameter AES128_ROUNDS = 4'ha;
   parameter AES256_ROUNDS = 4'he;
 
-  parameter INIT_ROUND  = 0;
-  parameter MAIN_ROUND  = 1;
-  parameter FINAL_ROUND = 2;
+  parameter NO_UPDATE    = 0;
+  parameter INIT_UPDATE  = 1;
+  parameter SBOX_UPDATE  = 2;
+  parameter MAIN_UPDATE  = 3;
+  parameter FINAL_UPDATE = 4;
 
   parameter CTRL_IDLE = 2'h0;
   parameter CTRL_INIT = 2'h1;
@@ -136,6 +138,7 @@ module aes_encipher_round(
   //----------------------------------------------------------------
   reg init_block;
   reg update_block;
+  reg [2 : 0] update_type;
 
   reg [31 : 0 ] tmp_sboxw;
 
@@ -376,83 +379,94 @@ module aes_encipher_round(
       reg [7 : 0] init_s32, s32_0, s32_1, s32_2;
       reg [7 : 0] init_s33, s33_0, s33_1, s33_2;
 
-      // Default assignments
-      tmp_sboxw    = 32'h00000000;
-      block_w0_new = 32'h00000000;
-      block_w0_we  = 0;
-      block_w1_new = 32'h00000000;
-      block_w1_we  = 0;
-      block_w2_new = 32'h00000000;
-      block_w2_we  = 0;
-      block_w3_new = 32'h00000000;
-      block_w3_we  = 0;
-
-
-      if (init_block)
-        begin
-          block_w0_new = block[127 : 096];
-          block_w0_we  = 1;
-          block_w1_new = block[095 : 064];
-          block_w1_we  = 1;
-          block_w2_new = block[063 : 032];
-          block_w2_we  = 1;
-          block_w3_new = block[031 : 000];
-          block_w3_we  = 1;
-        end
-
-//      else if (update_block)
-//        begin
-//
-//        end
-      
-      // InitRound
-      init_s00 = s00_1 ^ round_key[127 : 120];
-      init_s10 = s01_1 ^ round_key[119 : 112];
-      init_s20 = s02_1 ^ round_key[111 : 104];
-      init_s30 = s03_1 ^ round_key[103 :  96];
-      init_s01 = s10_1 ^ round_key[95  :  88];
-      init_s11 = s11_1 ^ round_key[87  :  80];
-      init_s21 = s12_1 ^ round_key[79  :  72];
-      init_s31 = s13_1 ^ round_key[71  :  64];
-      init_s02 = s20_1 ^ round_key[63  :  56];
-      init_s12 = s21_1 ^ round_key[55  :  48];
-      init_s22 = s22_1 ^ round_key[47  :  40];
-      init_s32 = s23_1 ^ round_key[39  :  32];
-      init_s03 = s30_1 ^ round_key[31  :  24];
-      init_s13 = s31_1 ^ round_key[23  :  16];
-      init_s23 = s32_1 ^ round_key[15  :   8];
-      init_s33 = s33_1 ^ round_key[7   :   0];
-
-      // SubBytes - Done through connectivity to the sbox.
-      case (sword_ctr_reg)
-        2'h0:
+      case (update_type)
+        NO_UPDATE:
           begin
-            tmp_sboxw    = block_w0_reg;
-            block_w0_new = new_sboxw;
+            tmp_sboxw    = 32'h00000000;
+            block_w0_new = 32'h00000000;
+            block_w0_we  = 0;
+            block_w1_new = 32'h00000000;
+            block_w1_we  = 0;
+            block_w2_new = 32'h00000000;
+            block_w2_we  = 0;
+            block_w3_new = 32'h00000000;
+            block_w3_we  = 0;
+          end
+
+        // InitRound
+        INIT_UPDATE:
+          begin
+//            init_s00 = s00_1 ^ round_key[127 : 120];
+//            init_s10 = s01_1 ^ round_key[119 : 112];
+//            init_s20 = s02_1 ^ round_key[111 : 104];
+//            init_s30 = s03_1 ^ round_key[103 :  96];
+//            init_s01 = s10_1 ^ round_key[95  :  88];
+//            init_s11 = s11_1 ^ round_key[87  :  80];
+//            init_s21 = s12_1 ^ round_key[79  :  72];
+//            init_s31 = s13_1 ^ round_key[71  :  64];
+//            init_s02 = s20_1 ^ round_key[63  :  56];
+//            init_s12 = s21_1 ^ round_key[55  :  48];
+//            init_s22 = s22_1 ^ round_key[47  :  40];
+//            init_s32 = s23_1 ^ round_key[39  :  32];
+//            init_s03 = s30_1 ^ round_key[31  :  24];
+//            init_s13 = s31_1 ^ round_key[23  :  16];
+//            init_s23 = s32_1 ^ round_key[15  :   8];
+//            init_s33 = s33_1 ^ round_key[7   :   0];
+
+            block_w0_new = block[127 : 096];
             block_w0_we  = 1;
-          end
-
-        2'h1:
-          begin
-            tmp_sboxw    = block_w1_reg;
-            block_w1_new = new_sboxw;
+            block_w1_new = block[095 : 064];
             block_w1_we  = 1;
-          end
-
-        2'h2:
-          begin
-            tmp_sboxw    = block_w2_reg;
-            block_w2_new = new_sboxw;
+            block_w2_new = block[063 : 032];
             block_w2_we  = 1;
-          end
-
-        2'h3:
-          begin
-            tmp_sboxw    = block_w3_reg;
-            block_w3_new = new_sboxw;
+            block_w3_new = block[031 : 000];
             block_w3_we  = 1;
           end
-      endcase // case (sbox_mux_ctrl_reg)
+
+        // SubBytes update using the module external Sboxes.
+        SBOX_UPDATE:
+          begin
+            case (sword_ctr_reg)
+              2'h0:
+                begin
+                  tmp_sboxw    = block_w0_reg;
+                  block_w0_new = new_sboxw;
+                  block_w0_we  = 1;
+                end
+
+              2'h1:
+                begin
+                  tmp_sboxw    = block_w1_reg;
+                  block_w1_new = new_sboxw;
+                  block_w1_we  = 1;
+                end
+
+              2'h2:
+                begin
+                  tmp_sboxw    = block_w2_reg;
+                  block_w2_new = new_sboxw;
+                  block_w2_we  = 1;
+                end
+
+              2'h3:
+                begin
+                  tmp_sboxw    = block_w3_reg;
+                  block_w3_new = new_sboxw;
+                  block_w3_we  = 1;
+                end
+            endcase // case (sbox_mux_ctrl_reg)
+          end
+
+        MAIN_UPDATE:
+          begin
+          end
+
+        FINAL_UPDATE:
+          begin
+          end
+      endcase // case (update_type)
+      
+
 
       // Shiftrows
       s00_0 = s00;
@@ -657,7 +671,7 @@ module aes_encipher_round(
       update_block  = 0;
       ready_new     = 0;
       ready_we      = 0;
-
+      update_type   = NO_UPDATE;
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 0;
     
