@@ -36,7 +36,7 @@
 //======================================================================
 
 module aes_inv_sbox(
-                    input wire [31 : 0] sword,
+                    input wire  [31 : 0] sword,
                     output wire [31 : 0] new_sword
                    );
 
@@ -64,7 +64,7 @@ module aes_inv_sbox(
   //----------------------------------------------------------------
   always @*
     begin : inv_sbox_rom0
-      case(sboxw[31 : 24])
+      case(sword[31 : 24])
         8'h00: tmp_new_sbox0 = 8'h52;
 	8'h01: tmp_new_sbox0 = 8'h09;
 	8'h02: tmp_new_sbox0 = 8'h6a;
@@ -321,7 +321,7 @@ module aes_inv_sbox(
 	8'hfd: tmp_new_sbox0 = 8'h21;
 	8'hfe: tmp_new_sbox0 = 8'h0c;
 	8'hff: tmp_new_sbox0 = 8'h7d;
-      endcase // case (addr)
+      endcase // case (sword)
     end // inv_sbox_rom0
 
 
@@ -332,7 +332,7 @@ module aes_inv_sbox(
   //----------------------------------------------------------------
   always @*
     begin : inv_sbox_rom1
-      case(sboxw[16 : 23])
+      case(sword[23 : 16])
         8'h00: tmp_new_sbox1 = 8'h52;
 	8'h01: tmp_new_sbox1 = 8'h09;
 	8'h02: tmp_new_sbox1 = 8'h6a;
@@ -589,7 +589,7 @@ module aes_inv_sbox(
 	8'hfd: tmp_new_sbox1 = 8'h21;
 	8'hfe: tmp_new_sbox1 = 8'h0c;
 	8'hff: tmp_new_sbox1 = 8'h7d;
-      endcase // case (addr)
+      endcase // case (sword)
     end // inv_sbox_rom1
 
 
@@ -600,7 +600,7 @@ module aes_inv_sbox(
   //----------------------------------------------------------------
   always @*
     begin : inv_sbox_rom2
-      case(sboxw[15 : 8])
+      case(sword[15 : 8])
         8'h00: tmp_new_sbox2 = 8'h52;
 	8'h01: tmp_new_sbox2 = 8'h09;
 	8'h02: tmp_new_sbox2 = 8'h6a;
@@ -857,7 +857,7 @@ module aes_inv_sbox(
 	8'hfd: tmp_new_sbox2 = 8'h21;
 	8'hfe: tmp_new_sbox2 = 8'h0c;
 	8'hff: tmp_new_sbox2 = 8'h7d;
-      endcase // case (addr)
+      endcase // case (sword)
     end // inv_sbox_rom2
 
 
@@ -868,7 +868,7 @@ module aes_inv_sbox(
   //----------------------------------------------------------------
   always @*
     begin : inv_sbox_rom3
-      case(sboxw[7 : 0])
+      case(sword[7 : 0])
         8'h00: tmp_new_sbox3 = 8'h52;
 	8'h01: tmp_new_sbox3 = 8'h09;
 	8'h02: tmp_new_sbox3 = 8'h6a;
@@ -1125,7 +1125,7 @@ module aes_inv_sbox(
 	8'hfd: tmp_new_sbox3 = 8'h21;
 	8'hfe: tmp_new_sbox3 = 8'h0c;
 	8'hff: tmp_new_sbox3 = 8'h7d;
-      endcase // case (addr)
+      endcase // case (sword)
     end // inv_sbox_rom3
 
 endmodule // aes_inv_sbox
