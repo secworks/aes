@@ -5,6 +5,7 @@
 # aes_key_gen.py
 # -------------
 # Simple, pure Python test model of the AES key generation.
+# This one is operating on 32 bit words.
 #
 #
 # Author: Joachim Strömbergson
@@ -380,7 +381,7 @@ def test_key(key, expected):
 #-------------------------------------------------------------------
 def test_key_expansion():
 
-    test_rcon()
+    # test_rcon()
 
     # Test of sam-implementations.
     sam_key128_1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
