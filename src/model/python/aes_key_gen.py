@@ -140,7 +140,7 @@ def next_words(prev_words, rcon):
 # The actual key generation.
 #-------------------------------------------------------------------
 def key_gen(key):
-    nr_rounds = {4:AES_128_ROUNDS, 6:AES_192_ROUNDS, 8:AES_256_ROUNDS}[len(key)]
+    nr_rounds = {4:AES_128_ROUNDS, 8:AES_256_ROUNDS}[len(key)]
     if VERBOSE:
         print("Generating keys for AES-%d." % (len(key) * 32))
 
@@ -148,16 +148,8 @@ def key_gen(key):
     if nr_rounds == AES_128_ROUNDS:
         round_keys.append(key)
 
-    elif nr_rounds == AES_192_ROUNDS:
-        (k0, k1, k2, k3, k4, k5) = key
-        round_keys.append((k0, k1, k2, k3))
-        rcon = ((0x8d << 1) ^ (0x11b & - (0x8d >> 7))) & 0xff
-        (x0, x1, x2, x3) = next_words((k0, k1, k2, k3), rcon)
-        round_keys.append((k4, k5, x2, x3))
-        nr_rounds -= 1
-
     else:
-        # nr_rounds == AES_192_ROUNDS
+        # nr_rounds == AES_256_ROUNDS
         (k0, k1, k2, k3, k4, k5, k6, k7) = key
         round_keys.append((k0, k1, k2, k3))
         round_keys.append((k4, k5, k6, k7))
@@ -185,134 +177,6 @@ def get_rcon(round):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
 
     return rcon
-
-
-#-------------------------------------------------------------------
-# sam_schedule_core()
-#
-# Perform the rotate and SubBytes operation used in all schedules.
-#-------------------------------------------------------------------
-def sam_schedule_core(word, i):
-    # Rotate one byte left
-    word = word[1 : 4] + [word[0]]
-
-    # Perform SubBytes on all bytes in the word.
-    for a in range(4):
-        word[a] = sbox[word[a]]
-
-    # XOR with rcon on the first byte
-    rcon = get_rcon(i)
-    print("Inside schedule_core: rcon %02d = 0x%02x" % (i, rcon))
-    word[0] = word[0] ^ rcon
-
-    return word
-
-
-#-------------------------------------------------------------------
-# sam_128_bit_key_expansion()
-#
-# Byte based key expansion for 128 bit keys by Sam Trenholme:
-# http://www.samiam.org/key-schedule.html
-#
-# the key here should be supplied as an array of bytes.
-# The array will be updated during processing.
-#-------------------------------------------------------------------
-def sam_128_bit_key_expansion(key):
-    t = [0] * 4
-    expkey = [0x0] * (11 * 16)
-    expkey[0:15] = key[:]
-
-    # c is 16 because the first sub-key is the user-supplied key
-    c = 16;
-    i = 1;
-
-    # We need 11 sets of sixteen bytes each for 128-bit mode
-    # 11 * 16 = 176
-    while (c < 176):
-        # Copy the temporary variable over from the last 4-byte block
-        for a in range(4):
-            t[a] = expkey[a + c - 4]
-
-        # Every four blocks (of four bytes), do a complex calculation */
-        if (c % 16 == 0):
-            t = sam_schedule_core(t, i)
-        i += 1
-
-        # New key is old key xored with the copied and possibly
-        # transformed word.
-        for a in range(4):
-            expkey[c] = expkey[c - 16] ^ t[a]
-        c += 1
-
-    return expkey
-
-
-#-------------------------------------------------------------------
-# sam_192_bit_key_expansion()
-#
-# Byte based key expansion for 192 bit keys by Sam Trenholme:
-# http://www.samiam.org/key-schedule.html
-#-------------------------------------------------------------------
-def sam_192_bit_key_expansion(key):
-    pass
-#void expand_key(unsigned char *key) {
-#        unsigned char t[4];
-#        unsigned char c = 24;
-#	unsigned char i = 1;
-#        unsigned char a;
-#        while(c < 208) {
-#                /* Copy the temporary variable over */
-#                for(a = 0; a < 4; a++) 
-#                        t[a] = key[a + c - 4]; 
-#                /* Every six sets, do a complex calculation */
-#                if(c % 24 == 0) {
-#                        schedule_code(t,i);
-#			i++;
-#		}
-#                for(a = 0; a < 4; a++) {
-#                        key[c] = key[c - 24] ^ t[a];
-#                        c++;
-#                }
-#        }
-#}
-
-
-
-
-#-------------------------------------------------------------------
-# sam_256_bit_key_expansion()
-#
-# Byte based key expansion for 256 bit keys by Sam Trenholme:
-# http://www.samiam.org/key-schedule.html
-#-------------------------------------------------------------------
-def sam_256_bit_key_expansion(key):
-    pass
-#void expand_key(unsigned char *key) {
-#        unsigned char t[4];
-#        unsigned char c = 32;
-#	unsigned char i = 1;
-#        unsigned char a;
-#        while(c < 240) {
-#                /* Copy the temporary variable over */
-#                for(a = 0; a < 4; a++) 
-#                        t[a] = key[a + c - 4]; 
-#                /* Every eight sets, do a complex calculation */
-#                if(c % 32 == 0) {
-#                        schedule_core(t,i);
-#			i++;
-#		}
-#                /* For 256-bit keys, we add an extra sbox to the
-#                 * calculation */
-#                if(c % 32 == 16) {
-#                        for(a = 0; a < 4; a++) 
-#                                t[a] = sbox(t[a]);
-#                }
-#                for(a = 0; a < 4; a++) {
-#                        key[c] = key[c - 32] ^ t[a];
-#                        c++;
-#                }
-#        }
-#}
 
 
 #-------------------------------------------------------------------
@@ -348,8 +212,8 @@ def test_rcon():
 # the given expected round keys.
 #-------------------------------------------------------------------
 def test_key(key, expected):
-    if len(key) not in [4, 6, 8]:
-        print("Error: Key is %d bits, not 128, 192 or 256 bits" % (len(key) * 32))
+    if len(key) not in [4, 8]:
+        print("Error: Key is %d bits, not 128 or 256 bits" % (len(key) * 32))
         return
 
     generated = key_gen(key)
@@ -370,6 +234,8 @@ def test_key(key, expected):
                   % (e0, e1, e2, e3))
             print("Got:      0x%08x 0x%08x 0x%08x 0x%08x"\
                   % (g0, g1, g2, g3))
+        else:
+            print("Correct key generated.")
 
 
 #-------------------------------------------------------------------
@@ -380,118 +246,59 @@ def test_key(key, expected):
 # http://www.samiam.org/key-schedule.html
 #-------------------------------------------------------------------
 def test_key_expansion():
-
-    # test_rcon()
-
-    # Test of sam-implementations.
-    sam_key128_1 = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
-
-    my_expkey = sam_128_bit_key_expansion(sam_key128_1)
-    print_bytekeys(my_expkey)
-
-
     # 128 bit keys.
-#    key128_1 = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
-#    exp128_1 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
-#                (0x62636363, 0x62636363, 0x62636363, 0x62636363),
-#                (0x9b9898c9, 0xf9fbfbaa, 0x9b9898c9, 0xf9fbfbaa),
-#                (0x90973450, 0x696ccffa, 0xf2f45733, 0x0b0fac99),
-#                (0xee06da7b, 0x876a1581, 0x759e42b2, 0x7e91ee2b),
-#                (0x7f2e2b88, 0xf8443e09, 0x8dda7cbb, 0xf34b9290),
-#                (0xec614b85, 0x1425758c, 0x99ff0937, 0x6ab49ba7),
-#                (0x21751787, 0x3550620b, 0xacaf6b3c, 0xc61bf09b),
-#                (0x0ef90333, 0x3ba96138, 0x97060a04, 0x511dfa9f),
-#                (0xb1d4d8e2, 0x8a7db9da, 0x1d7bb3de, 0x4c664941),
-#                (0xb4ef5bcb, 0x3e92e211, 0x23e951cf, 0x6f8f188e))
-#
-#    key128_2 = (0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff)
-#    exp128_2 = ((0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff),
-#                (0xe8e9e9e9, 0x17161616, 0xe8e9e9e9, 0x17161616),
-#                (0xadaeae19, 0xbab8b80f, 0x525151e6, 0x454747f0),
-#                (0x090e2277, 0xb3b69a78, 0xe1e7cb9e, 0xa4a08c6e),
-#                (0xe16abd3e, 0x52dc2746, 0xb33becd8, 0x179b60b6),
-#                (0xe5baf3ce, 0xb766d488, 0x045d3850, 0x13c658e6),
-#                (0x71d07db3, 0xc6b6a93b, 0xc2eb916b, 0xd12dc98d),
-#                (0xe90d208d, 0x2fbb89b6, 0xed5018dd, 0x3c7dd150),
-#                (0x96337366, 0xb988fad0, 0x54d8e20d, 0x68a5335d),
-#                (0x8bf03f23, 0x3278c5f3, 0x66a027fe, 0x0e0514a3),
-#                (0xd60a3588, 0xe472f07b, 0x82d2d785, 0x8cd7c326))
-#
-#    key128_3 = (0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f)
-#    exp128_3 = ((0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f),
-#                (0xd6aa74fd, 0xd2af72fa, 0xdaa678f1, 0xd6ab76fe),
-#                (0xb692cf0b, 0x643dbdf1, 0xbe9bc500, 0x6830b3fe),
-#                (0xb6ff744e, 0xd2c2c9bf, 0x6c590cbf, 0x0469bf41),
-#                (0x47f7f7bc, 0x95353e03, 0xf96c32bc, 0xfd058dfd),
-#                (0x3caaa3e8, 0xa99f9deb, 0x50f3af57, 0xadf622aa),
-#                (0x5e390f7d, 0xf7a69296, 0xa7553dc1, 0x0aa31f6b),
-#                (0x14f9701a, 0xe35fe28c, 0x440adf4d, 0x4ea9c026),
-#                (0x47438735, 0xa41c65b9, 0xe016baf4, 0xaebf7ad2),
-#                (0x549932d1, 0xf0855768, 0x1093ed9c, 0xbe2c974e),
-#                (0x13111d7f, 0xe3944a17, 0xf307a78b, 0x4d2b30c5))
-#
-#    key128_4 = (0x6920e299, 0xa5202a6d, 0x656e6368, 0x69746f2a)
-#    exp128_4 = ((0x6920e299, 0xa5202a6d, 0x656e6368, 0x69746f2a),
-#                (0xfa880760, 0x5fa82d0d, 0x3ac64e65, 0x53b2214f),
-#                (0xcf75838d, 0x90ddae80, 0xaa1be0e5, 0xf9a9c1aa),
-#                (0x180d2f14, 0x88d08194, 0x22cb6171, 0xdb62a0db),
-#                (0xbaed96ad, 0x323d1739, 0x10f67648, 0xcb94d693),
-#                (0x881b4ab2, 0xba265d8b, 0xaad02bc3, 0x6144fd50),
-#                (0xb34f195d, 0x096944d6, 0xa3b96f15, 0xc2fd9245),
-#                (0xa7007778, 0xae6933ae, 0x0dd05cbb, 0xcf2dcefe),
-#                (0xff8bccf2, 0x51e2ff5c, 0x5c32a3e7, 0x931f6d19),
-#                (0x24b7182e, 0x7555e772, 0x29674495, 0xba78298c),
-#                (0xae127cda, 0xdb479ba8, 0xf220df3d, 0x4858f6b1))
-#
-#    # 192 bit keys.
-#    key192_1 = (0x00000000, 0x00000000, 0x00000000,
-#                0x00000000, 0x00000000, 0x00000000)
-#    exp192_1 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
-#                (0x00000000, 0x00000000, 0x62636363, 0x62636363),
-#                (0x62636363, 0x62636363, 0x62636363, 0x62636363),
-#                (0x9b9898c9, 0xf9fbfbaa, 0x9b9898c9, 0xf9fbfbaa),
-#                (0x9b9898c9, 0xf9fbfbaa, 0x90973450, 0x696ccffa),
-#                (0xf2f45733, 0x0b0fac99, 0x90973450, 0x696ccffa),
-#                (0xc81d19a9, 0xa171d653, 0x53858160, 0x588a2df9),
-#                (0xc81d19a9, 0xa171d653, 0x7bebf49b, 0xda9a22c8),
-#                (0x891fa3a8, 0xd1958e51, 0x198897f8, 0xb8f941ab),
-#                (0xc26896f7, 0x18f2b43f, 0x91ed1797, 0x407899c6),
-#                (0x59f00e3e, 0xe1094f95, 0x83ecbc0f, 0x9b1e0830),
-#                (0x0af31fa7, 0x4a8b8661, 0x137b885f, 0xf272c7ca),
-#                (0x432ac886, 0xd834c0b6, 0xd2c7df11, 0x984c5970))
-#
-#    key192_2 = (0xffffffff, 0xffffffff, 0xffffffff,
-#                0xffffffff, 0xffffffff, 0xffffffff)
-#    exp192_2 = ((0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff),
-#                (0xffffffff, 0xffffffff, 0xe8e9e9e9, 0x17161616),
-#                (0xe8e9e9e9, 0x17161616, 0xe8e9e9e9, 0x17161616),
-#                (0xadaeae19, 0xbab8b80f, 0x525151e6, 0x454747f0),
-#                (0xadaeae19, 0xbab8b80f, 0xc5c2d8ed, 0x7f7a60e2),
-#                (0x2d2b3104, 0x686c76f4, 0xc5c2d8ed, 0x7f7a60e2),
-#                (0x1712403f, 0x686820dd, 0x454311d9, 0x2d2f672d),
-#                (0xe8edbfc0, 0x9797df22, 0x8f8cd3b7, 0xe7e4f36a),
-#                (0xa2a7e2b3, 0x8f88859e, 0x67653a5e, 0xf0f2e57c),
-#                (0x2655c33b, 0xc1b13051, 0x6316d2e2, 0xec9e577c),
-#                (0x8bfb6d22, 0x7b09885e, 0x67919b1a, 0xa620ab4b),
-#                (0xc53679a9, 0x29a82ed5, 0xa25343f7, 0xd95acba9),
-#                (0x598e482f, 0xffaee364, 0x3a989acd, 0x1330b418))
-#
-#    key192_3 = (0x00010203, 0x04050607, 0x08090a0b,
-#                0x0c0d0e0f, 0x10111213, 0x14151617)
-#    exp192_3 = ((0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f),
-#                (0x10111213, 0x14151617, 0x5846f2f9, 0x5c43f4fe),
-#                (0x544afef5, 0x5847f0fa, 0x4856e2e9, 0x5c43f4fe),
-#                (0x40f949b3, 0x1cbabd4d, 0x48f043b8, 0x10b7b342),
-#                (0x58e151ab, 0x04a2a555, 0x7effb541, 0x6245080c),
-#                (0x2ab54bb4, 0x3a02f8f6, 0x62e3a95d, 0x66410c08),
-#                (0xf5018572, 0x97448d7e, 0xbdf1c6ca, 0x87f33e3c),
-#                (0xe5109761, 0x83519b69, 0x34157c9e, 0xa351f1e0),
-#                (0x1ea0372a, 0x99530916, 0x7c439e77, 0xff12051e),
-#                (0xdd7e0e88, 0x7e2fff68, 0x608fc842, 0xf9dcc154),
-#                (0x859f5f23, 0x7a8d5a3d, 0xc0c02952, 0xbeefd63a),
-#                (0xde601e78, 0x27bcdf2c, 0xa223800f, 0xd8aeda32),
-#                (0xa4970a33, 0x1a78dc09, 0xc418c271, 0xe3a41d5d))
+    key128_1 = (0x00000000, 0x00000000, 0x00000000, 0x00000000)
+    exp128_1 = ((0x00000000, 0x00000000, 0x00000000, 0x00000000),
+                (0x62636363, 0x62636363, 0x62636363, 0x62636363),
+                (0x9b9898c9, 0xf9fbfbaa, 0x9b9898c9, 0xf9fbfbaa),
+                (0x90973450, 0x696ccffa, 0xf2f45733, 0x0b0fac99),
+                (0xee06da7b, 0x876a1581, 0x759e42b2, 0x7e91ee2b),
+                (0x7f2e2b88, 0xf8443e09, 0x8dda7cbb, 0xf34b9290),
+                (0xec614b85, 0x1425758c, 0x99ff0937, 0x6ab49ba7),
+                (0x21751787, 0x3550620b, 0xacaf6b3c, 0xc61bf09b),
+                (0x0ef90333, 0x3ba96138, 0x97060a04, 0x511dfa9f),
+                (0xb1d4d8e2, 0x8a7db9da, 0x1d7bb3de, 0x4c664941),
+                (0xb4ef5bcb, 0x3e92e211, 0x23e951cf, 0x6f8f188e))
+
+    key128_2 = (0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff)
+    exp128_2 = ((0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff),
+                (0xe8e9e9e9, 0x17161616, 0xe8e9e9e9, 0x17161616),
+                (0xadaeae19, 0xbab8b80f, 0x525151e6, 0x454747f0),
+                (0x090e2277, 0xb3b69a78, 0xe1e7cb9e, 0xa4a08c6e),
+                (0xe16abd3e, 0x52dc2746, 0xb33becd8, 0x179b60b6),
+                (0xe5baf3ce, 0xb766d488, 0x045d3850, 0x13c658e6),
+                (0x71d07db3, 0xc6b6a93b, 0xc2eb916b, 0xd12dc98d),
+                (0xe90d208d, 0x2fbb89b6, 0xed5018dd, 0x3c7dd150),
+                (0x96337366, 0xb988fad0, 0x54d8e20d, 0x68a5335d),
+                (0x8bf03f23, 0x3278c5f3, 0x66a027fe, 0x0e0514a3),
+                (0xd60a3588, 0xe472f07b, 0x82d2d785, 0x8cd7c326))
+
+    key128_3 = (0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f)
+    exp128_3 = ((0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f),
+                (0xd6aa74fd, 0xd2af72fa, 0xdaa678f1, 0xd6ab76fe),
+                (0xb692cf0b, 0x643dbdf1, 0xbe9bc500, 0x6830b3fe),
+                (0xb6ff744e, 0xd2c2c9bf, 0x6c590cbf, 0x0469bf41),
+                (0x47f7f7bc, 0x95353e03, 0xf96c32bc, 0xfd058dfd),
+                (0x3caaa3e8, 0xa99f9deb, 0x50f3af57, 0xadf622aa),
+                (0x5e390f7d, 0xf7a69296, 0xa7553dc1, 0x0aa31f6b),
+                (0x14f9701a, 0xe35fe28c, 0x440adf4d, 0x4ea9c026),
+                (0x47438735, 0xa41c65b9, 0xe016baf4, 0xaebf7ad2),
+                (0x549932d1, 0xf0855768, 0x1093ed9c, 0xbe2c974e),
+                (0x13111d7f, 0xe3944a17, 0xf307a78b, 0x4d2b30c5))
+
+    key128_4 = (0x6920e299, 0xa5202a6d, 0x656e6368, 0x69746f2a)
+    exp128_4 = ((0x6920e299, 0xa5202a6d, 0x656e6368, 0x69746f2a),
+                (0xfa880760, 0x5fa82d0d, 0x3ac64e65, 0x53b2214f),
+                (0xcf75838d, 0x90ddae80, 0xaa1be0e5, 0xf9a9c1aa),
+                (0x180d2f14, 0x88d08194, 0x22cb6171, 0xdb62a0db),
+                (0xbaed96ad, 0x323d1739, 0x10f67648, 0xcb94d693),
+                (0x881b4ab2, 0xba265d8b, 0xaad02bc3, 0x6144fd50),
+                (0xb34f195d, 0x096944d6, 0xa3b96f15, 0xc2fd9245),
+                (0xa7007778, 0xae6933ae, 0x0dd05cbb, 0xcf2dcefe),
+                (0xff8bccf2, 0x51e2ff5c, 0x5c32a3e7, 0x931f6d19),
+                (0x24b7182e, 0x7555e772, 0x29674495, 0xba78298c),
+                (0xae127cda, 0xdb479ba8, 0xf220df3d, 0x4858f6b1))
+
 #
 #    # 256 bit keys.
 #    key256_1 = (0x00000000, 0x00000000, 0x00000000, 0x00000000,
@@ -548,12 +355,12 @@ def test_key_expansion():
 #                (0x4e5a6699, 0xa9f24fe0, 0x7e572baa, 0xcdf8cdea),
 #                (0x24fc79cc, 0xbf0979e9, 0x371ac23c, 0x6d68de36))
 #
-#    print("*** Test of 128 bit keys: ***")
-#    test_key(key128_1, exp128_1)
-#    test_key(key128_2, exp128_2)
-#    test_key(key128_3, exp128_3)
-#    test_key(key128_4, exp128_4)
-#    print("")
+    print("*** Test of 128 bit keys: ***")
+    test_key(key128_1, exp128_1)
+    test_key(key128_2, exp128_2)
+    test_key(key128_3, exp128_3)
+    test_key(key128_4, exp128_4)
+    print("")
 #
 #    print("*** Test of 192 bit keys: ***")
 #    test_key(key192_1, exp192_1)
