@@ -8,20 +8,30 @@ Encryption Standard) as specified in the NIST document [FIPS 197](http://csrc.ni
 
 ## Introduction ##
 
-This implementation supports 128, 192 and 256 bit keys. The
-implementation is iterative but process all bytes in parallel and with
-16 S-boxes in the data path.
+This implementation supports 128 and 256 bit keys. The
+implementation is iterative but process bytes in parallel with
+4 S-boxes in the data path. The S-boxes are shared with the key
+expansion and the core can thus not do key update in parallel with block
+processing.
 
-The encipher and decipher round functionality are separated, but the
-state, key expansion anc control is common. This makes it possible to
-hard wire either encipher or decipher and allow the build tools to
-optimize away the other functionality which will reduce the size to
-about 50%. For cipher modes such as CTR, GCM decryption in the AES core
-will never be used.
+The encipher and decipher block processing are separated and basically
+self contained given access to a set of round keys and a block. This
+makes it possible to hard wire either encipher or decipher and allow the
+build tools to optimize away the other functionality which will reduce
+the size to about 50%. For cipher modes such as CTR, GCM decryption in
+the AES core will never be used and thus the decipher block processing
+can be removed.
 
 
 
 ## Status ##
+
+***(2014-07-27)***
+
+Reworked the partitioning of block registers, round counters etc -
+basically a rather big change. The block processing is now pretty much
+self contained machines. Removed support for 192 bit keys.
+
 
 ***(2014-04-26)***
 
@@ -39,5 +49,6 @@ least both 128 and 256 bit keys. Possibly also 192 albeit nobody uses it
 
 
 ***(2014-02-21***:
+
 Initial commit. Nothing really here yet.
 
