@@ -45,7 +45,7 @@ module aes_decipher_block(
                           input wire            next,
 
                           input wire            keylen,
-                          input wire [3 : 0]    round,
+                          output wire [3 : 0]   round,
                           input wire [127 : 0]  round_key,
 
                           input wire [127 : 0]  block,
@@ -180,7 +180,9 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign ready = ready_reg;
+  assign round     = round_ctr_reg;
+  assign new_block = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
+  assign ready     = ready_reg;
 
 
   //----------------------------------------------------------------
