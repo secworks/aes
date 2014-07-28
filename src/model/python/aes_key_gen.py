@@ -144,7 +144,7 @@ def key_gen128(key):
     round_keys.append(key)
     rcon = 0x8d
     for i in range(0, AES_128_ROUNDS):
-        rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
+        rcon = get_rcon(i + 1)
         round_keys.append(next_words(round_keys[i], rcon))
 
     return round_keys
