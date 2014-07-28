@@ -135,33 +135,55 @@ def next_words(prev_words, rcon):
 
 
 #-------------------------------------------------------------------
-# key_gen()
+# key_gen128()
 #
-# The actual key generation.
+# Generating the keys for 128 bit keys.
 #-------------------------------------------------------------------
-def key_gen(key):
-    nr_rounds = {4:AES_128_ROUNDS, 8:AES_256_ROUNDS}[len(key)]
-    if VERBOSE:
-        print("Generating keys for AES-%d." % (len(key) * 32))
-
+def key_gen128(key):
     round_keys = []
-    if nr_rounds == AES_128_ROUNDS:
-        round_keys.append(key)
-
-    else:
-        # nr_rounds == AES_256_ROUNDS
-        (k0, k1, k2, k3, k4, k5, k6, k7) = key
-        round_keys.append((k0, k1, k2, k3))
-        round_keys.append((k4, k5, k6, k7))
-        nr_rounds -= 1
-
+    round_keys.append(key)
     rcon = 0x8d
+    for i in range(0, AES_128_ROUNDS):
+        rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
+        round_keys.append(next_words(round_keys[i], rcon))
+
+    return round_keys
+
+
+#-------------------------------------------------------------------
+# key_gen256()
+#
+# Generating the keys for 256 bit keys.
+#-------------------------------------------------------------------
+def key_gen256(key):
+    round_keys = []
+    (k0, k1, k2, k3, k4, k5, k6, k7) = key
+    round_keys.append((k0, k1, k2, k3))
+    round_keys.append((k4, k5, k6, k7))
+    rcon = 0x8d
+    nr_rounds = AES_256_ROUNDS - 1
 
     for i in range(0, nr_rounds):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
         round_keys.append(next_words(round_keys[i], rcon))
 
     return round_keys
+
+
+#-------------------------------------------------------------------
+# key_gen()
+#
+# The actual key generation.
+#-------------------------------------------------------------------
+def key_gen(key):
+    if VERBOSE:
+        print("Generating keys for AES-%d." % (len(key) * 32))
+
+    if nr_rounds == AES_128_ROUNDS:
+        return key_gen128(key)
+
+    else:
+        return key_gen256(key)
 
 
 #-------------------------------------------------------------------
