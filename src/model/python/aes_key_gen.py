@@ -119,14 +119,46 @@ def rol8(w):
 
 
 #-------------------------------------------------------------------
-# next_words()
+# next_256bit_key_a()
 #
-# Generate the next four key words based on given rcon and
-# previous key words.
+# Generate the next four key words for aes-256 using algorithm A
+# based on given rcon and previous key words.
+#-------------------------------------------------------------------
+def next_256it_key_a(prev_key, rcon):
+    (v0, v1, v2, v3) = prev_key
+    tmp = substw(rol8(v3)) ^ (rcon << 24)
+    k0 = v0 ^ tmp
+    k1 = v1 ^ v0 ^ tmp
+    k2 = v2 ^ v1 ^ v0 ^ tmp
+    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
+
+    return (k0, k1, k2, k3)
+
+
+#-------------------------------------------------------------------
+# next_256bit_key_b()
+#
+# Generate the next four key words for aes-256 using algorithm B
+# based on given rcon and previous key words.
+#-------------------------------------------------------------------
+def next_256it_key_b(prev_key, rcon):
+    (v0, v1, v2, v3) = prev_key
+    tmp = substw(rol8(v3)) ^ (rcon << 24)
+    k0 = v0 ^ tmp
+    k1 = v1 ^ v0 ^ tmp
+    k2 = v2 ^ v1 ^ v0 ^ tmp
+    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
+
+    return (k0, k1, k2, k3)
+
+
+#-------------------------------------------------------------------
+# next_128bit_key()
+#
+# Generate the next four key words for aes-128 based on given
+# rcon and previous key words.
 #-------------------------------------------------------------------
 def next_128bit_key(prev_key, rcon):
-    print("Normal round.")
-
     (v0, v1, v2, v3) = prev_key
     tmp = substw(rol8(v3)) ^ (rcon << 24)
     k0 = v0 ^ tmp
