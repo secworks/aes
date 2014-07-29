@@ -119,6 +119,47 @@ def rol8(w):
 
 
 #-------------------------------------------------------------------
+# next_128bit_key()
+#
+# Generate the next four key words for aes-128 based on given
+# rcon and previous key words.
+#-------------------------------------------------------------------
+def next_128bit_key(prev_key, rcon):
+    (v0, v1, v2, v3) = prev_key
+    tmp = substw(rol8(v3)) ^ (rcon << 24)
+    k0 = v0 ^ tmp
+    k1 = v1 ^ v0 ^ tmp
+    k2 = v2 ^ v1 ^ v0 ^ tmp
+    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
+
+    return (k0, k1, k2, k3)
+
+
+#-------------------------------------------------------------------
+# key_gen128()
+#
+# Generating the keys for 128 bit keys.
+#-------------------------------------------------------------------
+def key_gen128(key):
+    round_keys = []
+
+    round_keys.append(key)
+
+    round_keys.append(next_128bit_key(round_keys[0], get_rcon(1)))
+    round_keys.append(next_128bit_key(round_keys[1], get_rcon(2)))
+    round_keys.append(next_128bit_key(round_keys[2], get_rcon(3)))
+    round_keys.append(next_128bit_key(round_keys[3], get_rcon(4)))
+    round_keys.append(next_128bit_key(round_keys[4], get_rcon(5)))
+    round_keys.append(next_128bit_key(round_keys[5], get_rcon(6)))
+    round_keys.append(next_128bit_key(round_keys[6], get_rcon(7)))
+    round_keys.append(next_128bit_key(round_keys[7], get_rcon(8)))
+    round_keys.append(next_128bit_key(round_keys[8], get_rcon(9)))
+    round_keys.append(next_128bit_key(round_keys[9], get_rcon(10)))
+
+    return round_keys
+
+
+#-------------------------------------------------------------------
 # next_256bit_key_a()
 #
 # Generate the next four key words for aes-256 using algorithm A
@@ -153,60 +194,6 @@ def next_256it_key_b(prev_key, rcon):
 
 
 #-------------------------------------------------------------------
-# next_128bit_key()
-#
-# Generate the next four key words for aes-128 based on given
-# rcon and previous key words.
-#-------------------------------------------------------------------
-def next_128bit_key(prev_key, rcon):
-    (v0, v1, v2, v3) = prev_key
-    tmp = substw(rol8(v3)) ^ (rcon << 24)
-    k0 = v0 ^ tmp
-    k1 = v1 ^ v0 ^ tmp
-    k2 = v2 ^ v1 ^ v0 ^ tmp
-    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
-
-    return (k0, k1, k2, k3)
-
-
-#-------------------------------------------------------------------
-# next_sub_words()
-#
-# Generate the next four key words based on given rcon and
-# previous key words. This version also does extra sbox
-# modification.
-#-------------------------------------------------------------------
-def next_sub_words(prev_words, rcon):
-    print("Sub round.")
-    pass
-    return (0, 1, 2, 3)
-
-
-#-------------------------------------------------------------------
-# key_gen128()
-#
-# Generating the keys for 128 bit keys.
-#-------------------------------------------------------------------
-def key_gen128(key):
-    round_keys = []
-
-    round_keys.append(key)
-
-    round_keys.append(next_128bit_key(round_keys[0], get_rcon(1)))
-    round_keys.append(next_128bit_key(round_keys[1], get_rcon(2)))
-    round_keys.append(next_128bit_key(round_keys[2], get_rcon(3)))
-    round_keys.append(next_128bit_key(round_keys[3], get_rcon(4)))
-    round_keys.append(next_128bit_key(round_keys[4], get_rcon(5)))
-    round_keys.append(next_128bit_key(round_keys[5], get_rcon(6)))
-    round_keys.append(next_128bit_key(round_keys[6], get_rcon(7)))
-    round_keys.append(next_128bit_key(round_keys[7], get_rcon(8)))
-    round_keys.append(next_128bit_key(round_keys[8], get_rcon(9)))
-    round_keys.append(next_128bit_key(round_keys[9], get_rcon(10)))
-
-    return round_keys
-
-
-#-------------------------------------------------------------------
 # key_gen256()
 #
 # Generating the keys for 256 bit keys.
@@ -218,13 +205,6 @@ def key_gen256(key):
     round_keys.append((k4, k5, k6, k7))
     rcon = 0x8d
     nr_rounds = AES_256_ROUNDS
-
-    for i in range(1, nr_rounds):
-        rcon = get_rcon(i)
-        if ((i % 4) == 1):
-            round_keys.append(next_sub_words(round_keys[i], rcon))
-        else:
-            round_keys.append(next_words(round_keys[i], rcon))
             
     return round_keys
 
