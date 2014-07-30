@@ -180,9 +180,9 @@ def next_256it_key_a(prev_key, rcon):
 # next_256bit_key_b()
 #
 # Generate the next four key words for aes-256 using algorithm B
-# based on given rcon and previous key words.
+# based on given previous eight keywords.
 #-------------------------------------------------------------------
-def next_256it_key_b(prev_key, rcon):
+def next_256it_key_b(prev_key, prev_key2):
     (v0, v1, v2, v3) = prev_key
     tmp = substw(rol8(v3)) ^ (rcon << 24)
     k0 = v0 ^ tmp
