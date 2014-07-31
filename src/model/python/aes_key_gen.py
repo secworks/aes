@@ -197,6 +197,17 @@ def next_256it_key_b(prev_key, prev_key2):
 # key_gen256()
 #
 # Generating the keys for 256 bit keys.
+#
+# Should match:
+#
+#  if i mod 8 = 0:
+#      t = SubWord(RotateWord(W[i-1])) ^ RCon(i/4)
+#      W[i] = t + w[i-8]
+#  else if i mod 4 = 0:
+#      W[i] = SubWord(W[i-1]) + W[i-8]
+#  else
+#      W[i] = W[i-1] ^ W[i-8]
+#
 #-------------------------------------------------------------------
 def key_gen256(key):
     round_keys = []
