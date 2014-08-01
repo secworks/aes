@@ -5,7 +5,8 @@
 # aes_key_gen.py
 # -------------
 # Simple, pure Python test model of the AES key generation.
-# This one is operating on 32 bit words.
+# This one is operating on 32 bit words. The key generation
+# supports 128 and 256 bit keys.
 #
 #
 # Author: Joachim Strömbergson
