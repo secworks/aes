@@ -166,13 +166,16 @@ def key_gen128(key):
 # Generate the next four key words for aes-256 using algorithm A
 # based on given rcon and previous key words.
 #-------------------------------------------------------------------
-def next_256it_key_a(prev_key, rcon):
-    (v0, v1, v2, v3) = prev_key
-    tmp = substw(rol8(v3)) ^ (rcon << 24)
-    k0 = v0 ^ tmp
-    k1 = v1 ^ v0 ^ tmp
-    k2 = v2 ^ v1 ^ v0 ^ tmp
-    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
+def next_256it_key_a(key0, key1, rcon):
+    (w0, w1, w2, w3) = key0
+    (w4, w5, w6, w7) = key1
+
+    t = substw(rol8(w7)) ^ (rcon << 24)
+
+    k0 = w0 ^ t
+    k1 = k0 ^ w1
+    k2 = k1 ^ w2
+    k3 = k2 ^ w3
 
     return (k0, k1, k2, k3)
 
@@ -183,13 +186,16 @@ def next_256it_key_a(prev_key, rcon):
 # Generate the next four key words for aes-256 using algorithm B
 # based on given previous eight keywords.
 #-------------------------------------------------------------------
-def next_256it_key_b(prev_key, prev_key2):
-    (v0, v1, v2, v3) = prev_key
-    tmp = substw(rol8(v3)) ^ (rcon << 24)
-    k0 = v0 ^ tmp
-    k1 = v1 ^ v0 ^ tmp
-    k2 = v2 ^ v1 ^ v0 ^ tmp
-    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
+def next_256it_key_b(key0, key1):
+    (w0, w1, w2, w3) = key0
+    (w4, w5, w6, w7) = key1
+
+    t = substw(w7)
+
+    k0 = w0 ^ t
+    k1 = w1 ^ k0
+    k2 = w2 ^ k1
+    k3 = w3 ^ k2
 
     return (k0, k1, k2, k3)
 
@@ -213,11 +219,15 @@ def next_256it_key_b(prev_key, prev_key2):
 def key_gen256(key):
     round_keys = []
     (k0, k1, k2, k3, k4, k5, k6, k7) = key
+
     round_keys.append((k0, k1, k2, k3))
     round_keys.append((k4, k5, k6, k7))
-    rcon = 0x8d
-    nr_rounds = AES_256_ROUNDS
-            
+
+    k = next_256it_key_a(round_keys[0], round_keys[1], get_rcon(1))
+    round_keys.append(k)
+    k = next_256it_key_b(round_keys[1], round_keys[2])
+    round_keys.append(k)
+
     return round_keys
 
 
@@ -435,11 +445,11 @@ def test_key_expansion():
     test_key(key128_4, exp128_4)
     print("")
 
-#    print("*** Test of 256 bit keys: ***")
+    print("*** Test of 256 bit keys: ***")
 #    test_key(key256_1, exp256_1)
 #    test_key(key256_2, exp256_2)
-#    test_key(key256_3, exp256_3)
-#    print("")
+    test_key(key256_3, exp256_3)
+    print("")
 
 
 #-------------------------------------------------------------------
