@@ -225,7 +225,6 @@ def key_gen256(key):
 
     j = 1
     for i in range(0, (AES_256_ROUNDS - 2), 2):
-        print("i = %d, j = %d" % (i, j))
         k = next_256it_key_a(round_keys[i], round_keys[i + 1], get_rcon(j))
         round_keys.append(k)
         k = next_256it_key_b(round_keys[i + 1], round_keys[i + 2])
@@ -454,8 +453,8 @@ def test_key_expansion():
     print("")
 
     print("*** Test of 256 bit keys: ***")
-#    test_key(key256_1, exp256_1)
-#    test_key(key256_2, exp256_2)
+    test_key(key256_1, exp256_1)
+    test_key(key256_2, exp256_2)
     test_key(key256_3, exp256_3)
     print("")
 
