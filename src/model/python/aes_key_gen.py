@@ -225,11 +225,16 @@ def key_gen256(key):
 
     j = 1
     for i in range(0, (AES_256_ROUNDS - 2), 2):
+        print("i = %d, j = %d" % (i, j))
         k = next_256it_key_a(round_keys[i], round_keys[i + 1], get_rcon(j))
         round_keys.append(k)
         k = next_256it_key_b(round_keys[i + 1], round_keys[i + 2])
         round_keys.append(k)
         j += 1
+
+    # One final key needs to be generated.
+    k = next_256it_key_a(round_keys[12], round_keys[13], get_rcon(7))
+    round_keys.append(k)
 
     return round_keys
 
