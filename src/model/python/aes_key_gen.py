@@ -228,6 +228,11 @@ def key_gen256(key):
     k = next_256it_key_b(round_keys[1], round_keys[2])
     round_keys.append(k)
 
+    k = next_256it_key_a(round_keys[2], round_keys[3], get_rcon(2))
+    round_keys.append(k)
+    k = next_256it_key_b(round_keys[3], round_keys[4])
+    round_keys.append(k)
+
     return round_keys
 
 
