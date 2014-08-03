@@ -173,9 +173,9 @@ def next_256it_key_a(key0, key1, rcon):
     t = substw(rol8(w7)) ^ (rcon << 24)
 
     k0 = w0 ^ t
-    k1 = k0 ^ w1
-    k2 = k1 ^ w2
-    k3 = k2 ^ w3
+    k1 = w1 ^ w0 ^ t
+    k2 = w2 ^ w1 ^ w0 ^ t
+    k3 = w3 ^ w2 ^ w1 ^ w0 ^ t
 
     return (k0, k1, k2, k3)
 
