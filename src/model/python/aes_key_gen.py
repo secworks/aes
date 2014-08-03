@@ -126,12 +126,14 @@ def rol8(w):
 # rcon and previous key words.
 #-------------------------------------------------------------------
 def next_128bit_key(prev_key, rcon):
-    (v0, v1, v2, v3) = prev_key
-    tmp = substw(rol8(v3)) ^ (rcon << 24)
-    k0 = v0 ^ tmp
-    k1 = v1 ^ v0 ^ tmp
-    k2 = v2 ^ v1 ^ v0 ^ tmp
-    k3 = v3 ^ v2 ^ v1 ^ v0 ^ tmp
+    (w0, w1, w2, w3) = prev_key
+
+    t = substw(rol8(w3)) ^ (rcon << 24)
+
+    k0 = w0 ^ t
+    k1 = w1 ^ w0 ^ t
+    k2 = w2 ^ w1 ^ w0 ^ t
+    k3 = w3 ^ w2 ^ w1 ^ w0 ^ t
 
     return (k0, k1, k2, k3)
 
