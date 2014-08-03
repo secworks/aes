@@ -164,7 +164,7 @@ def key_gen128(key):
 # next_256bit_key_a()
 #
 # Generate the next four key words for aes-256 using algorithm A
-# based on given rcon and previous key words.
+# based on given rcon and the previous two keys.
 #-------------------------------------------------------------------
 def next_256it_key_a(key0, key1, rcon):
     (w0, w1, w2, w3) = key0
@@ -193,9 +193,9 @@ def next_256it_key_b(key0, key1):
     t = substw(w7)
 
     k0 = w0 ^ t
-    k1 = w1 ^ k0
-    k2 = w2 ^ k1
-    k3 = w3 ^ k2
+    k1 = w1 ^ w0 ^ t
+    k2 = w2 ^ w1 ^ w0 ^ t
+    k3 = w3 ^ w2 ^ w1 ^ w0 ^ t
 
     return (k0, k1, k2, k3)
 
