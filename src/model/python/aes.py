@@ -249,17 +249,18 @@ class AES():
 
         # Initial round key created by copying from the key.
         if self.keylen == 128:
-            self.round_keys += self.key
+            self.round_keys.append(self.key)
 
-        if self.keylen == 192:
-            (k0, k1, k2, k3, k4, k5) = self.key
-            self.round_keys += (k0, k1, k2, k3)
-            self.round_keys += (k4, k5, 0x00000000, 0x00000000)
+            for i in range(10):
+                prev_key = self.round_keys[i]
+                rcon = self._get_rcon(i + 1)
+                key = self._next_128bit_key(prev_key, rcon)
+                self.round_keys.append(key)
 
         if self.keylen == 256:
-            (k0, k1, k2, k3, k4, k5, k6, k7) = self.key
-            self.round_keys += (k0, k1, k2, k3)
-            self.round_keys += (k4, k5, k6, k7)
+            (w0, w1, w2, w3, w4, w5, w6, w7) = self.key
+            self.round_keys += (w0, w1, w2, w3)
+            self.round_keys += (w4, w5, w6, w7)
 
         if self.verbose:
             print("Round keys:")
