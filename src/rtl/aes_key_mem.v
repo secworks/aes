@@ -213,24 +213,42 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // round_key_gen
   //
-  //
-  // The round key generator logic
+  // The round key generator logic for AES-128 and AES-256.
   //----------------------------------------------------------------
   always @*
     begin: round_key_gen
-      reg [31 : 0] w0, w1, w2, w3, w4, w5, w6, w7
-      reg [31 : 0] k0, k1, k2, k3, rconw;
-
-      rconw          = {rcon_reg, 24'h000000};
-
-      // Note that we do the row rotation operation here
-      // by the concatenation order of the sbox results.
-      tmp_sboxw = {prev_key_reg[007 : 000], prev_key_reg[015 : 008],
-                   prev_key_reg[023 : 016], prev_key_reg[031 : 024]};
+      reg [31 : 0] w0, w1, w2, w3, w4, w5, w6, w7;
+      reg [31 : 0] k0, k1, k2, k3;
+      reg [31 : 0] rconw, rotstw, tw, trw;
       
       // Default assignments.
-      key_mem_new = 128'h00000000000000000000000000000000;
-      key_mem_we  = 0;
+      key_mem_new   = 128'h00000000000000000000000000000000;
+      key_mem_we    = 0;
+      prev_key0_new = 128'h00000000000000000000000000000000;
+      prev_key0_we  = 0;
+      prev_key1_new = 128'h00000000000000000000000000000000;
+      prev_key1_we  = 0;
+
+      k0 = 32'h00000000;
+      k1 = 32'h00000000;
+      k2 = 32'h00000000;
+      k3 = 32'h00000000;
+
+      w0 = prev_key0_reg[127 : 096];
+      w1 = prev_key0_reg[095 : 064];
+      w2 = prev_key0_reg[063 : 032];
+      w3 = prev_key0_reg[031 : 000];
+
+      w4 = prev_key1_reg[127 : 096];
+      w5 = prev_key1_reg[095 : 064];
+      w6 = prev_key1_reg[063 : 032];
+      w7 = prev_key1_reg[031 : 000];
+
+      rconw = {rcon_reg, 24'h000000};
+      tmp_sboxw = w7;
+      rotstw = {new_sboxw[23 : 00], new_sboxw[31 : 24]};
+      trw = rotstw ^ rconw
+      tw = new_sboxw
 
       if (round_key_update)
         key_mem_we  = 1;
@@ -240,15 +258,20 @@ module aes_key_mem(
               begin
                 if (round_ctr_reg == 0)
                   begin
-                    key_mem_new = key[255 : 128];
+                    key_mem_new   = key[255 : 128];
+                    prev_key1_new = key[255 : 128];
+                    prev_key1_we  = 1;
                   end
                 else
                   begin
-                    w0 = prev_key_reg[127 : 096] ^ new_sboxw ^ rconw;
-                    w1 = prev_key_reg[095 : 064] ^ w0;
-                    w2 = prev_key_reg[063 : 032] ^ w1;
-                    w3 = prev_key_reg[031 : 000] ^ w2;
-                    key_mem_new = {w0, w1, w2, w3};
+                    k0 = w4 ^ trw;
+                    k1 = w5 ^ w4 ^ trw;
+                    k2 = w6 ^ w5 ^ w4 ^ trw;
+                    k3 = w7 ^ w6 ^ w5 ^ w4 ^ trw;
+
+                    key_mem_new   = {k0, k1, k2, k3};
+                    prev_key1_new = {k0, k1, k2, k3};
+                    prev_key1_we  = 1;
                   end
               end
 
@@ -257,12 +280,38 @@ module aes_key_mem(
               begin
                 if (round_ctr_reg == 0)
                   begin
-                    key_mem_new = key[255 : 128];
+                    key_mem_new   = key[255 : 128];
+                    prev_key0_new = key[255 : 128];
+                    prev_key0_we  = 1;
                   end
-
-                if (round_ctr_reg == 1)
+                else if (round_ctr_reg == 1)
                   begin
-                    key_mem_new = key[127 : 0];
+                    key_mem_new   = key[127 : 0];
+                    prev_key1_new = key[127 : 0];
+                    prev_key1_we  = 1;
+                  end
+                else:
+                  begin
+                    if (round_ctr_reg[0])
+                      begin
+                        k0 = w4 ^ trw;
+                        k1 = w5 ^ w4 ^ trw;
+                        k2 = w6 ^ w5 ^ w4 ^ trw;
+                        k3 = w7 ^ w6 ^ w5 ^ w4 ^ trw;
+                      end
+                    else
+                      begin
+                        k0 = w4 ^ tw;
+                        k1 = w5 ^ w4 ^ tw;
+                        k2 = w6 ^ w5 ^ w4 ^ tw;
+                        k3 = w7 ^ w6 ^ w5 ^ w4 ^ tw;
+                      end
+
+                    prev_key0_new = prev_key1_reg;
+                    prev_key0_we  = 1;
+                    key_mem_new   = {k0, k1, k2, k3};
+                    prev_key1_new = {k0, k1, k2, k3};
+                    prev_key1_we  = 1;
                   end
               end
 
