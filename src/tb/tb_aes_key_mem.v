@@ -51,6 +51,7 @@ module tb_aes_key_mem();
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
   parameter DEBUG = 1;
+  parameter SHOW_SBOX = 0;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
@@ -157,8 +158,8 @@ module tb_aes_key_mem();
       $display("");
 
       $display("Internal states:");
-      $display("key_mem_ctrl = 0x%01x, round_ctr_reg = 0x%01x, rcon_reg = 0x%01x",
-               dut.key_mem_ctrl_reg, dut.round_ctr_reg, dut.rcon_reg);
+      $display("key_mem_ctrl = 0x%01x, round_key_update = 0x%01x, round_ctr_reg = 0x%01x, rcon_reg = 0x%01x",
+               dut.key_mem_ctrl_reg, dut.round_key_update, dut.round_ctr_reg, dut.rcon_reg);
 
       $display("prev_key0_reg = 0x%016x, prev_key0_new = 0x%016x, prev_key0_we = 0x%01x",
                dut.prev_key0_reg, dut.prev_key0_new, dut.prev_key0_we);
@@ -169,9 +170,19 @@ module tb_aes_key_mem();
                dut.round_key_gen.w0, dut.round_key_gen.w1, 
                dut.round_key_gen.w2, dut.round_key_gen.w3);
       $display("sboxw = 0x%04x, new_sboxw = 0x%04x, rconw = 0x%04x",
-               dut.tmp_sboxw, dut.new_sboxw, dut.round_key_gen.rconw);
+               dut.sboxw, dut.new_sboxw, dut.round_key_gen.rconw);
       $display("key_mem_new = 0x%016x", dut.key_mem_new);
       $display("");
+
+      if (SHOW_SBOX)
+        begin
+          $display("Sbox functionality:");
+          $display("sboxw = 0x%08x", sbox.sboxw);
+          $display("tmp_new_sbox0 = 0x%02x, tmp_new_sbox1 = 0x%02x, tmp_new_sbox2 = 0x%02x, tmp_new_sbox3",
+                   sbox.tmp_new_sbox0, sbox.tmp_new_sbox1, sbox.tmp_new_sbox2, sbox.tmp_new_sbox3);
+          $display("new_sboxw = 0x%08x", sbox.new_sboxw);
+          $display("");
+        end
     end
   endtask // dump_dut_state
 
