@@ -317,10 +317,11 @@ module tb_aes_key_mem();
                     input [127 : 0] expected06,
                     input [127 : 0] expected07,
                     input [127 : 0] expected08,
-                    input [127 : 0] expected09
+                    input [127 : 0] expected09,
+                    input [127 : 0] expected10
                    );
     begin
-      $display("Testing with 128-bit key 0x%16x", key[255 : 128]);
+      $display("** Testing with 128-bit key 0x%16x", key[255 : 128]);
       $display("");
 
       tb_key = key;
@@ -339,8 +340,66 @@ module tb_aes_key_mem();
       check_key(4'h7, expected07);
       check_key(4'h8, expected08);
       check_key(4'h9, expected09);
+      check_key(4'ha, expected10);
+
+      tc_ctr = tc_ctr + 1;
     end
   endtask // test_key_128
+
+
+  //----------------------------------------------------------------
+  // test_key_256()
+  //
+  // Test 256 bit keys. Due to array problems, the result check
+  // is fairly ugly.
+  //----------------------------------------------------------------
+  task test_key_256(input [255 : 0] key,
+                    input [127 : 0] expected00,
+                    input [127 : 0] expected01,
+                    input [127 : 0] expected02,
+                    input [127 : 0] expected03,
+                    input [127 : 0] expected04,
+                    input [127 : 0] expected05,
+                    input [127 : 0] expected06,
+                    input [127 : 0] expected07,
+                    input [127 : 0] expected08,
+                    input [127 : 0] expected09,
+                    input [127 : 0] expected10,
+                    input [127 : 0] expected11,
+                    input [127 : 0] expected12,
+                    input [127 : 0] expected13,
+                    input [127 : 0] expected14
+                   );
+    begin
+      $display("** Testing with 256-bit key 0x%32x", key[255 : 000]);
+      $display("");
+
+      tb_key = key;
+      tb_init = 1;
+      #(2 * CLK_PERIOD);
+      tb_init = 0;
+
+      wait_ready();
+
+      check_key(4'h0, expected00);
+      check_key(4'h1, expected01);
+      check_key(4'h2, expected02);
+      check_key(4'h3, expected03);
+      check_key(4'h4, expected04);
+      check_key(4'h5, expected05);
+      check_key(4'h6, expected06);
+      check_key(4'h7, expected07);
+      check_key(4'h8, expected08);
+      check_key(4'h9, expected09);
+      check_key(4'ha, expected10);
+      check_key(4'hb, expected11);
+      check_key(4'hc, expected12);
+      check_key(4'hd, expected13);
+      check_key(4'he, expected14);
+
+      tc_ctr = tc_ctr + 1;
+    end
+  endtask // test_key_256
   
 
   //----------------------------------------------------------------
@@ -384,6 +443,9 @@ module tb_aes_key_mem();
       reg [127 : 0] expected_0_11;
       reg [127 : 0] expected_0_12;
       reg [127 : 0] expected_0_13;
+      reg [127 : 0] expected_0_14;
+
+      reg [255 : 0] key256_0;
       
       $display("   -= Testbench for aes key mem started =-");
       $display("    =====================================");
@@ -414,8 +476,31 @@ module tb_aes_key_mem();
 
       test_key_128(key128_0, expected_0_00, expected_0_01, expected_0_02, 
                    expected_0_03, expected_0_04, expected_0_05, expected_0_06, 
-                   expected_0_07, expected_0_08, expected_0_09);
+                   expected_0_07, expected_0_08, expected_0_09, expected_0_10);
 
+      key256_0      = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
+
+      expected_0_00 = 128'h000102030405060708090a0b0c0d0e0f;
+      expected_0_01 = 128'h101112131415161718191a1b1c1d1e1f;
+      expected_0_02 = 128'ha573c29fa176c498a97fce93a572c09c;
+      expected_0_03 = 128'h1651a8cd0244beda1a5da4c10640bade;
+      expected_0_04 = 128'hae87dff00ff11b68a68ed5fb03fc1567;
+      expected_0_05 = 128'h6de1f1486fa54f9275f8eb5373b8518d;
+      expected_0_06 = 128'hc656827fc9a799176f294cec6cd5598b;
+      expected_0_07 = 128'h3de23a75524775e727bf9eb45407cf39;
+      expected_0_08 = 128'h0bdc905fc27b0948ad5245a4c1871c2f;
+      expected_0_09 = 128'h45f5a66017b2d387300d4d33640a820a;
+      expected_0_10 = 128'h7ccff71cbeb4fe5413e6bbf0d261a7df;
+      expected_0_11 = 128'hf01afafee7a82979d7a5644ab3afe640;
+      expected_0_12 = 128'h2541fe719bf500258813bbd55a721c0a;
+      expected_0_13 = 128'h4e5a6699a9f24fe07e572baacdf8cdea;
+      expected_0_14 = 128'h24fc79ccbf0979e9371ac23c6d68de36;
+
+      test_key_256(key256_0,
+                   expected_0_00, expected_0_01, expected_0_02, expected_0_03,
+                   expected_0_04, expected_0_05, expected_0_06, expected_0_07,
+                   expected_0_08, expected_0_09, expected_0_10, expected_0_11,
+                   expected_0_12, expected_0_13, expected_0_14);
       
       display_test_result();
       $display("");
