@@ -543,6 +543,7 @@ module tb_aes_key_mem();
                    expected_04, expected_05, expected_06, expected_07,
                    expected_08, expected_09, expected_10);
 
+
       // AES-256 test case 1 key and expected values.
       key256_0    = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
 
