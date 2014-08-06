@@ -171,7 +171,8 @@ module tb_aes_key_mem();
                dut.round_key_gen.w2, dut.round_key_gen.w3);
       $display("sboxw = 0x%04x, new_sboxw = 0x%04x, rconw = 0x%04x",
                dut.sboxw, dut.new_sboxw, dut.round_key_gen.rconw);
-      $display("key_mem_new = 0x%016x", dut.key_mem_new);
+      $display("key_mem_new = 0x%016x, key_mem_we = 0x%01x",
+               dut.key_mem_new, dut.key_mem_we);
       $display("");
 
       if (SHOW_SBOX)
