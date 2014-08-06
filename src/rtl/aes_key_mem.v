@@ -78,9 +78,11 @@ module aes_key_mem(
 
   reg [127 : 0] prev_key0_reg;
   reg [127 : 0] prev_key0_new;
+  reg           prev_key0_we;
+
   reg [127 : 0] prev_key1_reg;
   reg [127 : 0] prev_key1_new;
-  reg           prev_key_we;
+  reg           prev_key1_we;
   
   reg [3 : 0] round_ctr_reg;
   reg [3 : 0] round_ctr_new;
@@ -185,9 +187,13 @@ module aes_key_mem(
               key_mem[round_ctr_reg] <= key_mem_new;
             end
 
-          if (prev_key_we)
+          if (prev_key0_we)
             begin
               prev_key0_reg <= prev_key0_new;
+            end
+
+          if (prev_key1_we)
+            begin
               prev_key1_reg <= prev_key1_new;
             end
 
@@ -247,8 +253,8 @@ module aes_key_mem(
       rconw = {rcon_reg, 24'h000000};
       tmp_sboxw = w7;
       rotstw = {new_sboxw[23 : 00], new_sboxw[31 : 24]};
-      trw = rotstw ^ rconw
-      tw = new_sboxw
+      trw = rotstw ^ rconw;
+      tw = new_sboxw;
 
       if (round_key_update)
         key_mem_we  = 1;
@@ -290,7 +296,7 @@ module aes_key_mem(
                     prev_key1_new = key[127 : 0];
                     prev_key1_we  = 1;
                   end
-                else:
+                else
                   begin
                     if (round_ctr_reg[0])
                       begin
