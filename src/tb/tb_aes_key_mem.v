@@ -429,23 +429,24 @@ module tb_aes_key_mem();
   initial
     begin : aes_key_mem_test
       reg [255 : 0] key128_0;
-      reg [127 : 0] expected_0_00;
-      reg [127 : 0] expected_0_01;
-      reg [127 : 0] expected_0_02;
-      reg [127 : 0] expected_0_03;
-      reg [127 : 0] expected_0_04;
-      reg [127 : 0] expected_0_05;
-      reg [127 : 0] expected_0_06;
-      reg [127 : 0] expected_0_07;
-      reg [127 : 0] expected_0_08;
-      reg [127 : 0] expected_0_09;
-      reg [127 : 0] expected_0_10;
-      reg [127 : 0] expected_0_11;
-      reg [127 : 0] expected_0_12;
-      reg [127 : 0] expected_0_13;
-      reg [127 : 0] expected_0_14;
-
+      reg [255 : 0] key128_1;
       reg [255 : 0] key256_0;
+
+      reg [127 : 0] expected_00;
+      reg [127 : 0] expected_01;
+      reg [127 : 0] expected_02;
+      reg [127 : 0] expected_03;
+      reg [127 : 0] expected_04;
+      reg [127 : 0] expected_05;
+      reg [127 : 0] expected_06;
+      reg [127 : 0] expected_07;
+      reg [127 : 0] expected_08;
+      reg [127 : 0] expected_09;
+      reg [127 : 0] expected_10;
+      reg [127 : 0] expected_11;
+      reg [127 : 0] expected_12;
+      reg [127 : 0] expected_13;
+      reg [127 : 0] expected_14;
       
       $display("   -= Testbench for aes key mem started =-");
       $display("    =====================================");
@@ -462,45 +463,46 @@ module tb_aes_key_mem();
       #(100 *CLK_PERIOD);
 
       key128_0      = 256'h00000000000000000000000000000000000000000000000000000000000000;
-      expected_0_00 = 128'h00000000000000000000000000000000;
-      expected_0_01 = 128'h62636363626363636263636362636363; 
-      expected_0_02 = 128'h9b9898c9f9fbfbaa9b9898c9f9fbfbaa; 
-      expected_0_03 = 128'h90973450696ccffaf2f457330b0fac99; 
-      expected_0_04 = 128'hee06da7b876a1581759e42b27e91ee2b; 
-      expected_0_05 = 128'h7f2e2b88f8443e098dda7cbbf34b9290; 
-      expected_0_06 = 128'hec614b851425758c99ff09376ab49ba7; 
-      expected_0_07 = 128'h217517873550620bacaf6b3cc61bf09b; 
-      expected_0_08 = 128'h0ef903333ba9613897060a04511dfa9f; 
-      expected_0_09 = 128'hb1d4d8e28a7db9da1d7bb3de4c664941; 
-      expected_0_10 = 128'hb4ef5bcb3e92e21123e951cf6f8f188e; 
+      expected_00 = 128'h00000000000000000000000000000000;
+      expected_01 = 128'h62636363626363636263636362636363;
+      expected_02 = 128'h9b9898c9f9fbfbaa9b9898c9f9fbfbaa;
+      expected_03 = 128'h90973450696ccffaf2f457330b0fac99;
+      expected_04 = 128'hee06da7b876a1581759e42b27e91ee2b;
+      expected_05 = 128'h7f2e2b88f8443e098dda7cbbf34b9290;
+      expected_06 = 128'hec614b851425758c99ff09376ab49ba7;
+      expected_07 = 128'h217517873550620bacaf6b3cc61bf09b;
+      expected_08 = 128'h0ef903333ba9613897060a04511dfa9f;
+      expected_09 = 128'hb1d4d8e28a7db9da1d7bb3de4c664941;
+      expected_10 = 128'hb4ef5bcb3e92e21123e951cf6f8f188e;
 
-      test_key_128(key128_0, expected_0_00, expected_0_01, expected_0_02, 
-                   expected_0_03, expected_0_04, expected_0_05, expected_0_06, 
-                   expected_0_07, expected_0_08, expected_0_09, expected_0_10);
+      test_key_128(key128_0,
+                   expected_00, expected_01, expected_02, expected_03,
+                   expected_04, expected_05, expected_06, expected_07,
+                   expected_08, expected_09, expected_10);
 
       key256_0      = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
 
-      expected_0_00 = 128'h000102030405060708090a0b0c0d0e0f;
-      expected_0_01 = 128'h101112131415161718191a1b1c1d1e1f;
-      expected_0_02 = 128'ha573c29fa176c498a97fce93a572c09c;
-      expected_0_03 = 128'h1651a8cd0244beda1a5da4c10640bade;
-      expected_0_04 = 128'hae87dff00ff11b68a68ed5fb03fc1567;
-      expected_0_05 = 128'h6de1f1486fa54f9275f8eb5373b8518d;
-      expected_0_06 = 128'hc656827fc9a799176f294cec6cd5598b;
-      expected_0_07 = 128'h3de23a75524775e727bf9eb45407cf39;
-      expected_0_08 = 128'h0bdc905fc27b0948ad5245a4c1871c2f;
-      expected_0_09 = 128'h45f5a66017b2d387300d4d33640a820a;
-      expected_0_10 = 128'h7ccff71cbeb4fe5413e6bbf0d261a7df;
-      expected_0_11 = 128'hf01afafee7a82979d7a5644ab3afe640;
-      expected_0_12 = 128'h2541fe719bf500258813bbd55a721c0a;
-      expected_0_13 = 128'h4e5a6699a9f24fe07e572baacdf8cdea;
-      expected_0_14 = 128'h24fc79ccbf0979e9371ac23c6d68de36;
+      expected_00 = 128'h000102030405060708090a0b0c0d0e0f;
+      expected_01 = 128'h101112131415161718191a1b1c1d1e1f;
+      expected_02 = 128'ha573c29fa176c498a97fce93a572c09c;
+      expected_03 = 128'h1651a8cd0244beda1a5da4c10640bade;
+      expected_04 = 128'hae87dff00ff11b68a68ed5fb03fc1567;
+      expected_05 = 128'h6de1f1486fa54f9275f8eb5373b8518d;
+      expected_06 = 128'hc656827fc9a799176f294cec6cd5598b;
+      expected_07 = 128'h3de23a75524775e727bf9eb45407cf39;
+      expected_08 = 128'h0bdc905fc27b0948ad5245a4c1871c2f;
+      expected_09 = 128'h45f5a66017b2d387300d4d33640a820a;
+      expected_10 = 128'h7ccff71cbeb4fe5413e6bbf0d261a7df;
+      expected_11 = 128'hf01afafee7a82979d7a5644ab3afe640;
+      expected_12 = 128'h2541fe719bf500258813bbd55a721c0a;
+      expected_13 = 128'h4e5a6699a9f24fe07e572baacdf8cdea;
+      expected_14 = 128'h24fc79ccbf0979e9371ac23c6d68de36;
 
       test_key_256(key256_0,
-                   expected_0_00, expected_0_01, expected_0_02, expected_0_03,
-                   expected_0_04, expected_0_05, expected_0_06, expected_0_07,
-                   expected_0_08, expected_0_09, expected_0_10, expected_0_11,
-                   expected_0_12, expected_0_13, expected_0_14);
+                   expected_00, expected_01, expected_02, expected_03,
+                   expected_04, expected_05, expected_06, expected_07,
+                   expected_08, expected_09, expected_10, expected_11,
+                   expected_12, expected_13, expected_14);
       
       display_test_result();
       $display("");
