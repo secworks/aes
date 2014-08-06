@@ -127,10 +127,7 @@ module aes_key_mem(
   //----------------------------------------------------------------
   assign round_key  = tmp_round_key;
   assign ready      = ready_reg;
-  assign sbox0_addr = tmp_sbox0_addr;
-  assign sbox1_addr = tmp_sbox1_addr;
-  assign sbox2_addr = tmp_sbox2_addr;
-  assign sbox3_addr = tmp_sbox3_addr;
+  assign sboxw      = tmp_sboxw;
 
     
   //----------------------------------------------------------------
