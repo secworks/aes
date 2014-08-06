@@ -462,7 +462,8 @@ module tb_aes_key_mem();
       
       #(100 *CLK_PERIOD);
 
-      key128_0      = 256'h00000000000000000000000000000000000000000000000000000000000000;
+      // AES-128 test case 1 key and expected values.
+      key128_0    = 256'h0000000000000000000000000000000000000000000000000000000000000000;
       expected_00 = 128'h00000000000000000000000000000000;
       expected_01 = 128'h62636363626363636263636362636363;
       expected_02 = 128'h9b9898c9f9fbfbaa9b9898c9f9fbfbaa;
@@ -480,7 +481,29 @@ module tb_aes_key_mem();
                    expected_04, expected_05, expected_06, expected_07,
                    expected_08, expected_09, expected_10);
 
-      key256_0      = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
+
+      // AES-128 test case 2 key and expected values.
+      key128_1    = 256'hffffffffffffffffffffffffffffffff00000000000000000000000000000000;
+      expected_00 = 128'hffffffffffffffffffffffffffffffff;
+      expected_01 = 128'he8e9e9e917161616e8e9e9e917161616;
+      expected_02 = 128'hadaeae19bab8b80f525151e6454747f0;
+      expected_03 = 128'h090e2277b3b69a78e1e7cb9ea4a08c6e;
+      expected_04 = 128'he16abd3e52dc2746b33becd8179b60b6;
+      expected_05 = 128'he5baf3ceb766d488045d385013c658e6;
+      expected_06 = 128'h71d07db3c6b6a93bc2eb916bd12dc98d;
+      expected_07 = 128'he90d208d2fbb89b6ed5018dd3c7dd150;
+      expected_08 = 128'h96337366b988fad054d8e20d68a5335d;
+      expected_09 = 128'h8bf03f233278c5f366a027fe0e0514a3;
+      expected_10 = 128'hd60a3588e472f07b82d2d7858cd7c326;
+
+      test_key_128(key128_1,
+                   expected_00, expected_01, expected_02, expected_03,
+                   expected_04, expected_05, expected_06, expected_07,
+                   expected_08, expected_09, expected_10);
+
+
+      // AES-256 test case 1 key and expected values.
+      key256_0    = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
 
       expected_00 = 128'h000102030405060708090a0b0c0d0e0f;
       expected_01 = 128'h101112131415161718191a1b1c1d1e1f;
