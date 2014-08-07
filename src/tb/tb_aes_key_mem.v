@@ -555,20 +555,20 @@ module tb_aes_key_mem();
       // AES-256 test case 1 key and expected values.
       key256_0    = 256'h000000000000000000000000000000000000000000000000000000000000000;
       expected_00 = 128'h00000000000000000000000000000000;
-      expected_00 = 128'h00000000000000000000000000000000;
-      expected_00 = 128'h62636363626363636263636362636363;
-      expected_00 = 128'haafbfbfbaafbfbfbaafbfbfbaafbfbfb;
-      expected_00 = 128'h6f6c6ccf0d0f0fac6f6c6ccf0d0f0fac;
-      expected_00 = 128'h7d8d8d6ad77676917d8d8d6ad7767691;
-      expected_00 = 128'h5354edc15e5be26d31378ea23c38810e;
-      expected_00 = 128'h968a81c141fcf7503c717a3aeb070cab;
-      expected_00 = 128'h9eaa8f28c0f16d45f1c6e3e7cdfe62e9;
-      expected_00 = 128'h2b312bdf6acddc8f56bca6b5bdbbaa1e;
-      expected_00 = 128'h6406fd52a4f79017553173f098cf1119;
-      expected_00 = 128'h6dbba90b0776758451cad331ec71792f;
-      expected_00 = 128'he7b0e89c4347788b16760b7b8eb91a62;
-      expected_00 = 128'h74ed0ba1739b7e252251ad14ce20d43b;
-      expected_00 = 128'h10f80a1753bf729c45c979e7cb706385;
+      expected_01 = 128'h00000000000000000000000000000000;
+      expected_02 = 128'h62636363626363636263636362636363;
+      expected_03 = 128'haafbfbfbaafbfbfbaafbfbfbaafbfbfb;
+      expected_04 = 128'h6f6c6ccf0d0f0fac6f6c6ccf0d0f0fac;
+      expected_05 = 128'h7d8d8d6ad77676917d8d8d6ad7767691;
+      expected_06 = 128'h5354edc15e5be26d31378ea23c38810e;
+      expected_07 = 128'h968a81c141fcf7503c717a3aeb070cab;
+      expected_08 = 128'h9eaa8f28c0f16d45f1c6e3e7cdfe62e9;
+      expected_09 = 128'h2b312bdf6acddc8f56bca6b5bdbbaa1e;
+      expected_10 = 128'h6406fd52a4f79017553173f098cf1119;
+      expected_11 = 128'h6dbba90b0776758451cad331ec71792f;
+      expected_12 = 128'he7b0e89c4347788b16760b7b8eb91a62;
+      expected_13 = 128'h74ed0ba1739b7e252251ad14ce20d43b;
+      expected_14 = 128'h10f80a1753bf729c45c979e7cb706385;
 
       test_key_256(key256_0,
                    expected_00, expected_01, expected_02, expected_03,
@@ -577,9 +577,33 @@ module tb_aes_key_mem();
                    expected_12, expected_13, expected_14);
 
 
+      // AES-256 test case 2 key and expected values.
+      key256_1    = 256'hffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+      expected_00 = 128'hffffffffffffffffffffffffffffffff;
+      expected_01 = 128'hffffffffffffffffffffffffffffffff;
+      expected_02 = 128'he8e9e9e917161616e8e9e9e917161616;
+      expected_03 = 128'h0fb8b8b8f04747470fb8b8b8f0474747;
+      expected_04 = 128'h4a4949655d5f5f73b5b6b69aa2a0a08c;
+      expected_05 = 128'h355858dcc51f1f9bcaa7a7233ae0e064;
+      expected_06 = 128'hafa80ae5f2f755964741e30ce5e14380;
+      expected_07 = 128'heca0421129bf5d8ae318faa9d9f81acd;
+      expected_08 = 128'he60ab7d014fde24653bc014ab65d42ca;
+      expected_09 = 128'ha2ec6e658b5333ef684bc946b1b3d38b;
+      expected_10 = 128'h9b6c8a188f91685edc2d69146a702bde;
+      expected_11 = 128'ha0bd9f782beeac9743a565d1f216b65a;
+      expected_12 = 128'hfc22349173b35ccfaf9e35dbc5ee1e05;
+      expected_13 = 128'h0695ed132d7b41846ede24559cc8920f;
+      expected_14 = 128'h546d424f27de1e8088402b5b4dae355e;
+
+      test_key_256(key256_1,
+                   expected_00, expected_01, expected_02, expected_03,
+                   expected_04, expected_05, expected_06, expected_07,
+                   expected_08, expected_09, expected_10, expected_11,
+                   expected_12, expected_13, expected_14);
+
+
       // AES-256 test case 3 key and expected values.
       key256_2    = 256'h000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f;
-
       expected_00 = 128'h000102030405060708090a0b0c0d0e0f;
       expected_01 = 128'h101112131415161718191a1b1c1d1e1f;
       expected_02 = 128'ha573c29fa176c498a97fce93a572c09c;
