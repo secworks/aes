@@ -51,6 +51,8 @@ import sys
 #-------------------------------------------------------------------
 VERBOSE = True
 
+DUMP_VARS = True
+
 AES_128_ROUNDS = 10
 AES_192_ROUNDS = 12
 AES_256_ROUNDS = 14
@@ -172,12 +174,22 @@ def next_256it_key_a(key0, key1, rcon):
     (w0, w1, w2, w3) = key0
     (w4, w5, w6, w7) = key1
 
-    t = substw(rol8(w7)) ^ (rcon << 24)
+    sw = substw(rol8(w7))
+    rw = (rcon << 24)
+    t = sw ^ rw
 
     k0 = w0 ^ t
     k1 = w1 ^ w0 ^ t
     k2 = w2 ^ w1 ^ w0 ^ t
     k3 = w3 ^ w2 ^ w1 ^ w0 ^ t
+
+    if (DUMP_VARS):
+        print("next_256bit_key_a:")
+        print("w0 = 0x%08x, w0 = 0x%08x, w0 = 0x%08x, w0 = 0x%08x" % (w0, w1, w2, w3))
+        print("w4 = 0x%08x, w5 = 0x%08x, w6 = 0x%08x, w7 = 0x%08x" % (w4, w5, w6, w7))
+        print("t = 0x%08x, sw = 0x%08x, rw = 0x%08x" % (t, sw, rw))
+        print("k0 = 0x%08x, k0 = 0x%08x, k0 = 0x%08x, k0 = 0x%08x" % (k0, k1, k2, k3))
+        print("")
 
     return (k0, k1, k2, k3)
 
@@ -198,6 +210,14 @@ def next_256it_key_b(key0, key1):
     k1 = w1 ^ w0 ^ t
     k2 = w2 ^ w1 ^ w0 ^ t
     k3 = w3 ^ w2 ^ w1 ^ w0 ^ t
+
+    if (DUMP_VARS):
+        print("next_256bit_key_b:")
+        print("w0 = 0x%08x, w0 = 0x%08x, w0 = 0x%08x, w0 = 0x%08x" % (w0, w1, w2, w3))
+        print("w4 = 0x%08x, w5 = 0x%08x, w6 = 0x%08x, w7 = 0x%08x" % (w4, w5, w6, w7))
+        print("t = 0x%08x" % (t))
+        print("k0 = 0x%08x, k0 = 0x%08x, k0 = 0x%08x, k0 = 0x%08x" % (k0, k1, k2, k3))
+        print("")
 
     return (k0, k1, k2, k3)
 
