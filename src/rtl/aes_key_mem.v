@@ -295,7 +295,7 @@ module aes_key_mem(
                   end
                 else
                   begin
-                    if (round_ctr_reg[0])
+                    if (round_ctr_reg[0] == 0)
                       begin
                         k0 = w4 ^ trw;
                         k1 = w5 ^ w4 ^ trw;
@@ -310,11 +310,11 @@ module aes_key_mem(
                         k3 = w7 ^ w6 ^ w5 ^ w4 ^ tw;
                       end
 
-                    prev_key0_new = prev_key1_reg;
-                    prev_key0_we  = 1;
                     key_mem_new   = {k0, k1, k2, k3};
                     prev_key1_new = {k0, k1, k2, k3};
                     prev_key1_we  = 1;
+                    prev_key0_new = prev_key1_reg;
+                    prev_key0_we  = 1;
                   end
               end
 
