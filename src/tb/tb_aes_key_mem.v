@@ -56,9 +56,8 @@ module tb_aes_key_mem();
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
 
-  parameter AES_128_BIT_KEY = 2'h0;
-  parameter AES_192_BIT_KEY = 2'h1;
-  parameter AES_256_BIT_KEY = 2'h2;
+  parameter AES_128_BIT_KEY = 0;
+  parameter AES_256_BIT_KEY = 1;
 
   parameter AES_128_NUM_ROUNDS = 10;
   parameter AES_192_NUM_ROUNDS = 12;
@@ -326,6 +325,7 @@ module tb_aes_key_mem();
       $display("");
 
       tb_key = key;
+      tb_keylen = AES_128_BIT_KEY;
       tb_init = 1;
       #(2 * CLK_PERIOD);
       tb_init = 0;
@@ -376,6 +376,7 @@ module tb_aes_key_mem();
       $display("");
 
       tb_key = key;
+      tb_keylen = AES_256_BIT_KEY;
       tb_init = 1;
       #(2 * CLK_PERIOD);
       tb_init = 0;
