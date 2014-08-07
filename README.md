@@ -26,6 +26,12 @@ can be removed.
 
 ## Status ##
 
+***(2014-08-07)***
+
+Round key generation for both AES-128 and AES-256 now works when tested
+separately. Datapaths and core are yet to be debugged.
+
+
 ***(2014-07-27)***
 
 Reworked the partitioning of block registers, round counters etc -
