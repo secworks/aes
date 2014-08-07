@@ -254,8 +254,8 @@ module aes_key_mem(
       tw = new_sboxw;
 
       if (round_key_update)
-        key_mem_we  = 1;
         begin
+        key_mem_we  = 1;
           case (keylen)
             AES_128_BIT_KEY:
               begin
