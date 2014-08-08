@@ -354,6 +354,7 @@ def test_key(key, expected):
 # given key length.
 #-------------------------------------------------------------------
 def aes_encipher_block(key, block):
+    tmp_block = block[:]
 
     # Get round keys based on the given key.
     if len(key) == 4:
@@ -362,8 +363,23 @@ def aes_encipher_block(key, block):
     else:
         round_keys = key_gen256(key)
         num_rounds = AES_256_ROUNDS
-        
-    return block
+
+    # Init round
+    tmp_block = addroundkeys(round_keys[0], tmp_block)
+
+    # Main rounds
+    for i in range(1 : (num_rounds - 1)):
+        tmp_block = subbytes(tmp_block)
+        tmp_block = shiftrows(tmp_block)
+        tmp_block = mixcolumns(tmp_block)
+        tmp_block = addroundkey(round_keys[i], tmp_block)
+
+    # Final round
+    tmp_block = subbytes(tmp_block)
+    tmp_block = shiftrows(tmp_block)
+    tmp_block = addroundkey(round_keys[num_rounds], tmp_block)
+
+    return tmp_block
 
 
 #-------------------------------------------------------------------
