@@ -110,12 +110,12 @@ def substw(w):
 
 
 #-------------------------------------------------------------------
-# rol8()
+# rolx()
 #
-# Rotate the given 32 bit word 8 bits left.
+# Rotate the given 32 bit word x bits left.
 #-------------------------------------------------------------------
-def rol8(w):
-    return ((w << 8) | (w >> 24)) & 0xffffffff
+def rol8(w, x):
+    return ((w << x) | (w >> (32 - x))) & 0xffffffff
 
 
 #-------------------------------------------------------------------
@@ -127,7 +127,7 @@ def rol8(w):
 def next_128bit_key(prev_key, rcon):
     (w0, w1, w2, w3) = prev_key
 
-    t = substw(rol8(w3)) ^ (rcon << 24)
+    t = substw(rolx(w3, 8)) ^ (rcon << 24)
 
     k0 = w0 ^ t
     k1 = w1 ^ w0 ^ t
@@ -171,7 +171,7 @@ def next_256it_key_a(key0, key1, rcon):
     (w0, w1, w2, w3) = key0
     (w4, w5, w6, w7) = key1
 
-    sw = substw(rol8(w7))
+    sw = substw(rolx(w7, 8))
     rw = (rcon << 24)
     t = sw ^ rw
 
@@ -274,6 +274,13 @@ def print_bytekeys(keys):
             print("0x%02x " % keys[i + j], end="")
         print("")
         i += 16
+
+#-------------------------------------------------------------------
+# shiftrows()
+#-------------------------------------------------------------------
+def shiftrows(block):
+    (w0, w1, w2, w3) = block
+    return (w0, rolx(w1, 8), rolx(w2, 16), rolx(w3, 24))
 
 
 #-------------------------------------------------------------------
