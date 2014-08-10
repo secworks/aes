@@ -732,8 +732,6 @@ def test_key_expansion():
 #-------------------------------------------------------------------
 def single_block_tests():
     nist_aes128_key = (0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x09cf4f3c)
-    nist_aes192_key = (0x8e73b0f7, 0xda0e6452, 0xc810f32b,
-                       0x809079e5, 0x62f8ead2, 0x522c6b7b)
     nist_aes256_key = (0x603deb10, 0x15ca71be, 0x2b73aef0, 0x857d7781,
                        0x1f352c07, 0x3b6108d7, 0x2d9810a3, 0x0914dff4)
     
