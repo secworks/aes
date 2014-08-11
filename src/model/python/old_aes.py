@@ -744,11 +744,6 @@ def single_block_tests():
     nist_exp128_1 = (0xf5d3d585, 0x03b9699d, 0xe785895a, 0x96fdbaaf)
     nist_exp128_2 = (0x43b1cd7f, 0x598ece23, 0x881b00e3, 0xed030688)
     nist_exp128_3 = (0x7b0c785e, 0x27e8ad3f, 0x82232071, 0x04725dd4)
-
-    nist_exp192_0 = (0xbd334f1d, 0x6e45f25f, 0xf712a214, 0x571fa5cc)
-    nist_exp192_1 = (0x97410484, 0x6d0ad3ad, 0x7734ecb3, 0xecee4eef)
-    nist_exp192_2 = (0xef7afd22, 0x70e2e60a, 0xdce0ba2f, 0xace6444e)
-    nist_exp192_3 = (0x9a4b41ba, 0x738d6c72, 0xfb166916, 0x03c18e0e)
     
     nist_exp256_0 = (0xf3eed1bd, 0xb5d2a03c, 0x064b5a7e, 0x3db181f8)
     nist_exp256_1 = (0x591ccb10, 0xd410ed26, 0xdc5ba74a, 0x31362870)
@@ -783,36 +778,6 @@ def single_block_tests():
     test_single_block(8, AES_DECIPHER, nist_aes128_key, 
                       nist_exp128_3, nist_plaintext3)
     
-
-    print("")
-    print("ECB 192 bit key tests")
-    print("---------------------")
-    
-    test_single_block(9, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext0, nist_exp192_0)
-    
-    test_single_block(10, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext1, nist_exp192_1)
-    
-    test_single_block(11, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext2, nist_exp192_2)
-
-    test_single_block(12, AES_ENCIPHER, nist_aes192_key, 
-                      nist_plaintext3, nist_exp192_3)
-
-      
-    test_single_block(13, AES_DECIPHER, nist_aes192_key, 
-                      nist_exp192_0, nist_plaintext0)
-
-    test_single_block(14, AES_DECIPHER, nist_aes192_key, 
-                      nist_exp192_1, nist_plaintext1)
-
-    test_single_block(15, AES_DECIPHER, nist_aes192_key, 
-                      nist_exp192_2, nist_plaintext2)
-
-    test_single_block(16, AES_DECIPHER, nist_aes192_key, 
-                      nist_exp192_3, nist_plaintext3)
-
       
     print("")
     print("ECB 256 bit key tests")
