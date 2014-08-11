@@ -276,26 +276,61 @@ def print_bytekeys(keys):
         i += 16
 
 
+
 #-------------------------------------------------------------------
+# subword()
+#
+# Perform bytwise sbox replacement of all bytes in the given word.
+#-------------------------------------------------------------------
+def subword(w):
+    b0 = w & 0xff
+    b1 = (w >> 8) & 0xff
+    b2 = (w >> 16) & 0xff
+    b3 = (w >> 24) & 0xff
+
+    s0 = sbox(b0)
+    s1 = sbox(b1)
+    s2 = sbox(b2)
+    s3 = sbox(b3)
+
+    return s0 + (s1 << 8) + (s2 << 16) + (s3 << 24)
+
+
+#-------------------------------------------------------------------
+# addroundkey()
+#
+# AES AddRoundKey block operation.
+# Perform XOR combination of the given block and the given key.
 #-------------------------------------------------------------------
 def addroundkey(key, block):
-    return block
+    (w0, w1, w2, w3) = block
+    (k0, k1, k2, k3) = key
+    return (w0 ^ k0, w1 ^ k1, w2 ^ k2, w3 ^ k3)
 
 
 #-------------------------------------------------------------------
+# mixcolumn()
+#
+# AES MixColumns on the given block.
 #-------------------------------------------------------------------
 def mixcolumns(block):
     return block
 
 
 #-------------------------------------------------------------------
+# subbytes()
+#
+# AES SubBytes operation on the given block.
 #-------------------------------------------------------------------
 def subbytes(block):
-    return block
+    (w0, w1, w2, w3) = block
+    return (subword(w0), subword(w1), subword(w2), subword(w3))
 
 
 #-------------------------------------------------------------------
 # shiftrows()
+#
+# AES ShiftRows block operation.
 #-------------------------------------------------------------------
 def shiftrows(block):
     (w0, w1, w2, w3) = block
