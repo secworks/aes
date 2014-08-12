@@ -301,26 +301,6 @@ def print_bytekeys(keys):
         i += 16
 
 
-
-#-------------------------------------------------------------------
-# subword()
-#
-# Perform bytwise sbox replacement of all bytes in the given word.
-#-------------------------------------------------------------------
-def subword(w):
-    b0 = w & 0xff
-    b1 = (w >> 8) & 0xff
-    b2 = (w >> 16) & 0xff
-    b3 = (w >> 24) & 0xff
-
-    s0 = sbox(b0)
-    s1 = sbox(b1)
-    s2 = sbox(b2)
-    s3 = sbox(b3)
-
-    return s0 + (s1 << 8) + (s2 << 16) + (s3 << 24)
-
-
 #-------------------------------------------------------------------
 # addroundkey()
 #
@@ -340,6 +320,25 @@ def addroundkey(key, block):
 #-------------------------------------------------------------------
 def mixcolumns(block):
     return block
+
+
+#-------------------------------------------------------------------
+# subword()
+#
+# Perform bytwise sbox replacement of all bytes in the given word.
+#-------------------------------------------------------------------
+def subword(w):
+    b0 = w & 0xff
+    b1 = (w >> 8) & 0xff
+    b2 = (w >> 16) & 0xff
+    b3 = (w >> 24) & 0xff
+
+    s0 = sbox[b0]
+    s1 = sbox[b1]
+    s2 = sbox[b2]
+    s3 = sbox[b3]
+
+    return s0 + (s1 << 8) + (s2 << 16) + (s3 << 24)
 
 
 #-------------------------------------------------------------------
@@ -380,7 +379,7 @@ def aes_encipher_block(key, block):
         num_rounds = AES_256_ROUNDS
 
     # Init round
-    tmp_block4 = addroundkeys(round_keys[0], block)
+    tmp_block4 = addroundkey(round_keys[0], block)
 
     if VERBOSE:
         print("  Initial AddRoundKeys round.")
