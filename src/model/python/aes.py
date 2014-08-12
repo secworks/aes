@@ -97,6 +97,7 @@ sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
 def print_block(block):
     (w0, w1, w2, w3) = block
     print("0x%08x, 0x%08x, 0x%08x, 0x%08x" % (w0, w1, w2, w3))
+    print("")
 
 
 #-------------------------------------------------------------------
@@ -454,6 +455,20 @@ def test_aes():
     nist_exp256_1 = (0x591ccb10, 0xd410ed26, 0xdc5ba74a, 0x31362870)
     nist_exp256_2 = (0xb6ed21b9, 0x9ca6f4f9, 0xf153e7b1, 0xbeafed1d)
     nist_exp256_3 = (0x23304b7a, 0x39f9f3ff, 0x067d8d8f, 0x9e24ecc7)
+
+
+    result = aes_encipher_block(nist_aes128_key, nist_plaintext0)
+    if VERBOSE:
+        print("Test 0 for AES-128.")
+        print("Key:")
+        print_key(nist_aes128_key)
+        print("Block in:")
+        print_block(nist_plaintext0)
+        print("Expected block out:")
+        print_block(nist_exp128_0)
+        print("Got block out:")
+        print_block(result)
+        print("")
 
 
 #-------------------------------------------------------------------
