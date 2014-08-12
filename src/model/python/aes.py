@@ -358,7 +358,7 @@ def aes_encipher_block(key, block):
     tmp_block = addroundkeys(round_keys[0], tmp_block)
 
     # Main rounds
-    for i in range(1 : (num_rounds - 1)):
+    for i in range(1 , (num_rounds - 1)):
         tmp_block = subbytes(tmp_block)
         tmp_block = shiftrows(tmp_block)
         tmp_block = mixcolumns(tmp_block)
