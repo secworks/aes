@@ -90,6 +90,30 @@ sbox = [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
 
 
 #-------------------------------------------------------------------
+# print_block()
+#
+# Print the given block as four 32 bit words.
+#-------------------------------------------------------------------
+def print_block(block):
+    (w0, w1, w2, w3) = block
+    print("0x%08x, 0x%08x, 0x%08x, 0x%08x" % (w0, w1, w2, w3))
+
+
+#-------------------------------------------------------------------
+# print_key()
+#
+# Print the given key as on or two sets of four 32 bit words.
+#-------------------------------------------------------------------
+def print_key(key):
+    if len(key) == 8:
+        (k0, k1, k2, k3, k4, k5, k6, k7) = key
+        print_block((k0, k1, k2, k3))
+        print_block((k4, k5, k6, k7))
+    else:
+        print_block(key)
+
+
+#-------------------------------------------------------------------
 # substw()
 #
 # Returns a 32-bit word in which each of the bytes in the
@@ -355,21 +379,55 @@ def aes_encipher_block(key, block):
         num_rounds = AES_256_ROUNDS
 
     # Init round
-    tmp_block = addroundkeys(round_keys[0], tmp_block)
+    tmp_block4 = addroundkeys(round_keys[0], block)
 
+    if VERBOSE:
+        print("  Initial AddRoundKeys round.")
+        print("Round key:")
+        print_key(round_keys[0])
+        print("Block in:")
+        print_block(block)
+        print("Block out:")
+        print_block(tmp_block4)
+        print("")
+        
     # Main rounds
     for i in range(1 , (num_rounds - 1)):
-        tmp_block = subbytes(tmp_block)
-        tmp_block = shiftrows(tmp_block)
-        tmp_block = mixcolumns(tmp_block)
-        tmp_block = addroundkey(round_keys[i], tmp_block)
+        tmp_block1 = subbytes(tmp_block4)
+        tmp_block2 = shiftrows(tmp_block1)
+        tmp_block3 = mixcolumns(tmp_block2)
+        tmp_block4 = addroundkey(round_keys[i], tmp_block4)
+
+        if VERBOSE:
+            print("  Round %d" % i)
+            print("SubBytes block in and out:")
+            print_block(tmp_block4)
+            print_block(tmp_block1)
+            print("ShiftRows block out:")
+            print_block(tmp_block2)
+            print("MixColumns block out:")
+            print_block(tmp_block3)
+            print("AddRoundKeys block out:")
+            print_block(tmp_block4)
+            print("")
 
     # Final round
-    tmp_block = subbytes(tmp_block)
-    tmp_block = shiftrows(tmp_block)
-    tmp_block = addroundkey(round_keys[num_rounds], tmp_block)
+    tmp_block1 = subbytes(tmp_block4)
+    tmp_block2 = shiftrows(tmp_block1)
+    tmp_block3 = addroundkey(round_keys[num_rounds], tmp_block2)
 
-    return tmp_block
+    if VERBOSE:
+        print("  Final round")
+        print("SubBytes block in and out:")
+        print_block(tmp_block4)
+        print_block(tmp_block1)
+        print("ShiftRows block out:")
+        print_block(tmp_block2)
+        print("AddRoundKeys block out:")
+        print_block(tmp_block3)
+        print("")
+
+    return tmp_block3
 
 
 #-------------------------------------------------------------------
