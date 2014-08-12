@@ -139,7 +139,7 @@ def substw(w):
 #
 # Rotate the given 32 bit word x bits left.
 #-------------------------------------------------------------------
-def rol8(w, x):
+def rolx(w, x):
     return ((w << x) | (w >> (32 - x))) & 0xffffffff
 
 
