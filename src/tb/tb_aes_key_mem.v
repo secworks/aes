@@ -189,21 +189,6 @@ module tb_aes_key_mem();
         end
     end
   endtask // dump_dut_state
-
-
-  
-  //----------------------------------------------------------------
-  // dump_mem()
-  //
-  // Dump the contents of the key memory in the dut.
-  //----------------------------------------------------------------
-  task dump_mem();
-    begin
-      $display("State of key mem");
-      $display("----------------");
-      $display("");
-    end
-  endtask // dump_mem
   
   
   //----------------------------------------------------------------
@@ -241,22 +226,6 @@ module tb_aes_key_mem();
       tb_round   = 4'h0;
     end
   endtask // init_sim
-
-
-  //----------------------------------------------------------------
-  // dump_dut_memory()
-  //----------------------------------------------------------------
-  task dump_dut_memory();
-    reg [3 : 0] round_nr;
-    begin
-      for (round_nr = 4'h0 ; round_nr < AES_256_NUM_ROUNDS ; round_nr = round_nr + 1'b1)
-        begin
-          tb_round = round_nr;
-          #(CLK_PERIOD);
-          $display("round_key[0x%01x] = 0x%016x", round_nr, tb_round_key);
-        end
-    end
-  endtask // dump_dut_memory
 
 
   //----------------------------------------------------------------
@@ -302,7 +271,7 @@ module tb_aes_key_mem();
         end
       $display("");
     end
-  endtask // dump_dut_memory
+  endtask // check_key
 
 
   //----------------------------------------------------------------
@@ -636,4 +605,3 @@ endmodule // tb_aes_key_mem
 //======================================================================
 // EOF tb_aes_key_mem.v
 //======================================================================
-
