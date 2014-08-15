@@ -124,6 +124,20 @@ inv_sbox = [0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38,
 
 
 #-------------------------------------------------------------------
+# print_bytekeys()
+#
+# Print a set of round keys given as an array of bytes.
+#-------------------------------------------------------------------
+def print_bytekeys(keys):
+    i = 0
+    print("Number of round keys: %d" % (int(len(keys) / 16)))
+    while i < (len(keys) - 1):
+        for j in range(16):
+            print("0x%02x " % keys[i + j], end="")
+        print("")
+        i += 16
+
+#-------------------------------------------------------------------
 # print_block()
 #
 # Print the given block as four 32 bit words.
@@ -319,21 +333,6 @@ def get_rcon(round):
         rcon = ((rcon << 1) ^ (0x11b & - (rcon >> 7))) & 0xff
 
     return rcon
-
-
-#-------------------------------------------------------------------
-# print_bytekeys()
-#
-# Print a set of round keys given as an array of bytes.
-#-------------------------------------------------------------------
-def print_bytekeys(keys):
-    i = 0
-    print("Number of round keys: %d" % (int(len(keys) / 16)))
-    while i < (len(keys) - 1):
-        for j in range(16):
-            print("0x%02x " % keys[i + j], end="")
-        print("")
-        i += 16
 
 
 #-------------------------------------------------------------------
