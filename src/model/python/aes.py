@@ -131,7 +131,6 @@ inv_sbox = [0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38,
 def print_block(block):
     (w0, w1, w2, w3) = block
     print("0x%08x, 0x%08x, 0x%08x, 0x%08x" % (w0, w1, w2, w3))
-    print("")
 
 
 #-------------------------------------------------------------------
@@ -346,7 +345,16 @@ def print_bytekeys(keys):
 def addroundkey(key, block):
     (w0, w1, w2, w3) = block
     (k0, k1, k2, k3) = key
-    return (w0 ^ k0, w1 ^ k1, w2 ^ k2, w3 ^ k3)
+
+    res_block = (w0 ^ k0, w1 ^ k1, w2 ^ k2, w3 ^ k3)
+
+    if VERBOSE:
+        print("AddRoundKey key, block in and block out:")
+        print_block(key)
+        print_block(block)
+        print_block(res_block)
+
+    return res_block
 
 
 #-------------------------------------------------------------------
@@ -355,7 +363,14 @@ def addroundkey(key, block):
 # AES MixColumns on the given block.
 #-------------------------------------------------------------------
 def mixcolumns(block):
-    return block
+    res_block = block
+
+    if VERBOSE:
+        print("MixColumns block in and block out:")
+        print_block(block)
+        print_block(res_block)
+
+    return res_block
 
 
 #-------------------------------------------------------------------
@@ -384,7 +399,15 @@ def subword(w):
 #-------------------------------------------------------------------
 def subbytes(block):
     (w0, w1, w2, w3) = block
-    return (subword(w0), subword(w1), subword(w2), subword(w3))
+
+    res_block = (subword(w0), subword(w1), subword(w2), subword(w3))
+
+    if VERBOSE:
+        print("SubBytes block in and block out:")
+        print_block(block)
+        print_block(res_block)
+
+    return res_block
 
 
 #-------------------------------------------------------------------
@@ -394,7 +417,15 @@ def subbytes(block):
 #-------------------------------------------------------------------
 def shiftrows(block):
     (w0, w1, w2, w3) = block
-    return (w0, rolx(w1, 8), rolx(w2, 16), rolx(w3, 24))
+
+    res_block = (w0, rolx(w1, 8), rolx(w2, 16), rolx(w3, 24))
+
+    if VERBOSE:
+        print("ShiftRows block in and block out:")
+        print_block(block)
+        print_block(res_block)
+
+    return res_block
 
 
 #-------------------------------------------------------------------
@@ -415,38 +446,18 @@ def aes_encipher_block(key, block):
         num_rounds = AES_256_ROUNDS
 
     # Init round
-    tmp_block4 = addroundkey(round_keys[0], block)
-
     print("  Initial AddRoundKeys round.")
-    print("Round key:")
-    print_key(round_keys[0])
-    print("Block in:")
-    print_block(block)
-    print("Block out:")
-    print_block(tmp_block4)
-    print("")
+    tmp_block4 = addroundkey(round_keys[0], block)
         
     # Main rounds
     for i in range(1 , (num_rounds - 1)):
         print("  Round %d" % i)
 
         tmp_block1 = subbytes(tmp_block4)
-        print("SubBytes block in and out:")
-        print_block(tmp_block4)
-        print_block(tmp_block1)
-
         tmp_block2 = shiftrows(tmp_block1)
-        print("ShiftRows block out:")
-        print_block(tmp_block2)
-
         tmp_block3 = mixcolumns(tmp_block2)
-        print("MixColumns block out:")
-        print_block(tmp_block3)
-
         tmp_block4 = addroundkey(round_keys[i], tmp_block4)
-        print("AddRoundKeys block out:")
-        print_block(tmp_block4)
-        print("")
+
 
     # Final round
     tmp_block1 = subbytes(tmp_block4)
