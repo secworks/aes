@@ -372,6 +372,7 @@ def addroundkey(key, block):
         print_block(key)
         print_block(block)
         print_block(res_block)
+        print("")
 
     return res_block
 
@@ -388,6 +389,7 @@ def mixcolumns(block):
         print("MixColumns block in and block out:")
         print_block(block)
         print_block(res_block)
+        print("")
 
     return res_block
 
@@ -425,6 +427,7 @@ def subbytes(block):
         print("SubBytes block in and block out:")
         print_block(block)
         print_block(res_block)
+        print("")
 
     return res_block
 
@@ -453,6 +456,7 @@ def shiftrows(block):
         print("ShiftRows block in and block out:")
         print_block(block)
         print_block(res_block)
+        print("")
 
     return res_block
 
@@ -480,7 +484,9 @@ def aes_encipher_block(key, block):
         
     # Main rounds
     for i in range(1 , (num_rounds - 1)):
-        print("  Round %d" % i)
+        print("")
+        print("  Round %02d" % i)
+        print("  ---------")
 
         tmp_block1 = subbytes(tmp_block4)
         tmp_block2 = shiftrows(tmp_block1)
