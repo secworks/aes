@@ -202,6 +202,8 @@ def next_128bit_key(prev_key, rcon):
 # Generating the keys for 128 bit keys.
 #-------------------------------------------------------------------
 def key_gen128(key):
+    print("Doing the 128 bit key expansion")
+
     round_keys = []
 
     round_keys.append(key)
@@ -415,35 +417,36 @@ def aes_encipher_block(key, block):
     # Init round
     tmp_block4 = addroundkey(round_keys[0], block)
 
-    if VERBOSE:
-        print("  Initial AddRoundKeys round.")
-        print("Round key:")
-        print_key(round_keys[0])
-        print("Block in:")
-        print_block(block)
-        print("Block out:")
-        print_block(tmp_block4)
-        print("")
+    print("  Initial AddRoundKeys round.")
+    print("Round key:")
+    print_key(round_keys[0])
+    print("Block in:")
+    print_block(block)
+    print("Block out:")
+    print_block(tmp_block4)
+    print("")
         
     # Main rounds
     for i in range(1 , (num_rounds - 1)):
-        tmp_block1 = subbytes(tmp_block4)
-        tmp_block2 = shiftrows(tmp_block1)
-        tmp_block3 = mixcolumns(tmp_block2)
-        tmp_block4 = addroundkey(round_keys[i], tmp_block4)
+        print("  Round %d" % i)
 
-        if VERBOSE:
-            print("  Round %d" % i)
-            print("SubBytes block in and out:")
-            print_block(tmp_block4)
-            print_block(tmp_block1)
-            print("ShiftRows block out:")
-            print_block(tmp_block2)
-            print("MixColumns block out:")
-            print_block(tmp_block3)
-            print("AddRoundKeys block out:")
-            print_block(tmp_block4)
-            print("")
+        tmp_block1 = subbytes(tmp_block4)
+        print("SubBytes block in and out:")
+        print_block(tmp_block4)
+        print_block(tmp_block1)
+
+        tmp_block2 = shiftrows(tmp_block1)
+        print("ShiftRows block out:")
+        print_block(tmp_block2)
+
+        tmp_block3 = mixcolumns(tmp_block2)
+        print("MixColumns block out:")
+        print_block(tmp_block3)
+
+        tmp_block4 = addroundkey(round_keys[i], tmp_block4)
+        print("AddRoundKeys block out:")
+        print_block(tmp_block4)
+        print("")
 
     # Final round
     tmp_block1 = subbytes(tmp_block4)
@@ -491,6 +494,7 @@ def test_aes():
 
 
     result = aes_encipher_block(nist_aes128_key, nist_plaintext0)
+
     if VERBOSE:
         print("Test 0 for AES-128.")
         print("Key:")
