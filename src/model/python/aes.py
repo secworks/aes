@@ -378,12 +378,44 @@ def addroundkey(key, block):
 
 
 #-------------------------------------------------------------------
-# mixcolumn()
+# gm()
+#
+# The specific Gmult for a given byte.
+#-------------------------------------------------------------------
+def gm(b):
+    return ((b << 1) ^ (0x1b ^ ((b >> 7) * 0xff))) & 0xff
+
+
+#-------------------------------------------------------------------
+# mixw()
+#
+# Perform bit mixing of the given words.
+#-------------------------------------------------------------------
+def mixw(w):
+    (b0, b1, b2, b3) = w2b(w)
+
+    mb0 = gm(b0) ^ gm(b1) ^ b1 ^ b2 ^ b3
+    mb1 = b0 ^ gm(b1) ^ gm(b2) ^ b2 ^ b3
+    mb2 = b0 ^ b1 ^ gm(b2) ^ gm(b3) ^ b3
+    mb3 = gm(b0) ^ b0 ^ b1 ^ b2 ^ gm(b3)
+
+    return b2w(mb0, mb1, mb2, mb3)
+
+
+#-------------------------------------------------------------------
+# mixcolumns()
 #
 # AES MixColumns on the given block.
 #-------------------------------------------------------------------
 def mixcolumns(block):
-    res_block = block
+    (c0, c1, c2, c3) = block
+
+    mc0 = mixw(c0)
+    mc1 = mixw(c1)
+    mc2 = mixw(c2)
+    mc3 = mixw(c3)
+
+    res_block = (mc0, mc1, mc2, mc3)
 
     if VERBOSE:
         print("MixColumns block in and block out:")
