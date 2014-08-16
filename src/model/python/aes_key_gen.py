@@ -318,6 +318,12 @@ def test_key(key, expected):
 
     generated = key_gen(key)
 
+    if VERBOSE:
+        for k in generated:
+            (w0, w1, w2, w3) = k
+            print("0x%08x, 0x%08x, 0x%08x, 0x%08x" %
+                  (w0, w1, w2, w3))
+
     if (len(generated) != len(expected)):
         print("Error: Incorrect number of keys generated.")
         print("Expected number of round keys: %d" % len(expected))
