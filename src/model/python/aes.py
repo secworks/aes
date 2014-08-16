@@ -383,7 +383,7 @@ def addroundkey(key, block):
 # The specific Galois Multiplication by two for a given byte.
 #-------------------------------------------------------------------
 def gm2(b):
-    return ((b << 1) & 0xff) ^ (0x1b ^ ((b >> 7) * 0xff))
+    return ((b << 1) ^ (0x1b ^ ((b >> 7) * 0xff)) & 0xff)
 
 
 #-------------------------------------------------------------------
@@ -441,17 +441,14 @@ def mixcolumns(block):
 # Perform bytwise sbox replacement of all bytes in the given word.
 #-------------------------------------------------------------------
 def subword(w):
-    b0 = w & 0xff
-    b1 = (w >> 8) & 0xff
-    b2 = (w >> 16) & 0xff
-    b3 = (w >> 24) & 0xff
+    (b0, b1, b2, b3) = w2b(w)
 
     s0 = sbox[b0]
     s1 = sbox[b1]
     s2 = sbox[b2]
     s3 = sbox[b3]
 
-    return s0 + (s1 << 8) + (s2 << 16) + (s3 << 24)
+    return b2w(s0, s1, s2, s3)
 
 
 #-------------------------------------------------------------------
