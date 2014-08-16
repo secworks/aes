@@ -529,7 +529,7 @@ def aes_encipher_block(key, block):
         tmp_block1 = subbytes(tmp_block4)
         tmp_block2 = shiftrows(tmp_block1)
         tmp_block3 = mixcolumns(tmp_block2)
-        tmp_block4 = addroundkey(round_keys[i], tmp_block4)
+        tmp_block4 = addroundkey(round_keys[i], tmp_block3)
 
 
     # Final round
