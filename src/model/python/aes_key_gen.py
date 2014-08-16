@@ -136,6 +136,14 @@ def next_128bit_key(prev_key, rcon):
     k2 = w2 ^ w1 ^ w0 ^ t
     k3 = w3 ^ w2 ^ w1 ^ w0 ^ t
 
+    if VERBOSE:
+        print("Inside next 128bit key:")
+        print("w0 = 0x%08x, w1 = 0x%08x, w2 = 0x%08x, w3 = 0x%08x, rcon = 0x%02x" %
+              (w0, w1, w2, w3, rcon))
+        print("t = 0x%08x" % t)
+        print("k0 = 0x%08x, k1 = 0x%08x, k2 = 0x%08x, k3 = 0x%08x" %
+              (k0, k1, k2, k3))
+
     return (k0, k1, k2, k3)
 
 
