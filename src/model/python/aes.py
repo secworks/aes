@@ -378,12 +378,21 @@ def addroundkey(key, block):
 
 
 #-------------------------------------------------------------------
-# gm()
+# gm2()
 #
-# The specific Gmult for a given byte.
+# The specific Galois Multiplication by two for a given byte.
 #-------------------------------------------------------------------
-def gm(b):
-    return ((b << 1) ^ (0x1b ^ ((b >> 7) * 0xff))) & 0xff
+def gm2(b):
+    return ((b << 1) & 0xff) ^ (0x1b ^ ((b >> 7) * 0xff))
+
+
+#-------------------------------------------------------------------
+# gm3()
+#
+# The specific Galois Multiplication by three for a given byte.
+#-------------------------------------------------------------------
+def gm3(b):
+    return gm2(b) ^ b
 
 
 #-------------------------------------------------------------------
@@ -394,10 +403,10 @@ def gm(b):
 def mixw(w):
     (b0, b1, b2, b3) = w2b(w)
 
-    mb0 = gm(b0) ^ gm(b1) ^ b1 ^ b2 ^ b3
-    mb1 = b0 ^ gm(b1) ^ gm(b2) ^ b2 ^ b3
-    mb2 = b0 ^ b1 ^ gm(b2) ^ gm(b3) ^ b3
-    mb3 = gm(b0) ^ b0 ^ b1 ^ b2 ^ gm(b3)
+    mb0 = gm2(b0) ^ gm3(b1) ^ b2      ^ b3
+    mb1 = b0      ^ gm2(b1) ^ gm3(b2) ^ b3
+    mb2 = b0      ^ b1      ^ gm2(b2) ^ gm3(b3)
+    mb3 = gm3(b0) ^ b1      ^ b2      ^ gm2(b3)
 
     return b2w(mb0, mb1, mb2, mb3)
 
