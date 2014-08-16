@@ -252,6 +252,16 @@ def key_gen128(key):
     round_keys.append(next_128bit_key(round_keys[8], get_rcon(9)))
     round_keys.append(next_128bit_key(round_keys[9], get_rcon(10)))
 
+    if VERBOSE:
+        print("Input key:")
+        print_block(key)
+        print("")
+
+        print("Generated keys:")
+        for k in round_keys:
+            print_block(k)
+        print("")
+
     return round_keys
 
 
@@ -336,6 +346,17 @@ def key_gen256(key):
     # One final key needs to be generated.
     k = next_256it_key_a(round_keys[12], round_keys[13], get_rcon(7))
     round_keys.append(k)
+
+    if VERBOSE:
+        print("Input key:")
+        print_block((k0, k1, k2, k3))
+        print_block((k4, k5, k6, k7))
+        print("")
+
+        print("Generated keys:")
+        for k in round_keys:
+            print_block(k)
+        print("")
 
     return round_keys
 
