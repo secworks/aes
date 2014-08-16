@@ -383,10 +383,7 @@ def addroundkey(key, block):
 # The specific Galois Multiplication by two for a given byte.
 #-------------------------------------------------------------------
 def gm2(b):
-    if (b & 0x80):
-        return ((b << 1) ^ 0x1b) & 0xff
-    else:
-        return (b << 1) & 0xff
+    return ((b << 1) ^ (0x1b & ((b >> 7) * 0xff))) & 0xff
 
 
 #-------------------------------------------------------------------
