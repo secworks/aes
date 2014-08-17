@@ -198,7 +198,17 @@ def substw(w):
     s2 = sbox[b2]
     s3 = sbox[b3]
 
-    return b2w(b0, b1, b2, b3)
+    res = b2w(b0, b1, b2, b3)
+
+    if VERBOSE:
+        print("Inside substw:")
+        print("b0 = 0x%02x, b1 = 0x%02x, b2 = 0x%02x, b3 = 0x%02x" %
+              (b0, b1, b2, b3))
+        print("s0 = 0x%02x, s1 = 0x%02x, s2 = 0x%02x, s3 = 0x%02x" %
+              (s0, s1, s2, s3))
+        print("res = 0x%08x" % (res))
+
+    return res
 
 
 #-------------------------------------------------------------------
