@@ -262,16 +262,8 @@ def key_gen128(key):
 
     round_keys.append(key)
 
-    round_keys.append(next_128bit_key(round_keys[0], get_rcon(1)))
-    round_keys.append(next_128bit_key(round_keys[1], get_rcon(2)))
-    round_keys.append(next_128bit_key(round_keys[2], get_rcon(3)))
-    round_keys.append(next_128bit_key(round_keys[3], get_rcon(4)))
-    round_keys.append(next_128bit_key(round_keys[4], get_rcon(5)))
-    round_keys.append(next_128bit_key(round_keys[5], get_rcon(6)))
-    round_keys.append(next_128bit_key(round_keys[6], get_rcon(7)))
-    round_keys.append(next_128bit_key(round_keys[7], get_rcon(8)))
-    round_keys.append(next_128bit_key(round_keys[8], get_rcon(9)))
-    round_keys.append(next_128bit_key(round_keys[9], get_rcon(10)))
+    for i in range(10):
+        round_keys.append(next_128bit_key(round_keys[i], get_rcon(i + 1)))
 
     if VERBOSE:
         print("Input key:")
