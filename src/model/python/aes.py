@@ -212,6 +212,34 @@ def substw(w):
 
 
 #-------------------------------------------------------------------
+# inv_substw()
+#
+# Returns a 32-bit word in which each of the bytes in the
+# given 32-bit word has been used as lookup into
+# the inverse AES S-box.
+#-------------------------------------------------------------------
+def inv_substw(w):
+    (b0, b1, b2, b3) = w2b(w)
+
+    s0 = inv_sbox[b0]
+    s1 = inv_sbox[b1]
+    s2 = inv_sbox[b2]
+    s3 = inv_sbox[b3]
+
+    res = b2w(s0, s1, s2, s3)
+
+    if VERBOSE:
+        print("Inside substw:")
+        print("b0 = 0x%02x, b1 = 0x%02x, b2 = 0x%02x, b3 = 0x%02x" %
+              (b0, b1, b2, b3))
+        print("s0 = 0x%02x, s1 = 0x%02x, s2 = 0x%02x, s3 = 0x%02x" %
+              (s0, s1, s2, s3))
+        print("res = 0x%08x" % (res))
+
+    return res
+
+
+#-------------------------------------------------------------------
 # rolx()
 #
 # Rotate the given 32 bit word x bits left.
@@ -470,22 +498,6 @@ def mixcolumns(block):
 
 
 #-------------------------------------------------------------------
-# subword()
-#
-# Perform bytwise sbox replacement of all bytes in the given word.
-#-------------------------------------------------------------------
-def subword(w):
-    (b0, b1, b2, b3) = w2b(w)
-
-    s0 = sbox[b0]
-    s1 = sbox[b1]
-    s2 = sbox[b2]
-    s3 = sbox[b3]
-
-    return b2w(s0, s1, s2, s3)
-
-
-#-------------------------------------------------------------------
 # subbytes()
 #
 # AES SubBytes operation on the given block.
@@ -493,7 +505,7 @@ def subword(w):
 def subbytes(block):
     (w0, w1, w2, w3) = block
 
-    res_block = (subword(w0), subword(w1), subword(w2), subword(w3))
+    res_block = (substw(w0), substw(w1), substw(w2), substw(w3))
 
     if VERBOSE:
         print("SubBytes block in and block out:")
@@ -602,7 +614,7 @@ def aes_decipher_block(key, block):
         print("  Round %02d" % i)
         print("  ---------")
 
-        tmp_block1 = subbytes(tmp_block4)
+        tmp_block1 = inv_subbytes(tmp_block4)
         tmp_block2 = shiftrows(tmp_block1)
         tmp_block3 = mixcolumns(tmp_block2)
         tmp_block4 = addroundkey(round_keys[i], tmp_block3)
