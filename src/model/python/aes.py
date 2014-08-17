@@ -705,14 +705,14 @@ def aes_decipher_block(key, block):
 
         tmp_block1 = inv_subbytes(tmp_block4)
         tmp_block2 = inv_shiftrows(tmp_block1)
-        tmp_block3 = mixcolumns(tmp_block2)
+        tmp_block3 = inv_mixcolumns(tmp_block2)
         tmp_block4 = addroundkey(round_keys[i], tmp_block3)
 
 
     # Final round
     print("  Final round.")
     tmp_block1 = inv_subbytes(tmp_block4)
-    tmp_block2 = shiftrows(tmp_block1)
+    tmp_block2 = inv_shiftrows(tmp_block1)
     tmp_block3 = addroundkey(round_keys[0], tmp_block2)
 
     return tmp_block3
