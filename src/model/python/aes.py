@@ -555,7 +555,7 @@ def aes_encipher_block(key, block):
     tmp_block4 = addroundkey(round_keys[0], block)
         
     # Main rounds
-    for i in range(1 , (num_rounds - 1)):
+    for i in range(1 , (num_rounds)):
         print("")
         print("  Round %02d" % i)
         print("  ---------")
@@ -567,20 +567,10 @@ def aes_encipher_block(key, block):
 
 
     # Final round
+    print("  Final round.")
     tmp_block1 = subbytes(tmp_block4)
     tmp_block2 = shiftrows(tmp_block1)
     tmp_block3 = addroundkey(round_keys[num_rounds], tmp_block2)
-
-    if VERBOSE:
-        print("  Final round")
-        print("SubBytes block in and out:")
-        print_block(tmp_block4)
-        print_block(tmp_block1)
-        print("ShiftRows block out:")
-        print_block(tmp_block2)
-        print("AddRoundKeys block out:")
-        print_block(tmp_block3)
-        print("")
 
     return tmp_block3
 
@@ -611,7 +601,15 @@ def test_aes():
     nist_exp256_3 = (0x23304b7a, 0x39f9f3ff, 0x067d8d8f, 0x9e24ecc7)
 
 
-    result = aes_encipher_block(nist_aes128_key, nist_plaintext0)
+    result128_0 = aes_encipher_block(nist_aes128_key, nist_plaintext0)
+    result128_1 = aes_encipher_block(nist_aes128_key, nist_plaintext1)
+    result128_2 = aes_encipher_block(nist_aes128_key, nist_plaintext2)
+    result128_3 = aes_encipher_block(nist_aes128_key, nist_plaintext3)
+
+    result256_0 = aes_encipher_block(nist_aes256_key, nist_plaintext0)
+    result256_1 = aes_encipher_block(nist_aes256_key, nist_plaintext1)
+    result256_2 = aes_encipher_block(nist_aes256_key, nist_plaintext2)
+    result256_3 = aes_encipher_block(nist_aes256_key, nist_plaintext3)
 
     if VERBOSE:
         print("Test 0 for AES-128.")
@@ -622,9 +620,52 @@ def test_aes():
         print("Expected block out:")
         print_block(nist_exp128_0)
         print("Got block out:")
-        print_block(result)
+        print_block(result128_0)
         print("")
 
+        print("Test 1 for AES-128.")
+        print("Key:")
+        print_key(nist_aes128_key)
+        print("Block in:")
+        print_block(nist_plaintext1)
+        print("Expected block out:")
+        print_block(nist_exp128_1)
+        print("Got block out:")
+        print_block(result128_1)
+        print("")
+
+        print("Test 2 for AES-128.")
+        print("Key:")
+        print_key(nist_aes128_key)
+        print("Block in:")
+        print_block(nist_plaintext2)
+        print("Expected block out:")
+        print_block(nist_exp128_2)
+        print("Got block out:")
+        print_block(result128_2)
+        print("")
+
+        print("Test 3 for AES-128.")
+        print("Key:")
+        print_key(nist_aes128_key)
+        print("Block in:")
+        print_block(nist_plaintext3)
+        print("Expected block out:")
+        print_block(nist_exp128_3)
+        print("Got block out:")
+        print_block(result128_3)
+        print("")
+
+        print("Test 0 for AES-256.")
+        print("Key:")
+        print_key(nist_aes128_key)
+        print("Block in:")
+        print_block(nist_plaintext0)
+        print("Expected block out:")
+        print_block(nist_exp256_0)
+        print("Got block out:")
+        print_block(result256_0)
+        print("")
 
 #-------------------------------------------------------------------
 # main()
