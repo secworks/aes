@@ -576,6 +576,48 @@ def aes_encipher_block(key, block):
 
 
 #-------------------------------------------------------------------
+# aes_decipher()
+#
+# Perform AES decipher operation for the given block
+# using the given key length.
+#-------------------------------------------------------------------
+def aes_decipher_block(key, block):
+    tmp_block = block[:]
+
+    # Get round keys based on the given key.
+    if len(key) == 4:
+        round_keys = key_gen128(key)
+        num_rounds = AES_128_ROUNDS
+    else:
+        round_keys = key_gen256(key)
+        num_rounds = AES_256_ROUNDS
+
+    # Init round
+    print("  Initial AddRoundKeys round.")
+    tmp_block4 = addroundkey(round_keys[num_rounds], block)
+
+    # Main rounds
+    for i in range(1 , (num_rounds)):
+        print("")
+        print("  Round %02d" % i)
+        print("  ---------")
+
+        tmp_block1 = subbytes(tmp_block4)
+        tmp_block2 = shiftrows(tmp_block1)
+        tmp_block3 = mixcolumns(tmp_block2)
+        tmp_block4 = addroundkey(round_keys[i], tmp_block3)
+
+
+    # Final round
+    print("  Final round.")
+    tmp_block1 = subbytes(tmp_block4)
+    tmp_block2 = shiftrows(tmp_block1)
+    tmp_block3 = addroundkey(round_keys[num_rounds], tmp_block2)
+
+    return tmp_block3
+
+
+#-------------------------------------------------------------------
 # test_aes()
 #
 # Test the AES implementation with 128 and 256 bit keys.
