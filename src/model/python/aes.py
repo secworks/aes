@@ -588,6 +588,47 @@ def aes_encipher_block(key, block):
 
 
 #-------------------------------------------------------------------
+# inv_mixw()
+#
+# Perform inverese bit mixing of the given words.
+# Currently not updated to correct functionality.
+#-------------------------------------------------------------------
+def inv_mixw(w):
+    (b0, b1, b2, b3) = w2b(w)
+
+    mb0 = gm2(b0) ^ gm3(b1) ^ b2      ^ b3
+    mb1 = b0      ^ gm2(b1) ^ gm3(b2) ^ b3
+    mb2 = b0      ^ b1      ^ gm2(b2) ^ gm3(b3)
+    mb3 = gm3(b0) ^ b1      ^ b2      ^ gm2(b3)
+
+    return b2w(mb0, mb1, mb2, mb3)
+
+
+#-------------------------------------------------------------------
+# inv_mixcolumns()
+#
+# AES Inverse MixColumns on the given block.
+#-------------------------------------------------------------------
+def inv_mixcolumns(block):
+    (c0, c1, c2, c3) = block
+
+    mc0 = inv_mixw(c0)
+    mc1 = inv_mixw(c1)
+    mc2 = inv_mixw(c2)
+    mc3 = inv_mixw(c3)
+
+    res_block = (mc0, mc1, mc2, mc3)
+
+    if VERBOSE:
+        print("Inverse MixColumns block in and block out:")
+        print_block(block)
+        print_block(res_block)
+        print("")
+
+    return res_block
+
+
+#-------------------------------------------------------------------
 # inv_shiftrows()
 #
 # AES inverse ShiftRows block operation.
