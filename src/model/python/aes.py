@@ -611,6 +611,7 @@ def test_aes():
     result256_2 = aes_encipher_block(nist_aes256_key, nist_plaintext2)
     result256_3 = aes_encipher_block(nist_aes256_key, nist_plaintext3)
 
+
     if VERBOSE:
         print("Test 0 for AES-128.")
         print("Key:")
@@ -656,9 +657,10 @@ def test_aes():
         print_block(result128_3)
         print("")
 
+
         print("Test 0 for AES-256.")
         print("Key:")
-        print_key(nist_aes128_key)
+        print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_plaintext0)
         print("Expected block out:")
@@ -666,6 +668,40 @@ def test_aes():
         print("Got block out:")
         print_block(result256_0)
         print("")
+
+        print("Test 1 for AES-256.")
+        print("Key:")
+        print_key(nist_aes256_key)
+        print("Block in:")
+        print_block(nist_plaintext1)
+        print("Expected block out:")
+        print_block(nist_exp256_1)
+        print("Got block out:")
+        print_block(result256_1)
+        print("")
+
+        print("Test 2 for AES-256.")
+        print("Key:")
+        print_key(nist_aes256_key)
+        print("Block in:")
+        print_block(nist_plaintext2)
+        print("Expected block out:")
+        print_block(nist_exp256_2)
+        print("Got block out:")
+        print_block(result256_2)
+        print("")
+
+        print("Test 3 for AES-256.")
+        print("Key:")
+        print_key(nist_aes256_key)
+        print("Block in:")
+        print_block(nist_plaintext3)
+        print("Expected block out:")
+        print_block(nist_exp256_3)
+        print("Got block out:")
+        print_block(result256_3)
+        print("")
+
 
 #-------------------------------------------------------------------
 # main()
