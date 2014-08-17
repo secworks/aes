@@ -588,6 +588,35 @@ def aes_encipher_block(key, block):
 
 
 #-------------------------------------------------------------------
+# inv_shiftrows()
+#
+# AES inverse ShiftRows block operation.
+#-------------------------------------------------------------------
+def inv_shiftrows(block):
+    (w0, w1, w2, w3) = block
+
+    c0 = w2b(w0)
+    c1 = w2b(w1)
+    c2 = w2b(w2)
+    c3 = w2b(w3)
+
+    ws0 = b2w(c0[0], c1[1],  c2[2],  c3[3])
+    ws1 = b2w(c3[0], c0[1],  c1[2],  c2[3])
+    ws2 = b2w(c2[0], c3[1],  c0[2],  c1[3])
+    ws3 = b2w(c1[0], c2[1],  c3[2],  c0[3])
+
+    res_block = (ws0, ws1, ws2, ws3)
+
+    if VERBOSE:
+        print("Inverse ShiftRows block in and block out:")
+        print_block(block)
+        print_block(res_block)
+        print("")
+
+    return res_block
+
+
+#-------------------------------------------------------------------
 # inv_subbytes()
 #
 # AES inverse SubBytes operation on the given block.
@@ -634,16 +663,16 @@ def aes_decipher_block(key, block):
         print("  ---------")
 
         tmp_block1 = inv_subbytes(tmp_block4)
-        tmp_block2 = shiftrows(tmp_block1)
+        tmp_block2 = inv_shiftrows(tmp_block1)
         tmp_block3 = mixcolumns(tmp_block2)
         tmp_block4 = addroundkey(round_keys[i], tmp_block3)
 
 
     # Final round
     print("  Final round.")
-    tmp_block1 = subbytes(tmp_block4)
+    tmp_block1 = inv_subbytes(tmp_block4)
     tmp_block2 = shiftrows(tmp_block1)
-    tmp_block3 = addroundkey(round_keys[num_rounds], tmp_block2)
+    tmp_block3 = addroundkey(round_keys[0], tmp_block2)
 
     return tmp_block3
 
