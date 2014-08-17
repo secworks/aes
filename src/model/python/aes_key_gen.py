@@ -129,7 +129,9 @@ def rol8(w):
 def next_128bit_key(prev_key, rcon):
     (w0, w1, w2, w3) = prev_key
 
-    t = substw(rol8(w3)) ^ (rcon << 24)
+    rol = rol8(w3)
+    subst = substw(rol)
+    t = subst ^ (rcon << 24)
 
     k0 = w0 ^ t
     k1 = w1 ^ w0 ^ t
@@ -138,9 +140,10 @@ def next_128bit_key(prev_key, rcon):
 
     if VERBOSE:
         print("Inside next 128bit key:")
-        print("w0 = 0x%08x, w1 = 0x%08x, w2 = 0x%08x, w3 = 0x%08x, rcon = 0x%02x" %
-              (w0, w1, w2, w3, rcon))
-        print("t = 0x%08x" % t)
+        print("w0 = 0x%08x, w1 = 0x%08x, w2 = 0x%08x, w3 = 0x%08x" %
+              (w0, w1, w2, w3))
+        print("rol = 0x%08x, subst = 0x%08x, rcon = 0x%02x, t = 0x%08x" %
+              (rol, subst, rcon, t))
         print("k0 = 0x%08x, k1 = 0x%08x, k2 = 0x%08x, k3 = 0x%08x" %
               (k0, k1, k2, k3))
 
