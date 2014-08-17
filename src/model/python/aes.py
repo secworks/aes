@@ -229,7 +229,7 @@ def inv_substw(w):
     res = b2w(s0, s1, s2, s3)
 
     if VERBOSE:
-        print("Inside substw:")
+        print("Inside inv_substw:")
         print("b0 = 0x%02x, b1 = 0x%02x, b2 = 0x%02x, b3 = 0x%02x" %
               (b0, b1, b2, b3))
         print("s0 = 0x%02x, s1 = 0x%02x, s2 = 0x%02x, s3 = 0x%02x" %
@@ -585,6 +585,25 @@ def aes_encipher_block(key, block):
     tmp_block3 = addroundkey(round_keys[num_rounds], tmp_block2)
 
     return tmp_block3
+
+
+#-------------------------------------------------------------------
+# inv_subbytes()
+#
+# AES inverse SubBytes operation on the given block.
+#-------------------------------------------------------------------
+def inv_subbytes(block):
+    (w0, w1, w2, w3) = block
+
+    res_block = (inv_substw(w0), inv_substw(w1), inv_substw(w2), inv_substw(w3))
+
+    if VERBOSE:
+        print("Inverse SubBytes block in and block out:")
+        print_block(block)
+        print_block(res_block)
+        print("")
+
+    return res_block
 
 
 #-------------------------------------------------------------------
