@@ -198,7 +198,7 @@ def substw(w):
     s2 = sbox[b2]
     s3 = sbox[b3]
 
-    res = b2w(b0, b1, b2, b3)
+    res = b2w(s0, s1, s2, s3)
 
     if VERBOSE:
         print("Inside substw:")
