@@ -185,6 +185,24 @@ def w2b(w):
 
 
 #-------------------------------------------------------------------
+# gm2()
+#
+# The specific Galois Multiplication by two for a given byte.
+#-------------------------------------------------------------------
+def gm2(b):
+    return ((b << 1) ^ (0x1b & ((b >> 7) * 0xff))) & 0xff
+
+
+#-------------------------------------------------------------------
+# gm3()
+#
+# The specific Galois Multiplication by three for a given byte.
+#-------------------------------------------------------------------
+def gm3(b):
+    return gm2(b) ^ b
+
+
+#-------------------------------------------------------------------
 # substw()
 #
 # Returns a 32-bit word in which each of the bytes in the
@@ -437,24 +455,6 @@ def addroundkey(key, block):
         print("")
 
     return res_block
-
-
-#-------------------------------------------------------------------
-# gm2()
-#
-# The specific Galois Multiplication by two for a given byte.
-#-------------------------------------------------------------------
-def gm2(b):
-    return ((b << 1) ^ (0x1b & ((b >> 7) * 0xff))) & 0xff
-
-
-#-------------------------------------------------------------------
-# gm3()
-#
-# The specific Galois Multiplication by three for a given byte.
-#-------------------------------------------------------------------
-def gm3(b):
-    return gm2(b) ^ b
 
 
 #-------------------------------------------------------------------
