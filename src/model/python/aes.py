@@ -693,9 +693,11 @@ def aes_decipher_block(key, block):
         round_keys = key_gen256(key)
         num_rounds = AES_256_ROUNDS
 
-    # Init round
-    print("  Initial AddRoundKeys round.")
-    tmp_block4 = addroundkey(round_keys[num_rounds], block)
+    # Initial round
+    print("  Initial round.")
+    tmp_block1 = addroundkey(round_keys[0], tmp_block)
+    tmp_block2 = inv_shiftrows(tmp_block1)
+    tmp_block4 = inv_subbytes(tmp_block2)
 
     # Main rounds
     for i in range(1 , (num_rounds)):
@@ -703,19 +705,16 @@ def aes_decipher_block(key, block):
         print("  Round %02d" % i)
         print("  ---------")
 
-        tmp_block1 = inv_subbytes(tmp_block4)
-        tmp_block2 = inv_shiftrows(tmp_block1)
-        tmp_block3 = inv_mixcolumns(tmp_block2)
-        tmp_block4 = addroundkey(round_keys[i], tmp_block3)
-
+        tmp_block1 = addroundkey(round_keys[i], tmp_block4)
+        tmp_block2 = inv_mixcolumns(tmp_block1)
+        tmp_block3 = inv_shiftrows(tmp_block2)
+        tmp_block4 = inv_subbytes(tmp_block3)
 
     # Final round
-    print("  Final round.")
-    tmp_block1 = inv_subbytes(tmp_block4)
-    tmp_block2 = inv_shiftrows(tmp_block1)
-    tmp_block3 = addroundkey(round_keys[0], tmp_block2)
+    print("  Final AddRoundKeys round.")
+    res_block = addroundkey(round_keys[0], tmp_block4)
 
-    return tmp_block3
+    return res_block
 
 
 #-------------------------------------------------------------------
