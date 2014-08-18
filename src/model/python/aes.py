@@ -528,23 +528,6 @@ def mixw(w):
 
 
 #-------------------------------------------------------------------
-# inv_mixw()
-#
-# Perform inverse bit mixing of the given words.
-#-------------------------------------------------------------------
-def inv_mixw(w):
-    (b0, b1, b2, b3) = w2b(w)
-
-    mb0 = gm14(b0) ^ gm11(b1) ^ gm13(b2) ^ gm09(b3)
-    mb1 = gm09(b0) ^ gm14(b1) ^ gm11(b2) ^ gm13(b3)
-    mb2 = gm13(b0) ^ gm09(b1) ^ gm14(b2) ^ gm11(b3)
-    mb3 = gm11(b0) ^ gm13(b1) ^ gm09(b2) ^ gm14(b3)
-
-    return b2w(mb0, mb1, mb2, mb3)
-
-
-
-#-------------------------------------------------------------------
 # mixcolumns()
 #
 # AES MixColumns on the given block.
@@ -661,16 +644,15 @@ def aes_encipher_block(key, block):
 #-------------------------------------------------------------------
 # inv_mixw()
 #
-# Perform inverese bit mixing of the given words.
-# Currently not updated to correct functionality.
+# Perform inverse bit mixing of the given words.
 #-------------------------------------------------------------------
 def inv_mixw(w):
     (b0, b1, b2, b3) = w2b(w)
 
-    mb0 = gm2(b0) ^ gm3(b1) ^ b2      ^ b3
-    mb1 = b0      ^ gm2(b1) ^ gm3(b2) ^ b3
-    mb2 = b0      ^ b1      ^ gm2(b2) ^ gm3(b3)
-    mb3 = gm3(b0) ^ b1      ^ b2      ^ gm2(b3)
+    mb0 = gm14(b0) ^ gm11(b1) ^ gm13(b2) ^ gm09(b3)
+    mb1 = gm09(b0) ^ gm14(b1) ^ gm11(b2) ^ gm13(b3)
+    mb2 = gm13(b0) ^ gm09(b1) ^ gm14(b2) ^ gm11(b3)
+    mb3 = gm11(b0) ^ gm13(b1) ^ gm09(b2) ^ gm14(b3)
 
     return b2w(mb0, mb1, mb2, mb3)
 
