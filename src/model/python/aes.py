@@ -747,7 +747,7 @@ def aes_decipher_block(key, block):
         num_rounds = AES_256_ROUNDS
 
     # Initial round
-    print("  Initial round.")
+    print("  Initial, partial round.")
     tmp_block1 = addroundkey(round_keys[len(round_keys) - 1], tmp_block)
     tmp_block2 = inv_shiftrows(tmp_block1)
     tmp_block4 = inv_subbytes(tmp_block2)
