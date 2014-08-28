@@ -407,9 +407,11 @@ module tb_aes_key_mem();
       reg [255 : 0] key128_1;
       reg [255 : 0] key128_2;
       reg [255 : 0] key128_3;
+      reg [255 : 0] nist_key128;
       reg [255 : 0] key256_0;
       reg [255 : 0] key256_1;
       reg [255 : 0] key256_2;
+      reg [255 : 0] nist_key256;
 
       reg [127 : 0] expected_00;
       reg [127 : 0] expected_01;
