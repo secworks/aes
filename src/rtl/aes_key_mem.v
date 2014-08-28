@@ -119,7 +119,6 @@ module aes_key_mem(
   reg [3 : 0]   num_rounds;
 
   reg [127 : 0] tmp_round_key;
-  reg           tmp_ready;
 
   
   //----------------------------------------------------------------
