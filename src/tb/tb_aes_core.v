@@ -280,6 +280,9 @@ module tb_aes_core();
      tb_init = 0;
      wait_ready();
 
+     $display("Key expansion done");
+     $display("");
+
      // Perform encipher och decipher operation on the block.
      tb_encdec = encdec;
      tb_block = block;
