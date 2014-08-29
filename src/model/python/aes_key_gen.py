@@ -459,6 +459,7 @@ def test_key_expansion():
                 (0x74ed0ba1, 0x739b7e25, 0x2251ad14, 0xce20d43b),
                 (0x10f80a17, 0x53bf729c, 0x45c979e7, 0xcb706385))
 
+
     key256_2 = (0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff,
                 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff)
     exp256_2 = ((0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff),
@@ -476,6 +477,7 @@ def test_key_expansion():
                 (0xfc223491, 0x73b35ccf, 0xaf9e35db, 0xc5ee1e05),
                 (0x0695ed13, 0x2d7b4184, 0x6ede2455, 0x9cc8920f),
                 (0x546d424f, 0x27de1e80, 0x88402b5b, 0x4dae355e))
+
 
     key256_3 = (0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f,
                 0x10111213, 0x14151617, 0x18191a1b, 0x1c1d1e1f)
@@ -495,19 +497,46 @@ def test_key_expansion():
                 (0x4e5a6699, 0xa9f24fe0, 0x7e572baa, 0xcdf8cdea),
                 (0x24fc79cc, 0xbf0979e9, 0x371ac23c, 0x6d68de36))
 
+
+    nist_aes256_key = (0x603deb10, 0x15ca71be, 0x2b73aef0, 0x857d7781,
+                       0x1f352c07, 0x3b6108d7, 0x2d9810a3, 0x0914dff4)
+
+    exp_nist256_key = ((0x603deb10, 0x15ca71be, 0x2b73aef0, 0x857d7781),
+                       (0x1f352c07, 0x3b6108d7, 0x2d9810a3, 0x0914dff4),
+                       (0x9ba35411, 0x8e6925af, 0xa51a8b5f, 0x2067fcde),
+                       (0xa8b09c1a, 0x93d194cd, 0xbe49846e, 0xb75d5b9a),
+                       (0xd59aecb8, 0x5bf3c917, 0xfee94248, 0xde8ebe96),
+                       (0xb5a9328a, 0x2678a647, 0x98312229, 0x2f6c79b3),
+                       (0x812c81ad, 0xdadf48ba, 0x24360af2, 0xfab8b464),
+                       (0x98c5bfc9, 0xbebd198e, 0x268c3ba7, 0x09e04214),
+                       (0x68007bac, 0xb2df3316, 0x96e939e4, 0x6c518d80),
+                       (0xc814e204, 0x76a9fb8a, 0x5025c02d, 0x59c58239),
+                       (0xde136967, 0x6ccc5a71, 0xfa256395, 0x9674ee15),
+                       (0x5886ca5d, 0x2e2f31d7, 0x7e0af1fa, 0x27cf73c3),
+                       (0x749c47ab, 0x18501dda, 0xe2757e4f, 0x7401905a),
+                       (0xcafaaae3, 0xe4d59b34, 0x9adf6ace, 0xbd10190d),
+                       (0xfe4890d1, 0xe6188d0b, 0x046df344, 0x706c631e))
+
     print("*** Test of 128 bit keys: ***")
     test_key(key128_1, exp128_1)
     test_key(key128_2, exp128_2)
     test_key(key128_3, exp128_3)
     test_key(key128_4, exp128_4)
-    print("The NIST key:")
+
+    print("The NIST 128 key:")
     test_key(nist_aes128_key, exp_nist128_key)
     print("")
+
 
     print("*** Test of 256 bit keys: ***")
     test_key(key256_1, exp256_1)
     test_key(key256_2, exp256_2)
     test_key(key256_3, exp256_3)
+
+    print("The NIST 256 key:")
+    test_key(nist_aes256_key, exp_nist256_key)
+    print("")
+
     print("")
 
 
