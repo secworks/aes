@@ -349,7 +349,7 @@ module tb_aes_core();
   //----------------------------------------------------------------
   initial
     begin : aes_core_test
-      reg [127 : 0] nist_aes128_key;
+      reg [255 : 0] nist_aes128_key;
       reg [255 : 0] nist_aes256_key;
 
       reg [127 : 0] nist_plaintext0;
@@ -367,8 +367,8 @@ module tb_aes_core();
       reg [127 : 0] nist_ecb_256_enc_expected2;
       reg [127 : 0] nist_ecb_256_enc_expected3;
 
-      nist_aes128_key = 128'h2b7e151628aed2a6abf7158809cf4f3c;
-      nist_aes256_key = 255'h603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4;
+      nist_aes128_key = 256'h2b7e151628aed2a6abf7158809cf4f3c00000000000000000000000000000000;
+      nist_aes256_key = 256'h603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4;
 
       nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
       nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
@@ -380,10 +380,10 @@ module tb_aes_core();
       nist_ecb_128_enc_expected2 = 128'h43b1cd7f598ece23881b00e3ed030688;
       nist_ecb_128_enc_expected3 = 128'h7b0c785e27e8ad3f8223207104725dd4;
 
-      nist_ecb_256_enc_expected0 = 255'hf3eed1bdb5d2a03c064b5a7e3db181f8;
-      nist_ecb_256_enc_expected1 = 255'h591ccb10d410ed26dc5ba74a31362870;
-      nist_ecb_256_enc_expected2 = 255'hb6ed21b99ca6f4f9f153e7b1beafed1d;
-      nist_ecb_256_enc_expected3 = 255'h23304b7a39f9f3ff067d8d8f9e24ecc7;
+      nist_ecb_256_enc_expected0 = 128'hf3eed1bdb5d2a03c064b5a7e3db181f8;
+      nist_ecb_256_enc_expected1 = 128'h591ccb10d410ed26dc5ba74a31362870;
+      nist_ecb_256_enc_expected2 = 128'hb6ed21b99ca6f4f9f153e7b1beafed1d;
+      nist_ecb_256_enc_expected3 = 128'h23304b7a39f9f3ff067d8d8f9e24ecc7;
 
 
       $display("   -= Testbench for aes core started =-");
