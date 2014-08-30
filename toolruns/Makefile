@@ -46,16 +46,12 @@ TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
 TB_CORE_SRC =../src/tb/tb_aes_core.v
 TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
+TB_ENC_SRC =../src/tb/tb_aes_encipher_block.v
 
 CC=iverilog
 
 
-all: core.sim core keymem
-
-
-keymem: $(KEYGEN_SRC) $(SBOX_SRC) $(TB_KEYMEM_SRC)
-	$(CC) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
-
+all: core.sim core keymem.sim encipher.sim
 
 core: $(CORE_SRC)
 	$(CC) -o core $(CORE_SRC)
@@ -65,8 +61,21 @@ core.sim: $(TB_CORE_SRC) core
 	$(CC) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
 
 
-keymem.sim: keymem.sim
+
+keymem.sim:  $(TB_KEYMEM_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
+	$(CC) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
+
+
+encipher.sim:  $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
+	$(CC) -o encipher.sim $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
+
+
+sim-keymem: keymem.sim
 	./keymem.sim
+
+
+som-encipher: encipher.sim
+	./encipher.sim
 
 
 sim-core: core.sim
