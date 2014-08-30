@@ -186,19 +186,19 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   task init_sim();
     begin
-      cycle_ctr = 0;
-      error_ctr = 0;
-      tc_ctr    = 0;
+      cycle_ctr    = 0;
+      error_ctr    = 0;
+      tc_ctr       = 0;
 
-      tb_clk     = 0;
-      tb_reset_n = 1;
-      tb_encdec  = 0;
-      tb_init    = 0;
-      tb_next    = 0;
-      tb_key     = {8{32'h00000000}};
-      tb_keylen  = 0;
+      tb_clk       = 0;
+      tb_reset_n   = 1;
 
-      tb_block  = {4{32'h00000000}};
+      tb_next      = 0;
+      tb_keylen    = 0;
+
+      tb_new_sboxw = 32'h00000000;
+      tb_round_key = {4{32'h00000000}};
+      tb_block     = {4{32'h00000000}};
     end
   endtask // init_sim
 
