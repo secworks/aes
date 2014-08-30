@@ -8,30 +8,30 @@
 // Author: Joachim Strombergson
 // Copyright (c) 2014, Secworks Sweden AB
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or 
-// without modification, are permitted provided that the following 
-// conditions are met: 
-// 
-// 1. Redistributions of source code must retain the above copyright 
-//    notice, this list of conditions and the following disclaimer. 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the 
-//    distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+//
+// Redistribution and use in source and binary forms, with or
+// without modification, are permitted provided that the following
+// conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in
+//    the documentation and/or other materials provided with the
+//    distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 // BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
@@ -46,7 +46,7 @@
 // Test module.
 //------------------------------------------------------------------
 module tb_aes_encipher_block();
-  
+
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
@@ -62,7 +62,7 @@ module tb_aes_encipher_block();
   parameter AES_DECIPHER = 1'b0;
   parameter AES_ENCIPHER = 1'b1;
 
-  
+
   //----------------------------------------------------------------
   // Register and Wire declarations.
   //----------------------------------------------------------------
@@ -72,17 +72,20 @@ module tb_aes_encipher_block();
 
   reg            tb_clk;
   reg            tb_reset_n;
-  reg            tb_encdec;
-  reg            tb_init;
+
   reg            tb_next;
-  wire           tb_ready;
-  reg [255 : 0]  tb_key;
   reg            tb_keylen;
+  wire           tb_ready;
+  wire [3 : 0]   tb_round;
+  reg [127 : 0]  tb_round_key;
+
+  wire [31 : 0]  tb_sboxw;
+  reg  [31 : 0]  tb_new_sboxw;
+
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_new_block;
-  wire           tb_result_valid;
-  
-  
+
+
   //----------------------------------------------------------------
   // Device Under Test.
   //----------------------------------------------------------------
@@ -103,19 +106,19 @@ module tb_aes_encipher_block();
                          .new_block(tb_new_block),
                          .ready(tb_ready)
                         );
-  
+
 
   //----------------------------------------------------------------
   // clk_gen
   //
   // Always running clock generator process.
   //----------------------------------------------------------------
-  always 
+  always
     begin : clk_gen
       #CLK_HALF_PERIOD;
       tb_clk = !tb_clk;
     end // clk_gen
-    
+
 
   //----------------------------------------------------------------
   // sys_monitor()
@@ -133,7 +136,7 @@ module tb_aes_encipher_block();
         end
     end
 
-  
+
   //----------------------------------------------------------------
   // dump_dut_state()
   //
@@ -143,20 +146,23 @@ module tb_aes_encipher_block();
     begin
       $display("State of DUT");
       $display("------------");
-      $display("Inputs and outputs:");
-      $display("encdec = 0x%01x, init = 0x%01x, next = 0x%01x", 
-               dut.encdec, dut.init, dut.next);
-      $display("keylen = 0x%01x, key  = 0x%032x ", dut.keylen, dut.key);
+      $display("ready = 0x%01x, next = 0x%01x, keylen = 0x%01x",
+               dut.ready, dut.next, dut.keylen);
       $display("block  = 0x%032x", dut.block);
+      $display("new_block    = 0x%016x", dut.new_block);
       $display("");
-      $display("ready        = 0x%01x", dut.ready);
-      $display("result_valid = 0x%01x, result = 0x%032x",
-               dut.result_valid, dut.result);
+
+      $display("round = 0x%01x, round_key = 0x%016x", dut.round, dut.round_key);
+      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
+      $display("");
+
+      $display("enc_ctrl = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
+               dut.enc_ctrl_reg, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
     end
   endtask // dump_dut_state
-  
-  
+
+
   //----------------------------------------------------------------
   // reset_dut()
   //
@@ -171,7 +177,7 @@ module tb_aes_encipher_block();
     end
   endtask // reset_dut
 
-  
+
   //----------------------------------------------------------------
   // init_sim()
   //
@@ -183,7 +189,7 @@ module tb_aes_encipher_block();
       cycle_ctr = 0;
       error_ctr = 0;
       tc_ctr    = 0;
-      
+
       tb_clk     = 0;
       tb_reset_n = 1;
       tb_encdec  = 0;
@@ -196,7 +202,7 @@ module tb_aes_encipher_block();
     end
   endtask // init_sim
 
-  
+
   //----------------------------------------------------------------
   // display_test_result()
   //
@@ -210,12 +216,12 @@ module tb_aes_encipher_block();
         end
       else
         begin
-          $display("*** %02d tests completed - %02d test cases did not complete successfully.", 
+          $display("*** %02d tests completed - %02d test cases did not complete successfully.",
                    tc_ctr, error_ctr);
         end
     end
   endtask // display_test_result
-  
+
 
   //----------------------------------------------------------------
   // wait_ready()
@@ -238,7 +244,7 @@ module tb_aes_encipher_block();
         end
     end
   endtask // wait_ready
-  
+
 
   //----------------------------------------------------------------
   // wait_valid()
@@ -246,7 +252,7 @@ module tb_aes_encipher_block();
   // Wait for the result_valid flag in the dut to be set.
   //
   // Note: It is the callers responsibility to call the function
-  // when the dut is actively processing a block and will in fact 
+  // when the dut is actively processing a block and will in fact
   // at some point set the flag.
   //----------------------------------------------------------------
   task wait_valid();
@@ -258,7 +264,7 @@ module tb_aes_encipher_block();
     end
   endtask // wait_valid
 
-  
+
   //----------------------------------------------------------------
   // ecb_mode_single_block_test()
   //
@@ -289,12 +295,12 @@ module tb_aes_encipher_block();
      #(2 * CLK_PERIOD);
      tb_next = 0;
      wait_valid();
-      
+
      if (tb_result == expected)
        begin
          $display("*** TC %0d successful.", tc_number);
          $display("");
-       end 
+       end
      else
        begin
          $display("*** ERROR: TC %0d NOT successful.", tc_number);
@@ -306,11 +312,11 @@ module tb_aes_encipher_block();
        end
    end
   endtask // ecb_mode_single_block_test
-                         
-    
+
+
   //----------------------------------------------------------------
   // tb_aes_encipher_block
-  // The main test functionality. 
+  // The main test functionality.
   //
   // Test cases taken from NIST SP 800-38A:
   // http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
@@ -366,58 +372,58 @@ module tb_aes_encipher_block();
 
       $display("ECB 128 bit key tests");
       $display("---------------------");
-      ecb_mode_single_block_test(8'h01, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h01, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_plaintext0, nist_ecb_128_enc_expected0);
 
-      ecb_mode_single_block_test(8'h02, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h02, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_plaintext1, nist_ecb_128_enc_expected1);
 
-      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_plaintext2, nist_ecb_128_enc_expected2);
 
-      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_plaintext3, nist_ecb_128_enc_expected3);
 
-      
-      ecb_mode_single_block_test(8'h04, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+
+      ecb_mode_single_block_test(8'h04, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_ecb_128_enc_expected0, nist_plaintext0);
 
-      ecb_mode_single_block_test(8'h05, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h05, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_ecb_128_enc_expected1, nist_plaintext1);
 
-      ecb_mode_single_block_test(8'h06, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h06, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_ecb_128_enc_expected2, nist_plaintext2);
 
-      ecb_mode_single_block_test(8'h07, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY, 
+      ecb_mode_single_block_test(8'h07, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_ecb_128_enc_expected3, nist_plaintext3);
-      
-      
+
+
       $display("");
       $display("ECB 256 bit key tests");
       $display("---------------------");
-      ecb_mode_single_block_test(8'h10, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h10, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_plaintext0, nist_ecb_256_enc_expected0);
 
-      ecb_mode_single_block_test(8'h11, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h11, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_plaintext1, nist_ecb_256_enc_expected1);
 
-      ecb_mode_single_block_test(8'h12, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h12, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_plaintext2, nist_ecb_256_enc_expected2);
 
-      ecb_mode_single_block_test(8'h13, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h13, AES_ENCIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_plaintext3, nist_ecb_256_enc_expected3);
 
-      
-      ecb_mode_single_block_test(8'h14, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+
+      ecb_mode_single_block_test(8'h14, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected0, nist_plaintext0);
 
-      ecb_mode_single_block_test(8'h15, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h15, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected1, nist_plaintext1);
 
-      ecb_mode_single_block_test(8'h16, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h16, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected2, nist_plaintext2);
 
-      ecb_mode_single_block_test(8'h17, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY, 
+      ecb_mode_single_block_test(8'h17, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected3, nist_plaintext3);
 
 
