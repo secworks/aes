@@ -77,18 +77,34 @@ module tb_aes_encipher_block();
   reg            tb_keylen;
   wire           tb_ready;
   wire [3 : 0]   tb_round;
-  reg [127 : 0]  tb_round_key;
+  wire [127 : 0] tb_round_key;
 
   wire [31 : 0]  tb_sboxw;
-  reg  [31 : 0]  tb_new_sboxw;
+  wire [31 : 0]  tb_new_sboxw;
 
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_new_block;
+
+  reg [127 : 0] key_mem [0 : 14];
+
+
+  //----------------------------------------------------------------
+  // Assignments.
+  //----------------------------------------------------------------
+  assign tb_round_key = key_mem[tb_round];
 
 
   //----------------------------------------------------------------
   // Device Under Test.
   //----------------------------------------------------------------
+  // We need an sbox for the tests.
+  aes_sbox sbox(
+                .sboxw(tb_sboxw),
+                .new_sboxw(tb_new_sboxw)
+               );
+
+
+  // The device under test.
   aes_encipher_block dut(
                          .clk(tb_clk),
                          .reset_n(tb_reset_n),
@@ -196,8 +212,6 @@ module tb_aes_encipher_block();
       tb_next      = 0;
       tb_keylen    = 0;
 
-      tb_new_sboxw = 32'h00000000;
-      tb_round_key = {4{32'h00000000}};
       tb_block     = {4{32'h00000000}};
     end
   endtask // init_sim
@@ -247,43 +261,44 @@ module tb_aes_encipher_block();
 
 
   //----------------------------------------------------------------
-  // ecb_mode_single_block_test()
+  // test_ecb_enc()
   //
-  // Perform ECB mode encryption or decryption single block test.
+  // Perform ECB mode encryption test.
   //----------------------------------------------------------------
-  task ecb_mode_single_block_test(input [7 : 0]   tc_number,
-                                  input           key_length,
-                                  input [127 : 0] block,
-                                  input [127 : 0] expected);
+  task test_ecb_enc(
+                    input           key_length,
+                    input [127 : 0] block,
+                    input [127 : 0] expected);
    begin
-     $display("*** TC %0d ECB mode test started.", tc_number);
-     tc_ctr = tc_ctr + 1;
+     $display("*** TC %0d ECB mode test started.", tc_ctr);
 
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
-     #(2 * CLK_PERIOD);
-     wait_ready();
 
      // Perform encipher och decipher operation on the block.
      tb_block = block;
      tb_next = 1;
      #(2 * CLK_PERIOD);
      tb_next = 0;
+     #(2 * CLK_PERIOD);
+
+     wait_ready();
 
      if (tb_new_block == expected)
        begin
-         $display("*** TC %0d successful.", tc_number);
+         $display("*** TC %0d successful.", tc_ctr);
          $display("");
        end
      else
        begin
-         $display("*** ERROR: TC %0d NOT successful.", tc_number);
+         $display("*** ERROR: TC %0d NOT successful.", tc_ctr);
          $display("Expected: 0x%032x", expected);
          $display("Got:      0x%032x", tb_new_block);
          $display("");
 
          error_ctr = error_ctr + 1;
        end
+     tc_ctr = tc_ctr + 1;
    end
   endtask // ecb_mode_single_block_test
 
@@ -297,24 +312,6 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   initial
     begin : tb_aes_encipher_block
-      reg [255 : 0] nist_key;
-
-      reg [127 : 0] round_key_00;
-      reg [127 : 0] round_key_01;
-      reg [127 : 0] round_key_02;
-      reg [127 : 0] round_key_03;
-      reg [127 : 0] round_key_04;
-      reg [127 : 0] round_key_05;
-      reg [127 : 0] round_key_06;
-      reg [127 : 0] round_key_07;
-      reg [127 : 0] round_key_08;
-      reg [127 : 0] round_key_09;
-      reg [127 : 0] round_key_10;
-      reg [127 : 0] round_key_11;
-      reg [127 : 0] round_key_12;
-      reg [127 : 0] round_key_13;
-      reg [127 : 0] round_key_14;
-
       reg [127 : 0] nist_plaintext0;
       reg [127 : 0] nist_plaintext1;
       reg [127 : 0] nist_plaintext2;
@@ -329,7 +326,6 @@ module tb_aes_encipher_block();
       reg [127 : 0] nist_ecb_256_enc_expected1;
       reg [127 : 0] nist_ecb_256_enc_expected2;
       reg [127 : 0] nist_ecb_256_enc_expected3;
-
 
       nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
       nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
@@ -358,97 +354,49 @@ module tb_aes_encipher_block();
 
 
       // NIST 128 bit ECB tests.
-      nist_key = 256'h2b7e151628aed2a6abf7158809cf4f3c00000000000000000000000000000000;
-      round_key_00 = 128'h2b7e151628aed2a6abf7158809cf4f3c;
-      round_key_01 = 128'ha0fafe1788542cb123a339392a6c7605;
-      round_key_02 = 128'hf2c295f27a96b9435935807a7359f67f;
-      round_key_03 = 128'h3d80477d4716fe3e1e237e446d7a883b;
-      round_key_04 = 128'hef44a541a8525b7fb671253bdb0bad00;
-      round_key_05 = 128'hd4d1c6f87c839d87caf2b8bc11f915bc;
-      round_key_06 = 128'h6d88a37a110b3efddbf98641ca0093fd;
-      round_key_07 = 128'h4e54f70e5f5fc9f384a64fb24ea6dc4f;
-      round_key_08 = 128'head27321b58dbad2312bf5607f8d292f;
-      round_key_09 = 128'hac7766f319fadc2128d12941575c006e;
-      round_key_10 = 128'hd014f9a8c9ee2589e13f0cc8b6630ca6;
-      round_key_11 = 128'h00000000000000000000000000000000;
-      round_key_12 = 128'h00000000000000000000000000000000;
-      round_key_13 = 128'h00000000000000000000000000000000;
-      round_key_14 = 128'h00000000000000000000000000000000;
+      key_mem[00] = 128'h2b7e151628aed2a6abf7158809cf4f3c;
+      key_mem[01] = 128'ha0fafe1788542cb123a339392a6c7605;
+      key_mem[02] = 128'hf2c295f27a96b9435935807a7359f67f;
+      key_mem[03] = 128'h3d80477d4716fe3e1e237e446d7a883b;
+      key_mem[04] = 128'hef44a541a8525b7fb671253bdb0bad00;
+      key_mem[05] = 128'hd4d1c6f87c839d87caf2b8bc11f915bc;
+      key_mem[06] = 128'h6d88a37a110b3efddbf98641ca0093fd;
+      key_mem[07] = 128'h4e54f70e5f5fc9f384a64fb24ea6dc4f;
+      key_mem[08] = 128'head27321b58dbad2312bf5607f8d292f;
+      key_mem[09] = 128'hac7766f319fadc2128d12941575c006e;
+      key_mem[10] = 128'hd014f9a8c9ee2589e13f0cc8b6630ca6;
+      key_mem[11] = 128'h00000000000000000000000000000000;
+      key_mem[12] = 128'h00000000000000000000000000000000;
+      key_mem[13] = 128'h00000000000000000000000000000000;
+      key_mem[14] = 128'h00000000000000000000000000000000;
 
-      test_ecb_enc(AES_128_BIT_KEY, nist_key,
-                   nist_plaintext0, nist_ecb_128_enc_expected0,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
-
-      test_ecb_enc(AES_128_BIT_KEY, nist_key,
-                   nist_plaintext1, nist_ecb_128_enc_expected1,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
-
-      test_ecb_enc(AES_128_BIT_KEY, nist_key,
-                   nist_plaintext2, nist_ecb_128_enc_expected2,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
-
-      test_ecb_enc(AES_128_BIT_KEY, nist_key,
-                   nist_plaintext3, nist_ecb_128_enc_expected3,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
+      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext0, nist_ecb_128_enc_expected0);
+      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext1, nist_ecb_128_enc_expected1);
+      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext2, nist_ecb_128_enc_expected2);
+      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext3, nist_ecb_128_enc_expected3);
 
 
       // NIST 256 bit ECB tests.
-      nist_key = 256'h603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4;
-      round_key_00 = 128'h603deb1015ca71be2b73aef0857d7781;
-      round_key_01 = 128'h1f352c073b6108d72d9810a30914dff4;
-      round_key_02 = 128'h9ba354118e6925afa51a8b5f2067fcde;
-      round_key_03 = 128'ha8b09c1a93d194cdbe49846eb75d5b9a;
-      round_key_04 = 128'hd59aecb85bf3c917fee94248de8ebe96;
-      round_key_05 = 128'hb5a9328a2678a647983122292f6c79b3;
-      round_key_06 = 128'h812c81addadf48ba24360af2fab8b464;
-      round_key_07 = 128'h98c5bfc9bebd198e268c3ba709e04214;
-      round_key_08 = 128'h68007bacb2df331696e939e46c518d80;
-      round_key_09 = 128'hc814e20476a9fb8a5025c02d59c58239;
-      round_key_10 = 128'hde1369676ccc5a71fa2563959674ee15;
-      round_key_11 = 128'h5886ca5d2e2f31d77e0af1fa27cf73c3;
-      round_key_12 = 128'h749c47ab18501ddae2757e4f7401905a;
-      round_key_13 = 128'hcafaaae3e4d59b349adf6acebd10190d;
-      round_key_14 = 128'hfe4890d1e6188d0b046df344706c631e;
+      key_mem[00] = 128'h603deb1015ca71be2b73aef0857d7781;
+      key_mem[01] = 128'h1f352c073b6108d72d9810a30914dff4;
+      key_mem[02] = 128'h9ba354118e6925afa51a8b5f2067fcde;
+      key_mem[03] = 128'ha8b09c1a93d194cdbe49846eb75d5b9a;
+      key_mem[04] = 128'hd59aecb85bf3c917fee94248de8ebe96;
+      key_mem[05] = 128'hb5a9328a2678a647983122292f6c79b3;
+      key_mem[06] = 128'h812c81addadf48ba24360af2fab8b464;
+      key_mem[07] = 128'h98c5bfc9bebd198e268c3ba709e04214;
+      key_mem[08] = 128'h68007bacb2df331696e939e46c518d80;
+      key_mem[09] = 128'hc814e20476a9fb8a5025c02d59c58239;
+      key_mem[10] = 128'hde1369676ccc5a71fa2563959674ee15;
+      key_mem[11] = 128'h5886ca5d2e2f31d77e0af1fa27cf73c3;
+      key_mem[12] = 128'h749c47ab18501ddae2757e4f7401905a;
+      key_mem[13] = 128'hcafaaae3e4d59b349adf6acebd10190d;
+      key_mem[14] = 128'hfe4890d1e6188d0b046df344706c631e;
 
-      test_ecb_enc(AES_256_BIT_KEY, nist_key,
-                   nist_plaintext0, nist_ecb_256_enc_expected0,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
-
-      test_ecb_enc(AES_256_BIT_KEY, nist_key,
-                   nist_plaintext1, nist_ecb_256_enc_expected1,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
-
-      test_ecb_enc(AES_256_BIT_KEY, nist_key,
-                   nist_plaintext2, nist_ecb_256_enc_expected2,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
-
-      test_ecb_enc(AES_256_BIT_KEY, nist_key,
-                   nist_plaintext3, nist_ecb_256_enc_expected3,
-                   round_key_00, round_key_01, round_key_02, round_key_03,
-                   round_key_04, round_key_05, round_key_06, round_key_07,
-                   round_key_08, round_key_09, round_key_10, round_key_11,
-                   round_key_12, round_key_13, round_key_14);
+      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext0, nist_ecb_256_enc_expected0);
+      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
+      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
+      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
 
 
       display_test_result();
