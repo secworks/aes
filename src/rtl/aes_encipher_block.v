@@ -424,12 +424,13 @@ module aes_encipher_block(
 
       if (sword_ctr_rst)
         begin
+          sword_ctr_new = 2'h0;
           sword_ctr_we  = 1'b1;
         end
       else if (sword_ctr_inc)
         begin
           sword_ctr_new = sword_ctr_reg + 1'b1;
-          sword_ctr_we  = 1'b0;
+          sword_ctr_we  = 1'b1;
         end
     end // sword_ctr
 
@@ -446,12 +447,13 @@ module aes_encipher_block(
 
       if (round_ctr_rst)
         begin
+          round_ctr_new = 4'h0;
           round_ctr_we  = 1'b1;
         end
       else if (round_ctr_inc)
         begin
           round_ctr_new = round_ctr_reg + 1'b1;
-          round_ctr_we  = 1'b0;
+          round_ctr_we  = 1'b1;
         end
     end // round_ctr
 
@@ -491,7 +493,7 @@ module aes_encipher_block(
           begin
             sword_ctr_rst = 1;
             update_type   = INIT_UPDATE;
-            enc_ctrl_new  = CTRL_INIT;
+            enc_ctrl_new  = CTRL_SBOX;
             enc_ctrl_we   = 1;
           end
 
