@@ -164,14 +164,12 @@ module tb_aes_encipher_block();
       $display("------------");
       $display("ready = 0x%01x, next = 0x%01x, keylen = 0x%01x",
                dut.ready, dut.next, dut.keylen);
-      $display("block  = 0x%032x", dut.block);
-      $display("new_block    = 0x%016x", dut.new_block);
+      $display("block     = 0x%032x", dut.block);
+      $display("new_block = 0x%032x", dut.new_block);
       $display("");
 
       $display("round = 0x%01x, round_key = 0x%016x", dut.round, dut.round_key);
       $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
-      $display("");
-
       $display("enc_ctrl = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
                dut.enc_ctrl_reg, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
