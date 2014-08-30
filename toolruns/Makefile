@@ -46,7 +46,7 @@ TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
 TB_CORE_SRC =../src/tb/tb_aes_core.v
 TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
-TB_ENC_SRC =../src/tb/tb_aes_encipher_block.v
+TB_ENCIPHER_SRC =../src/tb/tb_aes_encipher_block.v
 
 CC=iverilog
 
@@ -74,7 +74,7 @@ sim-keymem: keymem.sim
 	./keymem.sim
 
 
-som-encipher: encipher.sim
+sim-encipher: encipher.sim
 	./encipher.sim
 
 
@@ -83,20 +83,24 @@ sim-core: core.sim
 
 
 clean:
+	rm -f encipher.sim
 	rm -f keygen.sim
 	rm -f core.sim
 	rm -f core
 
 
 help:
+	@echo "Build system for simulation of AES Verilog core"
+	@echo ""
 	@echo "Supported targets:"
 	@echo "------------------"
-	@echo "all:        Build all simulation targets."
-	@echo "core:       Build the core simulation target."
-	@echo "keymem:     Build the keymem simulation target."
-	@echo "core.sim:   Run core level simulation."
-	@echo "keymem.sim: Run keymem simulation."
-	@echo "clean:      Delete all built files."
+	@echo "all:         Build all simulation targets."
+	@echo "core:        Build the core simulation target."
+	@echo "keymem:      Build the keymem simulation target."
+	@echo "sim-core:    Run core level simulation."
+	@echo "sim-keymem   Run keymem simulation."
+	@echo "sim-encipher Run encipher block simulation."
+	@echo "clean:       Delete all built files."
 
 #===================================================================
 # EOF Makefile
