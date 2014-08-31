@@ -617,6 +617,31 @@ module tb_aes_key_mem();
                    expected_04, expected_05, expected_06, expected_07,
                    expected_08, expected_09, expected_10, expected_11,
                    expected_12, expected_13, expected_14);
+
+
+      nist_key256 = 256'h603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4;
+      expected_00 = 128'h603deb1015ca71be2b73aef0857d7781;
+      expected_01 = 128'h1f352c073b6108d72d9810a30914dff4;
+      expected_02 = 128'h9ba354118e6925afa51a8b5f2067fcde;
+      expected_03 = 128'ha8b09c1a93d194cdbe49846eb75d5b9a;
+      expected_04 = 128'hd59aecb85bf3c917fee94248de8ebe96;
+      expected_05 = 128'hb5a9328a2678a647983122292f6c79b3;
+      expected_06 = 128'h812c81addadf48ba24360af2fab8b464;
+      expected_07 = 128'h98c5bfc9bebd198e268c3ba709e04214;
+      expected_08 = 128'h68007bacb2df331696e939e46c518d80;
+      expected_09 = 128'hc814e20476a9fb8a5025c02d59c58239;
+      expected_10 = 128'hde1369676ccc5a71fa2563959674ee15;
+      expected_11 = 128'h5886ca5d2e2f31d77e0af1fa27cf73c3;
+      expected_12 = 128'h749c47ab18501ddae2757e4f7401905a;
+      expected_13 = 128'hcafaaae3e4d59b349adf6acebd10190d;
+      expected_14 = 128'hfe4890d1e6188d0b046df344706c631e;
+
+      test_key_256(nist_key256,
+                   expected_00, expected_01, expected_02, expected_03,
+                   expected_04, expected_05, expected_06, expected_07,
+                   expected_08, expected_09, expected_10, expected_11,
+                   expected_12, expected_13, expected_14);
+
       
       display_test_result();
       $display("");
