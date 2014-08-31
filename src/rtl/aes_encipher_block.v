@@ -10,34 +10,34 @@
 // Author: Joachim Strombergson
 // Copyright (c) 2013, 2014, Secworks Sweden AB
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or 
-// without modification, are permitted provided that the following 
-// conditions are met: 
-// 
-// 1. Redistributions of source code must retain the above copyright 
-//    notice, this list of conditions and the following disclaimer. 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the 
-//    distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+//
+// Redistribution and use in source and binary forms, with or
+// without modification, are permitted provided that the following
+// conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in
+//    the documentation and/or other materials provided with the
+//    distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 // BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
- 
+
 module aes_encipher_block(
                           input wire            clk,
                           input wire            reset_n,
@@ -77,8 +77,8 @@ module aes_encipher_block(
   parameter CTRL_SBOX  = 3'h2;
   parameter CTRL_MAIN  = 3'h3;
   parameter CTRL_FINAL = 3'h4;
-  
- 
+
+
   //----------------------------------------------------------------
   // Gaolis multiplication functions for MixColumn.
   //----------------------------------------------------------------
@@ -93,6 +93,27 @@ module aes_encipher_block(
       gm3 = gm2(op) ^ op;
     end
   endfunction // gm3
+
+  //----------------------------------------------------------------
+  // Round functios.
+  //----------------------------------------------------------------
+  function [127 : 0] shiftrows(input [127 : 0] block);
+    reg [31 : 0] w0, w1, w2, w3;
+    reg [31 : 0] ws0, ws1, ws2, ws3;
+    begin
+      w0 = block[127 : 096];
+      w1 = block[095 : 064];
+      w1 = block[063 : 032];
+      w2 = block[031 : 000];
+
+      ws0 = {w0[31 : 24], w1[23 : 16], w2[15 : 08], w3[08 : 00]};
+      ws1 = {w1[31 : 24], w2[23 : 16], w3[15 : 08], w0[08 : 00]};
+      ws2 = {w2[31 : 24], w3[23 : 16], w0[15 : 08], w1[08 : 00]};
+      ws3 = {w3[31 : 24], w0[23 : 16], w1[15 : 08], w2[08 : 00]};
+
+      shiftrows = {ws0, ws1, ws2, ws3};
+    end
+  endfunction // shiftrows
 
 
   //----------------------------------------------------------------
@@ -225,171 +246,156 @@ module aes_encipher_block(
   always @*
     begin : round_logic
       // Wires for internal intermediate values.
-      reg [7 : 0] s00_0, s00_1, s00_2;
-      reg [7 : 0] s01_0, s01_1, s01_2;
-      reg [7 : 0] s02_0, s02_1, s02_2;
-      reg [7 : 0] s03_0, s03_1, s03_2;
-      reg [7 : 0] s10_0, s10_1, s10_2;
-      reg [7 : 0] s11_0, s11_1, s11_2;
-      reg [7 : 0] s12_0, s12_1, s12_2;
-      reg [7 : 0] s13_0, s13_1, s13_2;
-      reg [7 : 0] s20_0, s20_1, s20_2;
-      reg [7 : 0] s21_0, s21_1, s21_2;
-      reg [7 : 0] s22_0, s22_1, s22_2;
-      reg [7 : 0] s23_0, s23_1, s23_2;
-      reg [7 : 0] s30_0, s30_1, s30_2;
-      reg [7 : 0] s31_0, s31_1, s31_2;
-      reg [7 : 0] s32_0, s32_1, s32_2;
-      reg [7 : 0] s33_0, s33_1, s33_2;
-
-      // Logic common to normal round updates
-      // as well as final round update.
-      // Shiftrows
-      s00_0 = block_w0_reg[031 : 024];
-      s01_0 = block_w0_reg[023 : 016];
-      s02_0 = block_w0_reg[015 : 008];
-      s03_0 = block_w0_reg[007 : 000];
-
-      s10_0 = block_w1_reg[023 : 016];
-      s11_0 = block_w1_reg[015 : 008];
-      s12_0 = block_w1_reg[007 : 000];
-      s13_0 = block_w1_reg[031 : 024];
-
-      s20_0 = block_w2_reg[015 : 008];
-      s21_0 = block_w2_reg[007 : 000];
-      s22_0 = block_w2_reg[031 : 024];
-      s23_0 = block_w2_reg[023 : 016];
-
-      s30_0 = block_w3_reg[007 : 000];
-      s31_0 = block_w3_reg[031 : 024];
-      s32_0 = block_w3_reg[023 : 016];
-      s33_0 = block_w3_reg[015 : 008];
-
-      // MixColumns
-      s00_1 = gm2(s00_0) ^ gm3(s10_0) ^ s20_0      ^ s30_0;
-      s10_1 = s00_0      ^ gm2(s10_0) ^ gm3(s20_0) ^ s30_0;
-      s20_1 = s00_0      ^ s10_0      ^ gm2(s20_0) ^ gm3(s30_0);
-      s30_1 = gm3(s00_0) ^ s10_0      ^ s20_0      ^ gm2(s30_0);
-
-      s01_1 = gm2(s01_0) ^ gm3(s11_0) ^ s21_0      ^ s31_0;
-      s11_1 = s01_0      ^ gm2(s11_0) ^ gm3(s21_0) ^ s31_0;
-      s21_1 = s01_0      ^ s11_0      ^ gm2(s21_0) ^ gm3(s31_0);
-      s31_1 = gm3(s01_0) ^ s11_0      ^ s21_1      ^ gm2(s31_0);
-
-      s02_1 = gm2(s02_0) ^ gm3(s12_0) ^ s22_0      ^ s32_0;
-      s12_1 = s02_0      ^ gm2(s12_0) ^ gm3(s22_0) ^ s32_0;
-      s22_1 = s02_0      ^ s12_0      ^ gm2(s22_0) ^ gm3(s32_0);
-      s32_1 = gm3(s02_0) ^ s12_0      ^ s22_1      ^ gm2(s32_0);
-
-      s03_1 = gm2(s03_0) ^ gm3(s13_0) ^ s23_0      ^ s33_0;
-      s13_1 = s03_0      ^ gm2(s13_0) ^ gm3(s23_0) ^ s33_0;
-      s23_1 = s03_0      ^ s13_0      ^ gm2(s23_0) ^ gm3(s33_0);
-      s33_1 = gm3(s03_0) ^ s13_0      ^ s23_1      ^ gm2(s33_0);
-
-      // AddRoundKey
-      s00_2 = s00_1 ^ round_key[127 : 120];
-      s01_2 = s01_1 ^ round_key[119 : 112];
-      s02_2 = s02_1 ^ round_key[111 : 104];
-      s03_2 = s03_1 ^ round_key[103 :  96];
-      s10_2 = s10_1 ^ round_key[95  :  88];
-      s11_2 = s11_1 ^ round_key[87  :  80];
-      s12_2 = s12_1 ^ round_key[79  :  72];
-      s13_2 = s13_1 ^ round_key[71  :  64];
-      s20_2 = s20_1 ^ round_key[63  :  56];
-      s21_2 = s21_1 ^ round_key[55  :  48];
-      s22_2 = s22_1 ^ round_key[47  :  40];
-      s23_2 = s23_1 ^ round_key[39  :  32];
-      s30_2 = s30_1 ^ round_key[31  :  24];
-      s31_2 = s31_1 ^ round_key[23  :  16];
-      s32_2 = s32_1 ^ round_key[15  :   8];
-      s33_2 = s33_1 ^ round_key[7   :   0];
-
-      // Update based on update type.
-      case (update_type)
-        NO_UPDATE:
-          begin
-            tmp_sboxw    = 32'h00000000;
-            block_w0_new = 32'h00000000;
-            block_w0_we  = 0;
-            block_w1_new = 32'h00000000;
-            block_w1_we  = 0;
-            block_w2_new = 32'h00000000;
-            block_w2_we  = 0;
-            block_w3_new = 32'h00000000;
-            block_w3_we  = 0;
-          end
-
-        // InitRound
-        INIT_UPDATE:
-          begin
-            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
-            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
-            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
-            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
-            block_w0_we  = 1;
-            block_w1_we  = 1;
-            block_w2_we  = 1;
-            block_w3_we  = 1;
-          end
-
-        // SubBytes update using the module external Sboxes.
-        SBOX_UPDATE:
-          begin
-            case (sword_ctr_reg)
-              2'h0:
-                begin
-                  tmp_sboxw    = block_w0_reg;
-                  block_w0_new = new_sboxw;
-                  block_w0_we  = 1;
-                end
-
-              2'h1:
-                begin
-                  tmp_sboxw    = block_w1_reg;
-                  block_w1_new = new_sboxw;
-                  block_w1_we  = 1;
-                end
-
-              2'h2:
-                begin
-                  tmp_sboxw    = block_w2_reg;
-                  block_w2_new = new_sboxw;
-                  block_w2_we  = 1;
-                end
-
-              2'h3:
-                begin
-                  tmp_sboxw    = block_w3_reg;
-                  block_w3_new = new_sboxw;
-                  block_w3_we  = 1;
-                end
-            endcase // case (sbox_mux_ctrl_reg)
-          end
-
-        MAIN_UPDATE:
-          begin
-            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
-            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
-            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
-            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
-            block_w0_we  = 1;
-            block_w1_we  = 1;
-            block_w2_we  = 1;
-            block_w3_we  = 1;
-          end
-
-        FINAL_UPDATE:
-          begin
-            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
-            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
-            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
-            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
-            block_w0_we  = 1;
-            block_w1_we  = 1;
-            block_w2_we  = 1;
-            block_w3_we  = 1;
-          end
-      endcase // case (update_type)
+      reg [127 : 0] tmp, tmp1, tmp2, tmp3;
+//
+//      // Logic common to normal round updates
+//      // as well as final round update.
+//      // Shiftrows
+//      s00_0 = block_w0_reg[031 : 024];
+//      s01_0 = block_w0_reg[023 : 016];
+//      s02_0 = block_w0_reg[015 : 008];
+//      s03_0 = block_w0_reg[007 : 000];
+//
+//      s10_0 = block_w1_reg[023 : 016];
+//      s11_0 = block_w1_reg[015 : 008];
+//      s12_0 = block_w1_reg[007 : 000];
+//      s13_0 = block_w1_reg[031 : 024];
+//
+//      s20_0 = block_w2_reg[015 : 008];
+//      s21_0 = block_w2_reg[007 : 000];
+//      s22_0 = block_w2_reg[031 : 024];
+//      s23_0 = block_w2_reg[023 : 016];
+//
+//      s30_0 = block_w3_reg[007 : 000];
+//      s31_0 = block_w3_reg[031 : 024];
+//      s32_0 = block_w3_reg[023 : 016];
+//      s33_0 = block_w3_reg[015 : 008];
+//
+//      // MixColumns
+//      s00_1 = gm2(s00_0) ^ gm3(s10_0) ^ s20_0      ^ s30_0;
+//      s10_1 = s00_0      ^ gm2(s10_0) ^ gm3(s20_0) ^ s30_0;
+//      s20_1 = s00_0      ^ s10_0      ^ gm2(s20_0) ^ gm3(s30_0);
+//      s30_1 = gm3(s00_0) ^ s10_0      ^ s20_0      ^ gm2(s30_0);
+//
+//      s01_1 = gm2(s01_0) ^ gm3(s11_0) ^ s21_0      ^ s31_0;
+//      s11_1 = s01_0      ^ gm2(s11_0) ^ gm3(s21_0) ^ s31_0;
+//      s21_1 = s01_0      ^ s11_0      ^ gm2(s21_0) ^ gm3(s31_0);
+//      s31_1 = gm3(s01_0) ^ s11_0      ^ s21_1      ^ gm2(s31_0);
+//
+//      s02_1 = gm2(s02_0) ^ gm3(s12_0) ^ s22_0      ^ s32_0;
+//      s12_1 = s02_0      ^ gm2(s12_0) ^ gm3(s22_0) ^ s32_0;
+//      s22_1 = s02_0      ^ s12_0      ^ gm2(s22_0) ^ gm3(s32_0);
+//      s32_1 = gm3(s02_0) ^ s12_0      ^ s22_1      ^ gm2(s32_0);
+//
+//      s03_1 = gm2(s03_0) ^ gm3(s13_0) ^ s23_0      ^ s33_0;
+//      s13_1 = s03_0      ^ gm2(s13_0) ^ gm3(s23_0) ^ s33_0;
+//      s23_1 = s03_0      ^ s13_0      ^ gm2(s23_0) ^ gm3(s33_0);
+//      s33_1 = gm3(s03_0) ^ s13_0      ^ s23_1      ^ gm2(s33_0);
+//
+//      // AddRoundKey
+//      s00_2 = s00_1 ^ round_key[127 : 120];
+//      s01_2 = s01_1 ^ round_key[119 : 112];
+//      s02_2 = s02_1 ^ round_key[111 : 104];
+//      s03_2 = s03_1 ^ round_key[103 :  96];
+//      s10_2 = s10_1 ^ round_key[95  :  88];
+//      s11_2 = s11_1 ^ round_key[87  :  80];
+//      s12_2 = s12_1 ^ round_key[79  :  72];
+//      s13_2 = s13_1 ^ round_key[71  :  64];
+//      s20_2 = s20_1 ^ round_key[63  :  56];
+//      s21_2 = s21_1 ^ round_key[55  :  48];
+//      s22_2 = s22_1 ^ round_key[47  :  40];
+//      s23_2 = s23_1 ^ round_key[39  :  32];
+//      s30_2 = s30_1 ^ round_key[31  :  24];
+//      s31_2 = s31_1 ^ round_key[23  :  16];
+//      s32_2 = s32_1 ^ round_key[15  :   8];
+//      s33_2 = s33_1 ^ round_key[7   :   0];
+//
+//      // Update based on update type.
+//      case (update_type)
+//        NO_UPDATE:
+//          begin
+//            tmp_sboxw    = 32'h00000000;
+//            block_w0_new = 32'h00000000;
+//            block_w0_we  = 0;
+//            block_w1_new = 32'h00000000;
+//            block_w1_we  = 0;
+//            block_w2_new = 32'h00000000;
+//            block_w2_we  = 0;
+//            block_w3_new = 32'h00000000;
+//            block_w3_we  = 0;
+//          end
+//
+//        // InitRound
+//        INIT_UPDATE:
+//          begin
+//            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
+//            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
+//            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
+//            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
+//            block_w0_we  = 1;
+//            block_w1_we  = 1;
+//            block_w2_we  = 1;
+//            block_w3_we  = 1;
+//          end
+//
+//        // SubBytes update using the module external Sboxes.
+//        SBOX_UPDATE:
+//          begin
+//            case (sword_ctr_reg)
+//              2'h0:
+//                begin
+//                  tmp_sboxw    = block_w0_reg;
+//                  block_w0_new = new_sboxw;
+//                  block_w0_we  = 1;
+//                end
+//
+//              2'h1:
+//                begin
+//                  tmp_sboxw    = block_w1_reg;
+//                  block_w1_new = new_sboxw;
+//                  block_w1_we  = 1;
+//                end
+//
+//              2'h2:
+//                begin
+//                  tmp_sboxw    = block_w2_reg;
+//                  block_w2_new = new_sboxw;
+//                  block_w2_we  = 1;
+//                end
+//
+//              2'h3:
+//                begin
+//                  tmp_sboxw    = block_w3_reg;
+//                  block_w3_new = new_sboxw;
+//                  block_w3_we  = 1;
+//                end
+//            endcase // case (sbox_mux_ctrl_reg)
+//          end
+//
+//        MAIN_UPDATE:
+//          begin
+//            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
+//            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
+//            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
+//            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
+//            block_w0_we  = 1;
+//            block_w1_we  = 1;
+//            block_w2_we  = 1;
+//            block_w3_we  = 1;
+//          end
+//
+//        FINAL_UPDATE:
+//          begin
+//            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
+//            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
+//            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
+//            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
+//            block_w0_we  = 1;
+//            block_w1_we  = 1;
+//            block_w2_we  = 1;
+//            block_w3_we  = 1;
+//          end
+//      endcase // case (update_type)
     end // round_logic
 
 
@@ -475,7 +481,7 @@ module aes_encipher_block(
       update_type   = NO_UPDATE;
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 0;
-    
+
       case(enc_ctrl_reg)
         CTRL_IDLE:
           begin
