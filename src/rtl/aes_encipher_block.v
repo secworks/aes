@@ -311,92 +311,91 @@ module aes_encipher_block(
 //      s32_2 = s32_1 ^ round_key[15  :   8];
 //      s33_2 = s33_1 ^ round_key[7   :   0];
 //
-//      // Update based on update type.
-//      case (update_type)
-//        NO_UPDATE:
-//          begin
-//            tmp_sboxw    = 32'h00000000;
-//            block_w0_new = 32'h00000000;
-//            block_w0_we  = 0;
-//            block_w1_new = 32'h00000000;
-//            block_w1_we  = 0;
-//            block_w2_new = 32'h00000000;
-//            block_w2_we  = 0;
-//            block_w3_new = 32'h00000000;
-//            block_w3_we  = 0;
-//          end
-//
-//        // InitRound
-//        INIT_UPDATE:
-//          begin
-//            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
-//            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
-//            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
-//            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
-//            block_w0_we  = 1;
-//            block_w1_we  = 1;
-//            block_w2_we  = 1;
-//            block_w3_we  = 1;
-//          end
-//
-//        // SubBytes update using the module external Sboxes.
-//        SBOX_UPDATE:
-//          begin
-//            case (sword_ctr_reg)
-//              2'h0:
-//                begin
-//                  tmp_sboxw    = block_w0_reg;
-//                  block_w0_new = new_sboxw;
-//                  block_w0_we  = 1;
-//                end
-//
-//              2'h1:
-//                begin
-//                  tmp_sboxw    = block_w1_reg;
-//                  block_w1_new = new_sboxw;
-//                  block_w1_we  = 1;
-//                end
-//
-//              2'h2:
-//                begin
-//                  tmp_sboxw    = block_w2_reg;
-//                  block_w2_new = new_sboxw;
-//                  block_w2_we  = 1;
-//                end
-//
-//              2'h3:
-//                begin
-//                  tmp_sboxw    = block_w3_reg;
-//                  block_w3_new = new_sboxw;
-//                  block_w3_we  = 1;
-//                end
-//            endcase // case (sbox_mux_ctrl_reg)
-//          end
-//
-//        MAIN_UPDATE:
-//          begin
-//            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
-//            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
-//            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
-//            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
-//            block_w0_we  = 1;
-//            block_w1_we  = 1;
-//            block_w2_we  = 1;
-//            block_w3_we  = 1;
-//          end
-//
-//        FINAL_UPDATE:
-//          begin
-//            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
-//            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
-//            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
-//            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
-//            block_w0_we  = 1;
-//            block_w1_we  = 1;
-//            block_w2_we  = 1;
-//            block_w3_we  = 1;
-//          end
-//      endcase // case (update_type)
+      // Update based on update type.
+      case (update_type)
+        NO_UPDATE:
+          begin
+            tmp_sboxw    = 32'h00000000;
+            block_w0_new = 32'h00000000;
+            block_w0_we  = 0;
+            block_w1_new = 32'h00000000;
+            block_w1_we  = 0;
+            block_w2_new = 32'h00000000;
+            block_w2_we  = 0;
+            block_w3_new = 32'h00000000;
+            block_w3_we  = 0;
+          end
+
+        // InitRound
+        INIT_UPDATE:
+          begin
+            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
+            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
+            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
+            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
+          end
+
+        SBOX_UPDATE:
+          begin
+            case (sword_ctr_reg)
+              2'h0:
+                begin
+                  tmp_sboxw    = block_w0_reg;
+                  block_w0_new = new_sboxw;
+                  block_w0_we  = 1;
+                end
+
+              2'h1:
+                begin
+                  tmp_sboxw    = block_w1_reg;
+                  block_w1_new = new_sboxw;
+                  block_w1_we  = 1;
+                end
+
+              2'h2:
+                begin
+                  tmp_sboxw    = block_w2_reg;
+                  block_w2_new = new_sboxw;
+                  block_w2_we  = 1;
+                end
+
+              2'h3:
+                begin
+                  tmp_sboxw    = block_w3_reg;
+                  block_w3_new = new_sboxw;
+                  block_w3_we  = 1;
+                end
+            endcase // case (sbox_mux_ctrl_reg)
+          end
+
+        MAIN_UPDATE:
+          begin
+            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
+            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
+            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
+            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
+          end
+
+        FINAL_UPDATE:
+          begin
+            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
+            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
+            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
+            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
+            block_w0_we  = 1;
+            block_w1_we  = 1;
+            block_w2_we  = 1;
+            block_w3_we  = 1;
+          end
+      endcase // case (update_type)
     end // round_logic
 
 
