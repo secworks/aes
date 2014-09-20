@@ -203,10 +203,10 @@ module aes(
   //----------------------------------------------------------------
   // reg_update
   // Update functionality for all registers in the core.
-  // All registers are positive edge triggered with synchronous
-  // active low reset. All registers have write enable.
+  // All registers are positive edge triggered with asynchronous
+  // active low reset.
   //----------------------------------------------------------------
-  always @ (posedge clk)
+  always @ (posedge clk or negedge reset_n)
     begin
       if (!reset_n)
         begin

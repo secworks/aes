@@ -192,7 +192,7 @@ module aes_decipher_block(
   // All registers are positive edge triggered with synchronous
   // active low reset. All registers have write enable.
   //----------------------------------------------------------------
-  always @ (posedge clk)
+  always @ (posedge clk or negedge reset_n)
     begin: reg_update
       if (!reset_n)
         begin
