@@ -8,30 +8,30 @@
 // Author: Joachim Strombergson
 // Copyright (c) 2013 Secworks Sweden AB
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or 
-// without modification, are permitted provided that the following 
-// conditions are met: 
-// 
-// 1. Redistributions of source code must retain the above copyright 
-//    notice, this list of conditions and the following disclaimer. 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the 
-//    distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+//
+// Redistribution and use in source and binary forms, with or
+// without modification, are permitted provided that the following
+// conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in
+//    the documentation and/or other materials provided with the
+//    distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 // BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
@@ -53,7 +53,7 @@ module aes_key_mem(
                    input wire  [31 : 0]  new_sboxw
                   );
 
-  
+
   //----------------------------------------------------------------
   // Parameters.
   //----------------------------------------------------------------
@@ -62,13 +62,13 @@ module aes_key_mem(
 
   parameter AES_128_NUM_ROUNDS = 4'ha;
   parameter AES_256_NUM_ROUNDS = 4'he;
-  
+
   parameter CTRL_IDLE     = 3'h0;
   parameter CTRL_INIT     = 3'h1;
   parameter CTRL_GENERATE = 3'h2;
   parameter CTRL_DONE     = 3'h3;
 
-  
+
   //----------------------------------------------------------------
   // Registers.
   //----------------------------------------------------------------
@@ -83,7 +83,7 @@ module aes_key_mem(
   reg [127 : 0] prev_key1_reg;
   reg [127 : 0] prev_key1_new;
   reg           prev_key1_we;
-  
+
   reg [3 : 0] round_ctr_reg;
   reg [3 : 0] round_ctr_new;
   reg         round_ctr_rst;
@@ -103,7 +103,7 @@ module aes_key_mem(
   reg         rcon_we;
   reg         rcon_set;
   reg         rcon_next;
-  
+
 
   //----------------------------------------------------------------
   // Wires.
@@ -120,7 +120,7 @@ module aes_key_mem(
 
   reg [127 : 0] tmp_round_key;
 
-  
+
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
@@ -128,7 +128,7 @@ module aes_key_mem(
   assign ready      = ready_reg;
   assign sboxw      = tmp_sboxw;
 
-    
+
   //----------------------------------------------------------------
   // reg_update
   //
@@ -178,7 +178,7 @@ module aes_key_mem(
             begin
               rcon_reg <= rcon_new;
             end
-          
+
           if (key_mem_we)
             begin
               key_mem[round_ctr_reg] <= key_mem_new;
@@ -212,7 +212,7 @@ module aes_key_mem(
       tmp_round_key = key_mem[round];
     end // key_mem_read
 
-  
+
   //----------------------------------------------------------------
   // round_key_gen
   //
@@ -223,7 +223,7 @@ module aes_key_mem(
       reg [31 : 0] w0, w1, w2, w3, w4, w5, w6, w7;
       reg [31 : 0] k0, k1, k2, k3;
       reg [31 : 0] rconw, rotstw, tw, trw;
-      
+
       // Default assignments.
       key_mem_new   = 128'h00000000000000000000000000000000;
       key_mem_we    = 0;
@@ -350,7 +350,7 @@ module aes_key_mem(
       rcon_we  = 0;
 
       tmp_rcon = {rcon_reg[7 : 0], 1'b0} ^ (9'h11b & {9{rcon_reg[7]}});
-      
+
       if (rcon_set)
         begin
           rcon_new = 8'h8d;
