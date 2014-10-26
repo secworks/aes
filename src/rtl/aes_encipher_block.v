@@ -247,70 +247,8 @@ module aes_encipher_block(
   always @*
     begin : round_logic
       // Wires for internal intermediate values.
-      reg [127 : 0] tmp, tmp1, tmp2, tmp3;
-//
-//      // Logic common to normal round updates
-//      // as well as final round update.
-//      // Shiftrows
-//      s00_0 = block_w0_reg[031 : 024];
-//      s01_0 = block_w0_reg[023 : 016];
-//      s02_0 = block_w0_reg[015 : 008];
-//      s03_0 = block_w0_reg[007 : 000];
-//
-//      s10_0 = block_w1_reg[023 : 016];
-//      s11_0 = block_w1_reg[015 : 008];
-//      s12_0 = block_w1_reg[007 : 000];
-//      s13_0 = block_w1_reg[031 : 024];
-//
-//      s20_0 = block_w2_reg[015 : 008];
-//      s21_0 = block_w2_reg[007 : 000];
-//      s22_0 = block_w2_reg[031 : 024];
-//      s23_0 = block_w2_reg[023 : 016];
-//
-//      s30_0 = block_w3_reg[007 : 000];
-//      s31_0 = block_w3_reg[031 : 024];
-//      s32_0 = block_w3_reg[023 : 016];
-//      s33_0 = block_w3_reg[015 : 008];
-//
-//      // MixColumns
-//      s00_1 = gm2(s00_0) ^ gm3(s10_0) ^ s20_0      ^ s30_0;
-//      s10_1 = s00_0      ^ gm2(s10_0) ^ gm3(s20_0) ^ s30_0;
-//      s20_1 = s00_0      ^ s10_0      ^ gm2(s20_0) ^ gm3(s30_0);
-//      s30_1 = gm3(s00_0) ^ s10_0      ^ s20_0      ^ gm2(s30_0);
-//
-//      s01_1 = gm2(s01_0) ^ gm3(s11_0) ^ s21_0      ^ s31_0;
-//      s11_1 = s01_0      ^ gm2(s11_0) ^ gm3(s21_0) ^ s31_0;
-//      s21_1 = s01_0      ^ s11_0      ^ gm2(s21_0) ^ gm3(s31_0);
-//      s31_1 = gm3(s01_0) ^ s11_0      ^ s21_1      ^ gm2(s31_0);
-//
-//      s02_1 = gm2(s02_0) ^ gm3(s12_0) ^ s22_0      ^ s32_0;
-//      s12_1 = s02_0      ^ gm2(s12_0) ^ gm3(s22_0) ^ s32_0;
-//      s22_1 = s02_0      ^ s12_0      ^ gm2(s22_0) ^ gm3(s32_0);
-//      s32_1 = gm3(s02_0) ^ s12_0      ^ s22_1      ^ gm2(s32_0);
-//
-//      s03_1 = gm2(s03_0) ^ gm3(s13_0) ^ s23_0      ^ s33_0;
-//      s13_1 = s03_0      ^ gm2(s13_0) ^ gm3(s23_0) ^ s33_0;
-//      s23_1 = s03_0      ^ s13_0      ^ gm2(s23_0) ^ gm3(s33_0);
-//      s33_1 = gm3(s03_0) ^ s13_0      ^ s23_1      ^ gm2(s33_0);
-//
-//      // AddRoundKey
-//      s00_2 = s00_1 ^ round_key[127 : 120];
-//      s01_2 = s01_1 ^ round_key[119 : 112];
-//      s02_2 = s02_1 ^ round_key[111 : 104];
-//      s03_2 = s03_1 ^ round_key[103 :  96];
-//      s10_2 = s10_1 ^ round_key[95  :  88];
-//      s11_2 = s11_1 ^ round_key[87  :  80];
-//      s12_2 = s12_1 ^ round_key[79  :  72];
-//      s13_2 = s13_1 ^ round_key[71  :  64];
-//      s20_2 = s20_1 ^ round_key[63  :  56];
-//      s21_2 = s21_1 ^ round_key[55  :  48];
-//      s22_2 = s22_1 ^ round_key[47  :  40];
-//      s23_2 = s23_1 ^ round_key[39  :  32];
-//      s30_2 = s30_1 ^ round_key[31  :  24];
-//      s31_2 = s31_1 ^ round_key[23  :  16];
-//      s32_2 = s32_1 ^ round_key[15  :   8];
-//      s33_2 = s33_1 ^ round_key[7   :   0];
-//
+      reg [127 : 0] tmp_block0, tmp_block1, tmp_block2, tmp_block3;
+
       // Update based on update type.
       case (update_type)
         NO_UPDATE:
