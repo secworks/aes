@@ -96,7 +96,7 @@ module aes_encipher_block(
 
 
   //----------------------------------------------------------------
-  // Round functios.
+  // Round functions.
   //----------------------------------------------------------------
   function [127 : 0] shiftrows(input [127 : 0] block);
     reg [31 : 0] w0, w1, w2, w3;
@@ -312,6 +312,8 @@ module aes_encipher_block(
 
         MAIN_UPDATE:
           begin
+            tmp_block0 =
+
             block_w0_new = {s00_2, s01_2, s02_2, s03_2};
             block_w1_new = {s10_2, s11_2, s12_2, s13_2};
             block_w2_new = {s20_2, s21_2, s22_2, s23_2};
