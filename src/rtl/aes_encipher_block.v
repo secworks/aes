@@ -249,6 +249,11 @@ module aes_encipher_block(
       // Wires for internal intermediate values.
       reg [127 : 0] tmp_block0, tmp_block1, tmp_block2, tmp_block3;
 
+      tmp_block0 = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
+      tmp_block1 = shiftrows(tmp_block0);
+      tmp_block2 = mixcolumns(tmp_block1);
+      tmp_block3 = addroundkey(tmp_block2, round_key);
+
       // Update based on update type.
       case (update_type)
         NO_UPDATE:
@@ -312,12 +317,10 @@ module aes_encipher_block(
 
         MAIN_UPDATE:
           begin
-            tmp_block0 =
-
-            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
-            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
-            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
-            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
+            block_w0_new = tmp_block3[127 : 096];
+            block_w1_new = tmp_block3[095 : 064];
+            block_w2_new = tmp_block3[063 : 032];
+            block_w3_new = tmp_block3[031 : 000];
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
