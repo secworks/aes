@@ -110,11 +110,6 @@ module aes_key_mem(
   //----------------------------------------------------------------
   reg [31 : 0] tmp_sboxw;
 
-  reg [7 : 0] tmp_sbox0_addr;
-  reg [7 : 0] tmp_sbox1_addr;
-  reg [7 : 0] tmp_sbox2_addr;
-  reg [7 : 0] tmp_sbox3_addr;
-
   reg           round_key_update;
   reg [3 : 0]   num_rounds;
 
