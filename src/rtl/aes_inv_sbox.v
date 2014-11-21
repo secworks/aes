@@ -53,7 +53,7 @@ module aes_inv_sbox(
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
-  assign new_sboxw = {tmp_new_sbox0, tmp_new_sbox1,
+  assign new_sword = {tmp_new_sbox0, tmp_new_sbox1,
                       tmp_new_sbox2, tmp_new_sbox3};
 
 
