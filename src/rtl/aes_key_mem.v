@@ -340,11 +340,11 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin : rcon_logic
-      reg [8 : 0] tmp_rcon;
+      reg [7 : 0] tmp_rcon;
       rcon_new = 8'h00;
       rcon_we  = 0;
 
-      tmp_rcon = {rcon_reg[7 : 0], 1'b0} ^ (9'h11b & {9{rcon_reg[7]}});
+      tmp_rcon = {rcon_reg[6 : 0], 1'b0} ^ (8'h1b & {8{rcon_reg[7]}});
 
       if (rcon_set)
         begin
