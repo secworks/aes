@@ -137,8 +137,6 @@ module aes_encipher_block(
 
 
   function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] key);
-    reg [31 : 0] w0, w1, w2, w3;
-    reg [31 : 0] ws0, ws1, ws2, ws3;
     begin
       addroundkey = data ^ key;
     end
