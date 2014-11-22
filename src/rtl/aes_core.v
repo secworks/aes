@@ -50,7 +50,8 @@ module aes_core(
                 input wire            keylen,
 
                 input wire [127 : 0]  block,
-                output wire [127 : 0] result
+                output wire [127 : 0] result,
+                output wire           result_valid
                );
 
 
