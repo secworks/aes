@@ -118,8 +118,8 @@ module aes_encipher_block(
     begin
       w0 = data[127 : 096];
       w1 = data[095 : 064];
-      w1 = data[063 : 032];
-      w2 = data[031 : 000];
+      w2 = data[063 : 032];
+      w3 = data[031 : 000];
 
       ws0 = mixw(w0);
       ws1 = mixw(w1);
@@ -136,8 +136,8 @@ module aes_encipher_block(
     begin
       w0 = data[127 : 096];
       w1 = data[095 : 064];
-      w1 = data[063 : 032];
-      w2 = data[031 : 000];
+      w2 = data[063 : 032];
+      w3 = data[031 : 000];
 
       ws0 = {w0[31 : 24], w1[23 : 16], w2[15 : 08], w3[07 : 00]};
       ws1 = {w1[31 : 24], w2[23 : 16], w3[15 : 08], w0[07 : 00]};
@@ -148,9 +148,9 @@ module aes_encipher_block(
     end
   endfunction // shiftrows
 
-  function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] key);
+  function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] rkey);
     begin
-      addroundkey = data ^ key;
+      addroundkey = data ^ rkey;
     end
   endfunction // addroundkey
 
