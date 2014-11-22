@@ -287,7 +287,7 @@ module aes_encipher_block(
       block_w2_we  = 0;
       block_w3_we  = 0;
 
-      tmp_block0   = {blockw0_reg, blockw1_reg, blockw2_reg, blockw3_reg};
+      tmp_block0   = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
       tmp_block1   = shiftrows(tmp_block0);
       tmp_block2   = mixcolumns(tmp_block1);
 
