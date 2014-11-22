@@ -107,14 +107,42 @@ module aes_encipher_block(
       w1 = data[063 : 032];
       w2 = data[031 : 000];
 
-      ws0 = {w0[31 : 24], w1[23 : 16], w2[15 : 08], w3[08 : 00]};
-      ws1 = {w1[31 : 24], w2[23 : 16], w3[15 : 08], w0[08 : 00]};
-      ws2 = {w2[31 : 24], w3[23 : 16], w0[15 : 08], w1[08 : 00]};
-      ws3 = {w3[31 : 24], w0[23 : 16], w1[15 : 08], w2[08 : 00]};
+      ws0 = {w0[31 : 24], w1[23 : 16], w2[15 : 08], w3[07 : 00]};
+      ws1 = {w1[31 : 24], w2[23 : 16], w3[15 : 08], w0[07 : 00]};
+      ws2 = {w2[31 : 24], w3[23 : 16], w0[15 : 08], w1[07 : 00]};
+      ws3 = {w3[31 : 24], w0[23 : 16], w1[15 : 08], w2[07 : 00]};
 
       shiftrows = {ws0, ws1, ws2, ws3};
     end
   endfunction // shiftrows
+
+
+  function [127 : 0] mixcolumns(input [127 : 0] data);
+    reg [31 : 0] w0, w1, w2, w3;
+    reg [31 : 0] ws0, ws1, ws2, ws3;
+    begin
+      w0 = data[127 : 096];
+      w1 = data[095 : 064];
+      w1 = data[063 : 032];
+      w2 = data[031 : 000];
+
+      ws0 = {w0[31 : 24], w1[23 : 16], w2[15 : 08], w3[07 : 00]};
+      ws1 = {w1[31 : 24], w2[23 : 16], w3[15 : 08], w0[07 : 00]};
+      ws2 = {w2[31 : 24], w3[23 : 16], w0[15 : 08], w1[07 : 00]};
+      ws3 = {w3[31 : 24], w0[23 : 16], w1[15 : 08], w2[07 : 00]};
+
+      mixcolumns = {ws0, ws1, ws2, ws3};
+    end
+  endfunction // mixcolumns
+
+
+  function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] key);
+    reg [31 : 0] w0, w1, w2, w3;
+    reg [31 : 0] ws0, ws1, ws2, ws3;
+    begin
+      addroundkey = data ^ key;
+    end
+  endfunction // addroundkey
 
 
   //----------------------------------------------------------------
@@ -329,10 +357,10 @@ module aes_encipher_block(
 
         FINAL_UPDATE:
           begin
-            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
-            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
-            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
-            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
+//            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
+//            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
+//            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
+//            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
