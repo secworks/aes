@@ -8,30 +8,30 @@
 // Author: Joachim Strombergson
 // Copyright (c) 2013, 2014 Secworks Sweden AB
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or 
-// without modification, are permitted provided that the following 
-// conditions are met: 
-// 
-// 1. Redistributions of source code must retain the above copyright 
-//    notice, this list of conditions and the following disclaimer. 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the 
-//    distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+//
+// Redistribution and use in source and binary forms, with or
+// without modification, are permitted provided that the following
+// conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in
+//    the documentation and/or other materials provided with the
+//    distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 // BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
@@ -40,11 +40,11 @@ module aes(
            // Clock and reset.
            input wire           clk,
            input wire           reset_n,
-           
+
            // Control.
            input wire           cs,
            input wire           we,
-              
+
            // Data ports.
            input wire  [7 : 0]  address,
            input wire  [31 : 0] write_data,
@@ -63,13 +63,9 @@ module aes(
   parameter CTRL_INIT_BIT    = 0;
   parameter CTRL_NEXT_BIT    = 1;
   parameter CTRL_ENCDEC_BIT  = 2;
-  parameter CTRL_KEYLEN_LOW  = 3;
-  parameter CTRL_KEYLEN_HIGH = 4;
+  parameter CTRL_KEYLEN_BIT  = 3;
 
   parameter ADDR_CONFIG      = 8'h09;
-  parameter CTRL_ENCDEC_BIT  = 0;
-  parameter CTRL_KEYLEN_LOW  = 1;
-  parameter CTRL_KEYLEN_HIGH = 1;
 
   parameter ADDR_STATUS      = 8'h0a;
   parameter STATUS_READY_BIT = 0;
@@ -83,12 +79,12 @@ module aes(
   parameter ADDR_KEY5        = 8'h15;
   parameter ADDR_KEY6        = 8'h16;
   parameter ADDR_KEY7        = 8'h17;
-                             
+
   parameter ADDR_BLOCK0      = 8'h20;
   parameter ADDR_BLOCK1      = 8'h21;
   parameter ADDR_BLOCK2      = 8'h22;
   parameter ADDR_BLOCK3      = 8'h23;
-                             
+
   parameter ADDR_RESULT0     = 8'h30;
   parameter ADDR_RESULT1     = 8'h31;
   parameter ADDR_RESULT2     = 8'h32;
@@ -98,7 +94,7 @@ module aes(
   parameter CORE_NAME1       = 32'h31323820; // "128 "
   parameter CORE_VERSION     = 32'h302e3530; // "0.50"
 
-  
+
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
@@ -142,17 +138,17 @@ module aes(
   reg [31 : 0] key7_reg;
   reg          key7_we;
 
-  reg [128 : 0] result_reg;
+  reg [127 : 0] result_reg;
   reg           valid_reg;
   reg           ready_reg;
 
-  
+
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
   reg [31 : 0]   tmp_read_data;
   reg            tmp_error;
-  
+
   wire           core_encdec;
   wire           core_init;
   wire           core_next;
@@ -162,30 +158,31 @@ module aes(
   wire [127 : 0] core_block;
   wire [127 : 0] core_result;
   wire           core_valid;
-  
-  
+
+
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign read_data = tmp_read_data;
   assign error     = tmp_error;
-  
+
   assign core_key = {key0_reg, key1_reg, key2_reg, key3_reg,
                      key4_reg, key5_reg, key6_reg, key7_reg};
 
   assign core_block  = {block0_reg, block1_reg, block2_reg, block3_reg};
   assign core_init   = init_reg;
   assign core_next   = next_reg;
+  assign core_encdec = encdec_reg;
   assign core_keylen = keylen_reg;
-  
-             
+
+
   //----------------------------------------------------------------
   // core instantiation.
   //----------------------------------------------------------------
   aes_core core(
                 .clk(clk),
                 .reset_n(reset_n),
-                   
+
                 .encdec(core_encdec),
                 .init(core_init),
                 .next(core_next),
@@ -193,13 +190,13 @@ module aes(
 
                 .key(core_key),
                 .keylen(core_keylen),
-                   
+
                 .block(core_block),
                 .result(core_result),
                 .result_valid(core_valid)
                );
-  
-  
+
+
   //----------------------------------------------------------------
   // reg_update
   // Update functionality for all registers in the core.
@@ -252,7 +249,7 @@ module aes(
           if (config_we)
             begin
               encdec_reg <= write_data[CTRL_ENCDEC_BIT];
-              keylen_reg <= write_data[CTRL_KEYLEN_HIGH : CTRL_KEYLEN_LOW];
+              keylen_reg <= write_data[CTRL_KEYLEN_BIT];
             end
 
           if (key0_we)
@@ -379,7 +376,7 @@ module aes(
       block3_we     = 0;
       tmp_read_data = 32'h00000000;
       tmp_error     = 0;
-      
+
       if (cs)
         begin
           if (we)
@@ -456,7 +453,7 @@ module aes(
                   begin
                     block3_we = 1;
                   end
-                
+
                 default:
                   begin
                     tmp_error = 1;
@@ -472,7 +469,7 @@ module aes(
                   begin
                     tmp_read_data = CORE_NAME0;
                   end
-                
+
                 ADDR_NAME1:
                   begin
                     tmp_read_data = CORE_NAME1;
