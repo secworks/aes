@@ -467,6 +467,7 @@ module aes_encipher_block(
 
         CTRL_INIT:
           begin
+            round_ctr_inc = 1;
             sword_ctr_rst = 1;
             update_type   = INIT_UPDATE;
             enc_ctrl_new  = CTRL_SBOX;
