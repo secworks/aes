@@ -171,8 +171,8 @@ module tb_aes_encipher_block();
 
       $display("Control states");
       $display("round = 0x%01x", dut.round);
-      $display("enc_ctrl = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
-               dut.enc_ctrl_reg, dut.sword_ctr_reg, dut.round_ctr_reg);
+      $display("enc_ctrl = 0x%01x, update_type = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
+               dut.enc_ctrl_reg, dut.update_type, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
 
       $display("Internal data values");
