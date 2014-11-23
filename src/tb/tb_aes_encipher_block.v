@@ -162,16 +162,30 @@ module tb_aes_encipher_block();
     begin
       $display("State of DUT");
       $display("------------");
+      $display("Interfaces");
       $display("ready = 0x%01x, next = 0x%01x, keylen = 0x%01x",
                dut.ready, dut.next, dut.keylen);
       $display("block     = 0x%032x", dut.block);
       $display("new_block = 0x%032x", dut.new_block);
       $display("");
 
-      $display("round = 0x%01x, round_key = 0x%016x", dut.round, dut.round_key);
-      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
+      $display("Control states");
+      $display("round = 0x%01x", dut.round);
       $display("enc_ctrl = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
                dut.enc_ctrl_reg, dut.sword_ctr_reg, dut.round_ctr_reg);
+      $display("");
+
+      $display("Data values Control states");
+      $display("round_key = 0x%016x", dut.round_key);
+      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
+      $display("tmp_block0 = 0x%016x, tmp_block1 = 0x%016x, tmp_block2 = 0x%016x",
+               dut.round_logic.tmp_block0, dut.round_logic.tmp_block1,
+               dut.round_logic.tmp_block2);
+      $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
+               dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
+      $display("block_w0_new = 0x%08x, block_w1_new = 0x%08x, block_w2_new = 0x%08x, block_w3_new = 0x%08x",
+               dut.block_new[127 : 096], dut.block_new[095 : 064],
+               dut.block_new[063 : 032], dut.block_new[031 : 000]);
       $display("");
     end
   endtask // dump_dut_state
