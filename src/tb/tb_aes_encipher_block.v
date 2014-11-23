@@ -175,7 +175,7 @@ module tb_aes_encipher_block();
                dut.enc_ctrl_reg, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
 
-      $display("Data values Control states");
+      $display("Internal data values");
       $display("round_key = 0x%016x", dut.round_key);
       $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
       $display("tmp_block0 = 0x%016x, tmp_block1 = 0x%016x, tmp_block2 = 0x%016x",
