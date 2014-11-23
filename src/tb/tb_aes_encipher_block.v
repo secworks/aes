@@ -180,6 +180,8 @@ module tb_aes_encipher_block();
       $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
       $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
                dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
+      $display("");
+      $display("old_block          = 0x%08x", dut.round_logic.old_block);
       $display("shiftrows_block    = 0x%08x", dut.round_logic.shiftrows_block);
       $display("mixcolumns_block   = 0x%08x", dut.round_logic.mixcolumns_block);
       $display("addkey_init_block  = 0x%08x", dut.round_logic.addkey_init_block);
