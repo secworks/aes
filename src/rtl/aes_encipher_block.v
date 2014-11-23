@@ -282,6 +282,7 @@ module aes_encipher_block(
       reg [127 : 0] tmp_block0, tmp_block1, tmp_block2;
 
       block_new    = 128'h00000000000000000000000000000000;
+      tmp_sboxw    = 32'h00000000;
       block_w0_we  = 0;
       block_w1_we  = 0;
       block_w2_we  = 0;
