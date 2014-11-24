@@ -55,14 +55,22 @@ module aes_core(
                );
 
 
+
+
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
+  parameter CTRL_IDLE  = 2'h0;
+  parameter CTRL_INIT  = 2'h1;
+  parameter CTRL_MAIN  = 2'h2;
 
 
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
+  reg [1 : 0] aes_core_ctrl_reg;
+  reg [1 : 0] aes_core_ctrl_new;
+  reg         aes_core_ctrl_we;
 
 
   //----------------------------------------------------------------
@@ -94,8 +102,8 @@ module aes_core(
   reg [31 : 0]   sboxw;
   wire [31 : 0]  new_sboxw;
 
-  reg [127 : 000] tmp_result;
-  reg             tmp_result_valid;
+  reg [127 : 0]  tmp_result;
+  reg            tmp_result_valid;
 
 
   //----------------------------------------------------------------
@@ -166,6 +174,29 @@ module aes_core(
 
 
   //----------------------------------------------------------------
+  // reg_update
+  //
+  // Update functionality for all registers in the core.
+  // All registers are positive edge triggered with asynchronous
+  // active low reset. All registers have write enable.
+  //----------------------------------------------------------------
+  always @ (posedge clk or negedge reset_n)
+    begin: reg_update
+      if (!reset_n)
+        begin
+          aes_core_ctrl_reg <= CTRL_IDLE;
+        end
+      else
+        begin
+          if (aes_core_ctrl_we)
+            begin
+              aes_core_ctrl_reg <= aes_core_ctrl_new;
+            end
+        end
+    end // reg_update
+
+
+  //----------------------------------------------------------------
   // sbox_mux
   //
   // Controls which of the encipher datapath or the key memory
@@ -211,6 +242,41 @@ module aes_core(
         end
     end // encdec_mux
 
+
+  //----------------------------------------------------------------
+  // aes_core_ctrl
+  //
+  // Control FSM for aes core. Basically tracks if we are in
+  // key init, encipher or decipher modes and connects the
+  // different submodules to shared resources and interface ports.
+  //----------------------------------------------------------------
+  always @*
+    begin : aes_core_ctrl
+      init_state = 0;
+
+      case (aes_core_ctrl_reg)
+        CTRL_IDLE:
+          begin
+
+          end
+
+        CTRL_INIT:
+          begin
+
+          end
+
+        CTRL_MAIN:
+          begin
+
+          end
+
+        default:
+          begin
+
+          end
+      endcase // case (aes_core_ctrl_reg)
+
+    end // aes_core_ctrl
 endmodule // aes_core
 
 //======================================================================
