@@ -70,12 +70,9 @@ module aes_core(
   //----------------------------------------------------------------
   reg [7 : 0]    tmp_data;
 
-  reg            key_init;
   reg            init_state;
   reg            update_state;
 
-  reg [3 : 0]    num_rounds;
-  reg [1 : 0]    round_type;
   wire [127 : 0] round_key;
   wire           key_ready;
 
