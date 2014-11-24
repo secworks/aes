@@ -152,7 +152,7 @@ module tb_aes_core();
                dut.result_valid, dut.result);
       $display("");
       $display("Encipher state::");
-      $display("enc_ctrl = 0x%01x, round_ctr = 0x%01x", 
+      $display("enc_ctrl = 0x%01x, round_ctr = 0x%01x",
                dut.enc_block.enc_ctrl_reg, dut.enc_block.round_ctr_reg);
       $display("");
     end
@@ -405,28 +405,28 @@ module tb_aes_core();
       ecb_mode_single_block_test(8'h01, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_plaintext0, nist_ecb_128_enc_expected0);
 
-//      ecb_mode_single_block_test(8'h02, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
-//                                 nist_plaintext1, nist_ecb_128_enc_expected1);
-//
-//      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
-//                                 nist_plaintext2, nist_ecb_128_enc_expected2);
-//
-//      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
-//                                 nist_plaintext3, nist_ecb_128_enc_expected3);
-//
-//
-//      ecb_mode_single_block_test(8'h04, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
+      ecb_mode_single_block_test(8'h02, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
+                                 nist_plaintext1, nist_ecb_128_enc_expected1);
+
+      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
+                                 nist_plaintext2, nist_ecb_128_enc_expected2);
+
+      ecb_mode_single_block_test(8'h04, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
+                                 nist_plaintext3, nist_ecb_128_enc_expected3);
+
+
+//      ecb_mode_single_block_test(8'h05, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
 //                                 nist_ecb_128_enc_expected0, nist_plaintext0);
 //
-//      ecb_mode_single_block_test(8'h05, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
+//      ecb_mode_single_block_test(8'h06, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
 //                                 nist_ecb_128_enc_expected1, nist_plaintext1);
 //
-//      ecb_mode_single_block_test(8'h06, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
+//      ecb_mode_single_block_test(8'h07, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
 //                                 nist_ecb_128_enc_expected2, nist_plaintext2);
 //
-//      ecb_mode_single_block_test(8'h07, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
+//      ecb_mode_single_block_test(8'h08, AES_DECIPHER, nist_aes128_key, AES_128_BIT_KEY,
 //                                 nist_ecb_128_enc_expected3, nist_plaintext3);
-//
+
 
 //      $display("");
 //      $display("ECB 256 bit key tests");
@@ -455,7 +455,7 @@ module tb_aes_core();
 //
 //      ecb_mode_single_block_test(8'h17, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
 //                                 nist_ecb_256_enc_expected3, nist_plaintext3);
-//
+
 
       display_test_result();
       $display("");
