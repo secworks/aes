@@ -84,15 +84,10 @@ module aes_core(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [7 : 0]    tmp_data;
-
   reg            init_state;
-  reg            update_state;
 
   wire [127 : 0] round_key;
   wire           key_ready;
-
-  reg [3 : 0]    round_nr;
 
   reg            enc_next;
   wire [3 : 0]   enc_round_nr;
@@ -105,15 +100,15 @@ module aes_core(
   wire [127 : 0] dec_new_block;
   wire           dec_ready;
 
+  reg [127 : 0]  muxed_new_block;
+  reg [3 : 0]    muxed_round_nr;
+  reg [127 : 0]  muxed_result;
   reg            muxed_ready;
 
   wire [31 : 0]  keymem_sboxw;
 
-  reg [31 : 0]   sboxw;
+  reg [31 : 0]   muxed_sboxw;
   wire [31 : 0]  new_sboxw;
-
-  reg [127 : 0]  tmp_result;
-  reg            tmp_result_valid;
 
 
   //----------------------------------------------------------------
@@ -162,7 +157,7 @@ module aes_core(
                      .keylen(keylen),
                      .init(init),
 
-                     .round(round_nr),
+                     .round(muxed_round_nr),
                      .round_key(round_key),
                      .ready(key_ready),
 
@@ -171,16 +166,15 @@ module aes_core(
                     );
 
 
-  aes_sbox sbox(.sboxw(sboxw), .new_sboxw(new_sboxw));
+  aes_sbox sbox(.sboxw(muxed_sboxw), .new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
-  assign ready        = enc_ready & dec_ready & key_ready;
-
-  assign result       = tmp_result;
-  assign result_valid = tmp_result_valid;
+  assign ready        = ready_reg;
+  assign result       = muxed_new_block;
+  assign result_valid = result_valid_reg;
 
 
   //----------------------------------------------------------------
@@ -195,7 +189,7 @@ module aes_core(
       if (!reset_n)
         begin
           result_valid_reg  <= 1'b0;
-          ready_reg         <= 1'b0;
+          ready_reg         <= 1'b1;
           aes_core_ctrl_reg <= CTRL_IDLE;
         end
       else
@@ -228,11 +222,11 @@ module aes_core(
     begin : sbox_mux
       if (init_state)
         begin
-          sboxw = keymem_sboxw;
+          muxed_sboxw = keymem_sboxw;
         end
       else
         begin
-          sboxw = enc_sboxw;
+          muxed_sboxw = enc_sboxw;
         end
     end // sbox_mux
 
@@ -251,18 +245,18 @@ module aes_core(
       if (encdec)
         begin
           // Encipher operations
-          enc_next         = next;
-          round_nr         = enc_round_nr;
-          tmp_result       = enc_new_block;
-          muxed_ready      = enc_ready;
+          enc_next        = next;
+          muxed_round_nr  = enc_round_nr;
+          muxed_new_block = enc_new_block;
+          muxed_ready     = enc_ready;
         end
       else
         begin
           // Decipher operations
-          dec_next         = next;
-          round_nr         = dec_round_nr;
-          tmp_result       = dec_new_block;
-          muxed_ready      = dec_ready;
+          dec_next        = next;
+          muxed_round_nr  = dec_round_nr;
+          muxed_new_block = dec_new_block;
+          muxed_ready     = dec_ready;
         end
     end // encdec_mux
 
