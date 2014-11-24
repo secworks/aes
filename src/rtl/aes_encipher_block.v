@@ -372,8 +372,8 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   // num_rounds_mux
   //
-  // Simple mux that selects the number of rouns used to process
-  // the block based on the give key length.
+  // Simple mux that selects the number of rounds used to process
+  // the block based on the given key length.
   //----------------------------------------------------------------
   always @*
     begin : num_rounds_mux
