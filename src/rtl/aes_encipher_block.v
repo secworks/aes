@@ -488,27 +488,21 @@ module aes_encipher_block(
         CTRL_MAIN:
           begin
             sword_ctr_rst = 1;
-            update_type   = MAIN_UPDATE;
             round_ctr_inc = 1;
-            if (round_ctr_reg == num_rounds)
+            if (round_ctr_reg < num_rounds)
               begin
-                enc_ctrl_new  = CTRL_FINAL;
+                update_type   = MAIN_UPDATE;
+                enc_ctrl_new  = CTRL_SBOX;
                 enc_ctrl_we   = 1;
               end
             else
               begin
-                enc_ctrl_new  = CTRL_SBOX;
-                enc_ctrl_we   = 1;
+                update_type  = FINAL_UPDATE;
+                ready_new    = 1;
+                ready_we     = 1;
+                enc_ctrl_new = CTRL_IDLE;
+                enc_ctrl_we  = 1;
               end
-          end
-
-        CTRL_FINAL:
-          begin
-            update_type  = FINAL_UPDATE;
-            ready_new    = 1;
-            ready_we     = 1;
-            enc_ctrl_new = CTRL_IDLE;
-            enc_ctrl_we  = 1;
           end
 
         default:
