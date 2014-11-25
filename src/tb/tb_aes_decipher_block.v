@@ -157,13 +157,13 @@ module tb_aes_decipher_block();
 
       $display("Control states");
       $display("round = 0x%01x", dut.round);
-      $display("enc_ctrl = 0x%01x, update_type = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
-               dut.enc_ctrl_reg, dut.update_type, dut.sword_ctr_reg, dut.round_ctr_reg);
+      $display("dec_ctrl = 0x%01x, update_type = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
+               dut.dec_ctrl_reg, dut.update_type, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
 
       $display("Internal data values");
       $display("round_key = 0x%016x", dut.round_key);
-      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
+      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.tmp_sboxw, dut.new_sboxw);
       $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
                dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
       $display("");
@@ -263,11 +263,11 @@ module tb_aes_decipher_block();
 
 
   //----------------------------------------------------------------
-  // test_ecb_enc()
+  // test_ecb_de()
   //
   // Perform ECB mode encryption test.
   //----------------------------------------------------------------
-  task test_ecb_enc(
+  task test_ecb_dec(
                     input           key_length,
                     input [127 : 0] block,
                     input [127 : 0] expected);
@@ -319,30 +319,30 @@ module tb_aes_decipher_block();
       reg [127 : 0] nist_plaintext2;
       reg [127 : 0] nist_plaintext3;
 
-      reg [127 : 0] nist_ecb_128_enc_expected0;
-      reg [127 : 0] nist_ecb_128_enc_expected1;
-      reg [127 : 0] nist_ecb_128_enc_expected2;
-      reg [127 : 0] nist_ecb_128_enc_expected3;
+      reg [127 : 0] nist_ecb_128_dec_ciphertext0;
+      reg [127 : 0] nist_ecb_128_dec_ciphertext1;
+      reg [127 : 0] nist_ecb_128_dec_ciphertext2;
+      reg [127 : 0] nist_ecb_128_dec_ciphertext3;
 
-      reg [127 : 0] nist_ecb_256_enc_expected0;
-      reg [127 : 0] nist_ecb_256_enc_expected1;
-      reg [127 : 0] nist_ecb_256_enc_expected2;
-      reg [127 : 0] nist_ecb_256_enc_expected3;
+      reg [127 : 0] nist_ecb_256_dec_ciphertext0;
+      reg [127 : 0] nist_ecb_256_dec_ciphertext1;
+      reg [127 : 0] nist_ecb_256_dec_ciphertext2;
+      reg [127 : 0] nist_ecb_256_dec_ciphertext3;
 
       nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
       nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
       nist_plaintext2 = 128'h30c81c46a35ce411e5fbc1191a0a52ef;
       nist_plaintext3 = 128'hf69f2445df4f9b17ad2b417be66c3710;
 
-      nist_ecb_128_enc_expected0 = 128'h3ad77bb40d7a3660a89ecaf32466ef97;
-      nist_ecb_128_enc_expected1 = 128'hf5d3d58503b9699de785895a96fdbaaf;
-      nist_ecb_128_enc_expected2 = 128'h43b1cd7f598ece23881b00e3ed030688;
-      nist_ecb_128_enc_expected3 = 128'h7b0c785e27e8ad3f8223207104725dd4;
+      nist_ecb_128_dec_ciphertext0 = 128'h3ad77bb40d7a3660a89ecaf32466ef97;
+      nist_ecb_128_dec_ciphertext1 = 128'hf5d3d58503b9699de785895a96fdbaaf;
+      nist_ecb_128_dec_ciphertext2 = 128'h43b1cd7f598ece23881b00e3ed030688;
+      nist_ecb_128_dec_ciphertext3 = 128'h7b0c785e27e8ad3f8223207104725dd4;
 
-      nist_ecb_256_enc_expected0 = 255'hf3eed1bdb5d2a03c064b5a7e3db181f8;
-      nist_ecb_256_enc_expected1 = 255'h591ccb10d410ed26dc5ba74a31362870;
-      nist_ecb_256_enc_expected2 = 255'hb6ed21b99ca6f4f9f153e7b1beafed1d;
-      nist_ecb_256_enc_expected3 = 255'h23304b7a39f9f3ff067d8d8f9e24ecc7;
+      nist_ecb_256_dec_ciphertext0 = 255'hf3eed1bdb5d2a03c064b5a7e3db181f8;
+      nist_ecb_256_dec_ciphertext1 = 255'h591ccb10d410ed26dc5ba74a31362870;
+      nist_ecb_256_dec_ciphertext2 = 255'hb6ed21b99ca6f4f9f153e7b1beafed1d;
+      nist_ecb_256_dec_ciphertext3 = 255'h23304b7a39f9f3ff067d8d8f9e24ecc7;
 
 
       $display("   -= Testbench for aes decipher block started =-");
@@ -372,10 +372,10 @@ module tb_aes_decipher_block();
       key_mem[13] = 128'h00000000000000000000000000000000;
       key_mem[14] = 128'h00000000000000000000000000000000;
 
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext0, nist_ecb_128_enc_expected0);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext1, nist_ecb_128_enc_expected1);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext2, nist_ecb_128_enc_expected2);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext3, nist_ecb_128_enc_expected3);
+      test_ecb_dec(AES_128_BIT_KEY, nist_ecb_128_dec_ciphertext0, nist_plaintext0);
+      test_ecb_dec(AES_128_BIT_KEY, nist_ecb_128_dec_ciphertext1, nist_plaintext1);
+      test_ecb_dec(AES_128_BIT_KEY, nist_ecb_128_dec_ciphertext2, nist_plaintext2);
+      test_ecb_dec(AES_128_BIT_KEY, nist_ecb_128_dec_ciphertext3, nist_plaintext3);
 
 
       // NIST 256 bit ECB tests.
@@ -395,10 +395,10 @@ module tb_aes_decipher_block();
       key_mem[13] = 128'hcafaaae3e4d59b349adf6acebd10190d;
       key_mem[14] = 128'hfe4890d1e6188d0b046df344706c631e;
 
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext0, nist_ecb_256_enc_expected0);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
+      test_ecb_dec(AES_256_BIT_KEY, nist_ecb_256_dec_ciphertext0, nist_plaintext0);
+      test_ecb_dec(AES_256_BIT_KEY, nist_ecb_256_dec_ciphertext1, nist_plaintext1);
+      test_ecb_dec(AES_256_BIT_KEY, nist_ecb_256_dec_ciphertext2, nist_plaintext2);
+      test_ecb_dec(AES_256_BIT_KEY, nist_ecb_256_dec_ciphertext3, nist_plaintext3);
 
 
       display_test_result();
