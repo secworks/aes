@@ -359,11 +359,6 @@ module aes_encipher_block(
 
         default:
           begin
-            block_new    = 128'h00000000000000000000000000000000;
-            block_w0_we  = 0;
-            block_w1_we  = 0;
-            block_w2_we  = 0;
-            block_w3_we  = 0;
           end
       endcase // case (update_type)
     end // round_logic
@@ -441,7 +436,6 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   always @*
     begin: encipher_ctrl
-      // Default assignments.
       sword_ctr_inc = 0;
       sword_ctr_rst = 0;
       round_ctr_inc = 0;
