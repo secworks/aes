@@ -318,28 +318,27 @@ module aes_decipher_block(
   always @*
     begin : round_logic
       reg [127 : 0] old_block, inv_shiftrows_block, inv_mixcolumns_block;
-      reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
+      reg [127 : 0] addkey_block;
 
-      block_new    = 128'h00000000000000000000000000000000;
-      tmp_sboxw    = 32'h00000000;
-      block_w0_we  = 0;
-      block_w1_we  = 0;
-      block_w2_we  = 0;
-      block_w3_we  = 0;
+      inv_shiftrows_block  = 128'h00000000000000000000000000000000;
+      inv_mixcolumns_block = 128'h00000000000000000000000000000000;
+      addkey_block         = 128'h00000000000000000000000000000000;
+      block_new            = 128'h00000000000000000000000000000000;
+      tmp_sboxw            = 32'h00000000;
+      block_w0_we          = 0;
+      block_w1_we          = 0;
+      block_w2_we          = 0;
+      block_w3_we          = 0;
 
       old_block            = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
-      inv_shiftrows_block  = inv_shiftrows(old_block);
-      inv_mixcolumns_block = inv_mixcolumns(inv_shiftrows_block);
-      addkey_init_block    = addroundkey(block, round_key);
-      addkey_main_block    = addroundkey(inv_mixcolumns_block, round_key);
-      addkey_final_block   = addroundkey(inv_shiftrows_block, round_key);
 
       // Update based on update type.
       case (update_type)
         // InitRound
         INIT_UPDATE:
           begin
-            block_new    = addkey_init_block;
+            addkey_block = addroundkey(block, round_key);
+            block_new    = inv_shiftrows(addkey_block);
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
@@ -353,42 +352,44 @@ module aes_decipher_block(
             case (sword_ctr_reg)
               2'h0:
                 begin
-                  tmp_sboxw    = block_w0_reg;
-                  block_w0_we  = 1;
+                  tmp_sboxw   = block_w0_reg;
+                  block_w0_we = 1;
                 end
 
               2'h1:
                 begin
-                  tmp_sboxw    = block_w1_reg;
-                  block_w1_we  = 1;
+                  tmp_sboxw   = block_w1_reg;
+                  block_w1_we = 1;
                 end
 
               2'h2:
                 begin
-                  tmp_sboxw    = block_w2_reg;
-                  block_w2_we  = 1;
+                  tmp_sboxw   = block_w2_reg;
+                  block_w2_we = 1;
                 end
 
               2'h3:
                 begin
-                  tmp_sboxw    = block_w3_reg;
-                  block_w3_we  = 1;
+                  tmp_sboxw   = block_w3_reg;
+                  block_w3_we = 1;
                 end
             endcase // case (sbox_mux_ctrl_reg)
           end
 
         MAIN_UPDATE:
           begin
-            block_new    = addkey_main_block;
-            block_w0_we  = 1;
-            block_w1_we  = 1;
-            block_w2_we  = 1;
-            block_w3_we  = 1;
+            addkey_block         = addroundkey(old_block, round_key);
+            inv_mixcolumns_block = inv_mixcolumns(addkey_block);
+            block_new            = inv_shiftrows(inv_mixcolumns_block);
+            block_w0_we          = 1;
+            block_w1_we          = 1;
+            block_w2_we          = 1;
+            block_w3_we          = 1;
           end
 
         FINAL_UPDATE:
           begin
-            block_new    = addkey_final_block;
+            block_new    = addroundkey(old_block, round_key);
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
