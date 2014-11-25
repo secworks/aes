@@ -200,8 +200,8 @@ module aes_decipher_block(
   reg [3 : 0]  round_ctr_reg;
   reg [3 : 0]  round_ctr_new;
   reg          round_ctr_we;
-  reg          round_ctr_rst;
-  reg          round_ctr_inc;
+  reg          round_ctr_set;
+  reg          round_ctr_dec;
 
   reg [127 : 0] block_new;
   reg [31 : 0]  block_w0_reg;
@@ -403,25 +403,6 @@ module aes_decipher_block(
 
 
   //----------------------------------------------------------------
-  // num_rounds_mux
-  //
-  // Simple mux that selects the number of rounds used to process
-  // the block based on the given key length.
-  //----------------------------------------------------------------
-  always @*
-    begin : num_rounds_mux
-      if (keylen == AES_256_BIT_KEY)
-        begin
-          num_rounds = AES256_ROUNDS;
-        end
-      else
-        begin
-          num_rounds = AES128_ROUNDS;
-        end
-    end // num_rounds_mux
-
-
-  //----------------------------------------------------------------
   // sword_ctr
   //
   // The subbytes word counter with reset and increase logic.
@@ -454,14 +435,21 @@ module aes_decipher_block(
       round_ctr_new = 4'h0;
       round_ctr_we  = 1'b0;
 
-      if (round_ctr_rst)
+      if (round_ctr_set)
         begin
-          round_ctr_new = 4'h0;
+          if (keylen == AES_256_BIT_KEY)
+            begin
+              round_ctr_new = AES256_ROUNDS;
+            end
+          else
+            begin
+              round_ctr_new = AES128_ROUNDS;
+            end
           round_ctr_we  = 1'b1;
         end
-      else if (round_ctr_inc)
+      else if (round_ctr_dec)
         begin
-          round_ctr_new = round_ctr_reg + 1'b1;
+          round_ctr_new = round_ctr_reg - 1'b1;
           round_ctr_we  = 1'b1;
         end
     end // round_ctr
@@ -476,8 +464,8 @@ module aes_decipher_block(
     begin: decipher_ctrl
       sword_ctr_inc = 0;
       sword_ctr_rst = 0;
-      round_ctr_inc = 0;
-      round_ctr_rst = 0;
+      round_ctr_dec = 0;
+      round_ctr_set = 0;
       ready_new     = 0;
       ready_we      = 0;
       update_type   = NO_UPDATE;
@@ -489,7 +477,7 @@ module aes_decipher_block(
           begin
             if (next)
               begin
-                round_ctr_rst = 1;
+                round_ctr_set = 1;
                 ready_new     = 0;
                 ready_we      = 1;
                 dec_ctrl_new  = CTRL_INIT;
@@ -499,7 +487,7 @@ module aes_decipher_block(
 
         CTRL_INIT:
           begin
-            round_ctr_inc = 1;
+            round_ctr_dec = 1;
             sword_ctr_rst = 1;
             update_type   = INIT_UPDATE;
             dec_ctrl_new  = CTRL_SBOX;
@@ -520,8 +508,8 @@ module aes_decipher_block(
         CTRL_MAIN:
           begin
             sword_ctr_rst = 1;
-            round_ctr_inc = 1;
-            if (round_ctr_reg < num_rounds)
+            round_ctr_dec = 1;
+            if (round_ctr_reg > 0)
               begin
                 update_type   = MAIN_UPDATE;
                 dec_ctrl_new  = CTRL_SBOX;
