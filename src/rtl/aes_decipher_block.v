@@ -337,12 +337,14 @@ module aes_decipher_block(
         // InitRound
         INIT_UPDATE:
           begin
-            addkey_block = addroundkey(block, round_key);
-            block_new    = inv_shiftrows(addkey_block);
-            block_w0_we  = 1;
-            block_w1_we  = 1;
-            block_w2_we  = 1;
-            block_w3_we  = 1;
+            old_block           = block;
+            addkey_block        = addroundkey(old_block, round_key);
+            inv_shiftrows_block = inv_shiftrows(addkey_block);
+            block_new           = inv_shiftrows_block;
+            block_w0_we         = 1;
+            block_w1_we         = 1;
+            block_w2_we         = 1;
+            block_w3_we         = 1;
           end
 
         SBOX_UPDATE:
