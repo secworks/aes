@@ -1,8 +1,8 @@
 //======================================================================
 //
-// tb_aes_encipher_block.v
+// tb_aes_decipher_block.v
 // -----------------------
-// Testbench for the AES encipher block module.
+// Testbench for the AES decipher block module.
 //
 //
 // Author: Joachim Strombergson
@@ -45,7 +45,7 @@
 //------------------------------------------------------------------
 // Test module.
 //------------------------------------------------------------------
-module tb_aes_encipher_block();
+module tb_aes_decipher_block();
 
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
@@ -79,9 +79,6 @@ module tb_aes_encipher_block();
   wire [3 : 0]   tb_round;
   wire [127 : 0] tb_round_key;
 
-  wire [31 : 0]  tb_sboxw;
-  wire [31 : 0]  tb_new_sboxw;
-
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_new_block;
 
@@ -97,15 +94,7 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   // Device Under Test.
   //----------------------------------------------------------------
-  // We need an sbox for the tests.
-  aes_sbox sbox(
-                .sboxw(tb_sboxw),
-                .new_sboxw(tb_new_sboxw)
-               );
-
-
-  // The device under test.
-  aes_encipher_block dut(
+  aes_decipher_block dut(
                          .clk(tb_clk),
                          .reset_n(tb_reset_n),
 
@@ -114,9 +103,6 @@ module tb_aes_encipher_block();
                          .keylen(tb_keylen),
                          .round(tb_round),
                          .round_key(tb_round_key),
-
-                         .sboxw(tb_sboxw),
-                         .new_sboxw(tb_new_sboxw),
 
                          .block(tb_block),
                          .new_block(tb_new_block),
@@ -291,7 +277,7 @@ module tb_aes_encipher_block();
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
 
-     // Perform encipher och decipher operation on the block.
+     // Perform decipher operation on the block.
      tb_block = block;
      tb_next = 1;
      #(2 * CLK_PERIOD);
@@ -320,14 +306,14 @@ module tb_aes_encipher_block();
 
 
   //----------------------------------------------------------------
-  // tb_aes_encipher_block
+  // tb_aes_decipher_block
   // The main test functionality.
   //
   // Test cases taken from NIST SP 800-38A:
   // http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
   //----------------------------------------------------------------
   initial
-    begin : tb_aes_encipher_block
+    begin : tb_aes_decipher_block
       reg [127 : 0] nist_plaintext0;
       reg [127 : 0] nist_plaintext1;
       reg [127 : 0] nist_plaintext2;
@@ -359,7 +345,7 @@ module tb_aes_encipher_block();
       nist_ecb_256_enc_expected3 = 255'h23304b7a39f9f3ff067d8d8f9e24ecc7;
 
 
-      $display("   -= Testbench for aes encipher block started =-");
+      $display("   -= Testbench for aes decipher block started =-");
       $display("     ============================================");
       $display("");
 
@@ -417,11 +403,11 @@ module tb_aes_encipher_block();
 
       display_test_result();
       $display("");
-      $display("*** AES encipher block module simulation done. ***");
+      $display("*** AES decipher block module simulation done. ***");
       $finish;
     end // aes_core_test
-endmodule // tb_aes_encipher_block
+endmodule // tb_aes_decipher_block
 
 //======================================================================
-// EOF tb_aes_encipher_block.v
+// EOF tb_aes_decipher_block.v
 //======================================================================
