@@ -405,8 +405,8 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   // num_rounds_mux
   //
-  // Simple mux that selects the number of rouns used to process
-  // the block based on the give key length.
+  // Simple mux that selects the number of rounds used to process
+  // the block based on the given key length.
   //----------------------------------------------------------------
   always @*
     begin : num_rounds_mux
@@ -433,12 +433,13 @@ module aes_decipher_block(
 
       if (sword_ctr_rst)
         begin
+          sword_ctr_new = 2'h0;
           sword_ctr_we  = 1'b1;
         end
       else if (sword_ctr_inc)
         begin
           sword_ctr_new = sword_ctr_reg + 1'b1;
-          sword_ctr_we  = 1'b0;
+          sword_ctr_we  = 1'b1;
         end
     end // sword_ctr
 
@@ -468,7 +469,6 @@ module aes_decipher_block(
 
   //----------------------------------------------------------------
   // decipher_ctrl
-  //
   //
   // The FSM that controls the decipher operations.
   //----------------------------------------------------------------
