@@ -102,7 +102,6 @@ module aes_core(
 
   reg [127 : 0]  muxed_new_block;
   reg [3 : 0]    muxed_round_nr;
-  reg [127 : 0]  muxed_result;
   reg            muxed_ready;
 
   wire [31 : 0]  keymem_sboxw;
