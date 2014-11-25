@@ -167,12 +167,12 @@ module tb_aes_decipher_block();
       $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
                dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
       $display("");
-      $display("old_block          = 0x%08x", dut.round_logic.old_block);
-      $display("shiftrows_block    = 0x%08x", dut.round_logic.shiftrows_block);
-      $display("mixcolumns_block   = 0x%08x", dut.round_logic.mixcolumns_block);
-      $display("addkey_init_block  = 0x%08x", dut.round_logic.addkey_init_block);
-      $display("addkey_main_block  = 0x%08x", dut.round_logic.addkey_main_block);
-      $display("addkey_final_block = 0x%08x", dut.round_logic.addkey_final_block);
+      $display("old_block            = 0x%08x", dut.round_logic.old_block);
+      $display("inv_shiftrows_block  = 0x%08x", dut.round_logic.inv_shiftrows_block);
+      $display("inv_mixcolumns_block = 0x%08x", dut.round_logic.inv_mixcolumns_block);
+      $display("addkey_init_block    = 0x%08x", dut.round_logic.addkey_init_block);
+      $display("addkey_main_block    = 0x%08x", dut.round_logic.addkey_main_block);
+      $display("addkey_final_block   = 0x%08x", dut.round_logic.addkey_final_block);
       $display("block_w0_new = 0x%08x, block_w1_new = 0x%08x, block_w2_new = 0x%08x, block_w3_new = 0x%08x",
                dut.block_new[127 : 096], dut.block_new[095 : 064],
                dut.block_new[063 : 032], dut.block_new[031 : 000]);
