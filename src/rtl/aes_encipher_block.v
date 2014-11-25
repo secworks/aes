@@ -194,14 +194,14 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   reg [2 : 0]  update_type;
   reg [3 : 0]  num_rounds;
-  reg [31 : 0] tmp_sboxw;
+  reg [31 : 0] muxed_sboxw;
 
 
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign round     = round_ctr_reg;
-  assign sboxw     = tmp_sboxw;
+  assign sboxw     = muxed_sboxw;
   assign new_block = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
   assign ready     = ready_reg;
 
@@ -282,7 +282,7 @@ module aes_encipher_block(
       reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
 
       block_new    = 128'h00000000000000000000000000000000;
-      tmp_sboxw    = 32'h00000000;
+      muxed_sboxw  = 32'h00000000;
       block_w0_we  = 0;
       block_w1_we  = 0;
       block_w2_we  = 0;
@@ -312,26 +312,26 @@ module aes_encipher_block(
             case (sword_ctr_reg)
               2'h0:
                 begin
-                  tmp_sboxw    = block_w0_reg;
-                  block_w0_we  = 1;
+                  muxed_sboxw = block_w0_reg;
+                  block_w0_we = 1;
                 end
 
               2'h1:
                 begin
-                  tmp_sboxw    = block_w1_reg;
-                  block_w1_we  = 1;
+                  muxed_sboxw = block_w1_reg;
+                  block_w1_we = 1;
                 end
 
               2'h2:
                 begin
-                  tmp_sboxw    = block_w2_reg;
-                  block_w2_we  = 1;
+                  muxed_sboxw = block_w2_reg;
+                  block_w2_we = 1;
                 end
 
               2'h3:
                 begin
-                  tmp_sboxw    = block_w3_reg;
-                  block_w3_we  = 1;
+                  muxed_sboxw = block_w3_reg;
+                  block_w3_we = 1;
                 end
             endcase // case (sbox_mux_ctrl_reg)
           end
