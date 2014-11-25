@@ -291,7 +291,7 @@ module tb_aes_encipher_block();
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
 
-     // Perform encipher och decipher operation on the block.
+     // Perform encipher operation on the block.
      tb_block = block;
      tb_next = 1;
      #(2 * CLK_PERIOD);
