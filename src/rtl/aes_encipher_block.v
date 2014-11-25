@@ -278,7 +278,6 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   always @*
     begin : round_logic
-      // Wires for internal intermediate values.
       reg [127 : 0] old_block, shiftrows_block, mixcolumns_block;
       reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
 
@@ -296,9 +295,7 @@ module aes_encipher_block(
       addkey_main_block  = addroundkey(mixcolumns_block, round_key);
       addkey_final_block = addroundkey(shiftrows_block, round_key);
 
-      // Update based on update type.
       case (update_type)
-        // InitRound
         INIT_UPDATE:
           begin
             block_new    = addkey_init_block;
