@@ -10,30 +10,30 @@
 // Author: Joachim Strombergson
 // Copyright (c) 2013, 2014, Secworks Sweden AB
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or 
-// without modification, are permitted provided that the following 
-// conditions are met: 
-// 
-// 1. Redistributions of source code must retain the above copyright 
-//    notice, this list of conditions and the following disclaimer. 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the 
-//    distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+//
+// Redistribution and use in source and binary forms, with or
+// without modification, are permitted provided that the following
+// conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in
+//    the documentation and/or other materials provided with the
+//    distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 // BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
@@ -63,11 +63,11 @@ module aes_decipher_block(
   parameter AES128_ROUNDS = 4'ha;
   parameter AES256_ROUNDS = 4'he;
 
-  parameter NO_UPDATE    = 0;
-  parameter INIT_UPDATE  = 1;
-  parameter SBOX_UPDATE  = 2;
-  parameter MAIN_UPDATE  = 3;
-  parameter FINAL_UPDATE = 4;
+  parameter NO_UPDATE    = 3'h0;
+  parameter INIT_UPDATE  = 3'h1;
+  parameter SBOX_UPDATE  = 3'h2;
+  parameter MAIN_UPDATE  = 3'h3;
+  parameter FINAL_UPDATE = 3'h4;
 
   parameter CTRL_IDLE  = 3'h0;
   parameter CTRL_INIT  = 3'h1;
@@ -84,6 +84,12 @@ module aes_decipher_block(
       gm2 = {op[6 : 0], 1'b0} ^ (8'h1b & {8{op[7]}});
     end
   endfunction // gm2
+
+  function [7 : 0] gm3(input [7 : 0] op);
+    begin
+      gm3 = gm2(op) ^ op;
+    end
+  endfunction // gm3
 
   function [7 : 0] gm4(input [7 : 0] op);
     begin
@@ -121,7 +127,67 @@ module aes_decipher_block(
     end
   endfunction // gm14
 
-  
+  function [31 : 0] mixw(input [31 : 0] w);
+    reg [7 : 0] b0, b1, b2, b3;
+    reg [7 : 0] mb0, mb1, mb2, mb3;
+    begin
+      b0 = w[31 : 24];
+      b1 = w[23 : 16];
+      b2 = w[15 : 08];
+      b3 = w[07 : 00];
+
+      mb0 = gm2(b0) ^ gm3(b1) ^ b2      ^ b3;
+      mb1 = b0      ^ gm2(b1) ^ gm3(b2) ^ b3;
+      mb2 = b0      ^ b1      ^ gm2(b2) ^ gm3(b3);
+      mb3 = gm3(b0) ^ b1      ^ b2      ^ gm2(b3);
+
+      mixw = {mb0, mb1, mb2, mb3};
+    end
+  endfunction // mixw
+
+  function [127 : 0] mixcolumns(input [127 : 0] data);
+    reg [31 : 0] w0, w1, w2, w3;
+    reg [31 : 0] ws0, ws1, ws2, ws3;
+    begin
+      w0 = data[127 : 096];
+      w1 = data[095 : 064];
+      w2 = data[063 : 032];
+      w3 = data[031 : 000];
+
+      ws0 = mixw(w0);
+      ws1 = mixw(w1);
+      ws2 = mixw(w2);
+      ws3 = mixw(w3);
+
+      mixcolumns = {ws0, ws1, ws2, ws3};
+    end
+  endfunction // mixcolumns
+
+  function [127 : 0] shiftrows(input [127 : 0] data);
+    reg [31 : 0] w0, w1, w2, w3;
+    reg [31 : 0] ws0, ws1, ws2, ws3;
+    begin
+      w0 = data[127 : 096];
+      w1 = data[095 : 064];
+      w2 = data[063 : 032];
+      w3 = data[031 : 000];
+
+      ws0 = {w0[31 : 24], w1[23 : 16], w2[15 : 08], w3[07 : 00]};
+      ws1 = {w1[31 : 24], w2[23 : 16], w3[15 : 08], w0[07 : 00]};
+      ws2 = {w2[31 : 24], w3[23 : 16], w0[15 : 08], w1[07 : 00]};
+      ws3 = {w3[31 : 24], w0[23 : 16], w1[15 : 08], w2[07 : 00]};
+
+      shiftrows = {ws0, ws1, ws2, ws3};
+    end
+  endfunction // shiftrows
+
+  function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] rkey);
+    begin
+      addroundkey = data ^ rkey;
+    end
+  endfunction // addroundkey
+
+
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
@@ -137,21 +203,15 @@ module aes_decipher_block(
   reg          round_ctr_rst;
   reg          round_ctr_inc;
 
-  reg [31 : 0] block_w0_reg;
-  reg [31 : 0] block_w0_new;
-  reg          block_w0_we;
-
-  reg [31 : 0] block_w1_reg;
-  reg [31 : 0] block_w1_new;
-  reg          block_w1_we;
-
-  reg [31 : 0] block_w2_reg;
-  reg [31 : 0] block_w2_new;
-  reg          block_w2_we;
-
-  reg [31 : 0] block_w3_reg;
-  reg [31 : 0] block_w3_new;
-  reg          block_w3_we;
+  reg [127 : 0] block_new;
+  reg [31 : 0]  block_w0_reg;
+  reg [31 : 0]  block_w1_reg;
+  reg [31 : 0]  block_w2_reg;
+  reg [31 : 0]  block_w3_reg;
+  reg           block_w0_we;
+  reg           block_w1_we;
+  reg           block_w2_we;
+  reg           block_w3_we;
 
   reg          ready_reg;
   reg          ready_new;
@@ -165,16 +225,16 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [31 : 0]  sword;
-  wire [31 : 0] new_sword;
+  reg [31 : 0]  tmp_sboxw;
+  wire [31 : 0] new_sboxw;
   reg [2 : 0]   update_type;
   reg [3 : 0]   num_rounds;
 
-  
+
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_inv_sbox inv_sbox(.sword(sword), .new_sword(new_sword));
+  aes_inv_sbox inv_sbox(.sword(tmp_sboxw), .new_sword(new_sboxw));
 
 
   //----------------------------------------------------------------
@@ -196,35 +256,35 @@ module aes_decipher_block(
     begin: reg_update
       if (!reset_n)
         begin
-          sword_ctr_reg <= 2'h0;
-          round_ctr_reg <= 4'h0;
           block_w0_reg  <= 32'h00000000;
           block_w1_reg  <= 32'h00000000;
           block_w2_reg  <= 32'h00000000;
           block_w3_reg  <= 32'h00000000;
+          sword_ctr_reg <= 2'h0;
+          round_ctr_reg <= 4'h0;
           ready_reg     <= 1;
-          dec_ctrl_reg <= CTRL_IDLE;
+          dec_ctrl_reg  <= CTRL_IDLE;
         end
       else
         begin
           if (block_w0_we)
             begin
-              block_w0_reg <= block_w0_new;
+              block_w0_reg <= block_new[127 : 096];
             end
 
           if (block_w1_we)
             begin
-              block_w1_reg <= block_w1_new;
+              block_w1_reg <= block_new[095 : 064];
             end
 
           if (block_w2_we)
             begin
-              block_w2_reg <= block_w2_new;
+              block_w2_reg <= block_new[063 : 032];
             end
 
           if (block_w3_we)
             begin
-              block_w3_reg <= block_w3_new;
+              block_w3_reg <= block_new[031 : 000];
             end
 
           if (sword_ctr_we)
@@ -257,104 +317,29 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   always @*
     begin : round_logic
-      // Wires for internal intermediate values.
-      reg [7 : 0] s00_0, s00_1, s00_2;
-      reg [7 : 0] s01_0, s01_1, s01_2;
-      reg [7 : 0] s02_0, s02_1, s02_2;
-      reg [7 : 0] s03_0, s03_1, s03_2;
-      reg [7 : 0] s10_0, s10_1, s10_2;
-      reg [7 : 0] s11_0, s11_1, s11_2;
-      reg [7 : 0] s12_0, s12_1, s12_2;
-      reg [7 : 0] s13_0, s13_1, s13_2;
-      reg [7 : 0] s20_0, s20_1, s20_2;
-      reg [7 : 0] s21_0, s21_1, s21_2;
-      reg [7 : 0] s22_0, s22_1, s22_2;
-      reg [7 : 0] s23_0, s23_1, s23_2;
-      reg [7 : 0] s30_0, s30_1, s30_2;
-      reg [7 : 0] s31_0, s31_1, s31_2;
-      reg [7 : 0] s32_0, s32_1, s32_2;
-      reg [7 : 0] s33_0, s33_1, s33_2;
+      reg [127 : 0] old_block, shiftrows_block, mixcolumns_block;
+      reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
 
-      // Logic common to normal round updates
-      // as well as final round update.
-      // Shiftrows
-      s00_0 = block_w0_reg[031 : 024];
-      s01_0 = block_w0_reg[023 : 016];
-      s02_0 = block_w0_reg[015 : 008];
-      s03_0 = block_w0_reg[007 : 000];
+      block_new    = 128'h00000000000000000000000000000000;
+      tmp_sboxw    = 32'h00000000;
+      block_w0_we  = 0;
+      block_w1_we  = 0;
+      block_w2_we  = 0;
+      block_w3_we  = 0;
 
-      s10_0 = block_w1_reg[023 : 016];
-      s11_0 = block_w1_reg[015 : 008];
-      s12_0 = block_w1_reg[007 : 000];
-      s13_0 = block_w1_reg[031 : 024];
+      old_block          = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
+      shiftrows_block    = shiftrows(old_block);
+      mixcolumns_block   = mixcolumns(shiftrows_block);
+      addkey_init_block  = addroundkey(block, round_key);
+      addkey_main_block  = addroundkey(mixcolumns_block, round_key);
+      addkey_final_block = addroundkey(shiftrows_block, round_key);
 
-      s20_0 = block_w2_reg[015 : 008];
-      s21_0 = block_w2_reg[007 : 000];
-      s22_0 = block_w2_reg[031 : 024];
-      s23_0 = block_w2_reg[023 : 016];
-
-      s30_0 = block_w3_reg[007 : 000];
-      s31_0 = block_w3_reg[031 : 024];
-      s32_0 = block_w3_reg[023 : 016];
-      s33_0 = block_w3_reg[015 : 008];
-
-      // MixColumns
-      s00_1 = gm14(s00_0) ^ gm11(s10_0) ^ gm13(s20_0) ^ gm09(s30_0);
-      s10_1 = gm09(s00_0) ^ gm14(s10_0) ^ gm11(s20_0) ^ gm13(s30_0);
-      s20_1 = gm13(s00_0) ^ gm09(s10_0) ^ gm14(s20_0) ^ gm11(s30_0);
-      s30_1 = gm11(s00_0) ^ gm13(s10_0) ^ gm09(s20_0) ^ gm14(s30_0);
-      s01_1 = gm14(s01_0) ^ gm11(s11_0) ^ gm13(s21_0) ^ gm09(s31_0);
-      s11_1 = gm09(s01_0) ^ gm14(s11_0) ^ gm11(s21_0) ^ gm13(s31_0);
-      s21_1 = gm13(s01_0) ^ gm09(s11_0) ^ gm14(s21_0) ^ gm11(s31_0);
-      s31_1 = gm11(s01_0) ^ gm13(s11_0) ^ gm09(s21_0) ^ gm14(s31_0);
-      s02_1 = gm14(s02_0) ^ gm11(s12_0) ^ gm13(s22_0) ^ gm09(s32_0);
-      s12_1 = gm09(s02_0) ^ gm14(s12_0) ^ gm11(s22_0) ^ gm13(s32_0);
-      s22_1 = gm13(s02_0) ^ gm09(s12_0) ^ gm14(s22_0) ^ gm11(s32_0);
-      s32_1 = gm11(s02_0) ^ gm13(s12_0) ^ gm09(s22_0) ^ gm14(s32_0);
-      s03_1 = gm14(s03_0) ^ gm11(s13_0) ^ gm13(s23_0) ^ gm09(s33_0);
-      s13_1 = gm09(s03_0) ^ gm14(s13_0) ^ gm11(s23_0) ^ gm13(s33_0);
-      s23_1 = gm13(s03_0) ^ gm09(s13_0) ^ gm14(s23_0) ^ gm11(s33_0);
-      s33_1 = gm11(s03_0) ^ gm13(s13_0) ^ gm09(s23_0) ^ gm14(s33_0);
-
-      // AddRoundKey
-      s00_2 = s00_1 ^ round_key[127 : 120];
-      s01_2 = s01_1 ^ round_key[119 : 112];
-      s02_2 = s02_1 ^ round_key[111 : 104];
-      s03_2 = s03_1 ^ round_key[103 :  96];
-      s10_2 = s10_1 ^ round_key[95  :  88];
-      s11_2 = s11_1 ^ round_key[87  :  80];
-      s12_2 = s12_1 ^ round_key[79  :  72];
-      s13_2 = s13_1 ^ round_key[71  :  64];
-      s20_2 = s20_1 ^ round_key[63  :  56];
-      s21_2 = s21_1 ^ round_key[55  :  48];
-      s22_2 = s22_1 ^ round_key[47  :  40];
-      s23_2 = s23_1 ^ round_key[39  :  32];
-      s30_2 = s30_1 ^ round_key[31  :  24];
-      s31_2 = s31_1 ^ round_key[23  :  16];
-      s32_2 = s32_1 ^ round_key[15  :   8];
-      s33_2 = s33_1 ^ round_key[7   :   0];
-
+      // Update based on update type.
       case (update_type)
-        NO_UPDATE:
-          begin
-            sword = 32'h00000000;
-            block_w0_new = 32'h00000000;
-            block_w0_we  = 0;
-            block_w1_new = 32'h00000000;
-            block_w1_we  = 0;
-            block_w2_new = 32'h00000000;
-            block_w2_we  = 0;
-            block_w3_new = 32'h00000000;
-            block_w3_we  = 0;
-          end
-
+        // InitRound
         INIT_UPDATE:
           begin
-            // InitRound
-            block_w0_new = block[127 : 096] ^ round_key[127 : 096];
-            block_w1_new = block[095 : 064] ^ round_key[095 : 064];
-            block_w2_new = block[063 : 032] ^ round_key[063 : 032];
-            block_w3_new = block[031 : 000] ^ round_key[031 : 000];
+            block_new    = addkey_init_block;
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
@@ -363,32 +348,30 @@ module aes_decipher_block(
 
         SBOX_UPDATE:
           begin
+            block_new = {new_sboxw, new_sboxw, new_sboxw, new_sboxw};
+
             case (sword_ctr_reg)
               2'h0:
                 begin
-                  sword        = block_w0_reg;
-                  block_w0_new = new_sword;
+                  tmp_sboxw    = block_w0_reg;
                   block_w0_we  = 1;
                 end
 
               2'h1:
                 begin
-                  sword        = block_w1_reg;
-                  block_w1_new = new_sword;
+                  tmp_sboxw    = block_w1_reg;
                   block_w1_we  = 1;
                 end
 
               2'h2:
                 begin
-                  sword        = block_w2_reg;
-                  block_w2_new = new_sword;
+                  tmp_sboxw    = block_w2_reg;
                   block_w2_we  = 1;
                 end
 
               2'h3:
                 begin
-                  sword        = block_w3_reg;
-                  block_w3_new = new_sword;
+                  tmp_sboxw    = block_w3_reg;
                   block_w3_we  = 1;
                 end
             endcase // case (sbox_mux_ctrl_reg)
@@ -396,10 +379,7 @@ module aes_decipher_block(
 
         MAIN_UPDATE:
           begin
-            block_w0_new = {s00_2, s01_2, s02_2, s03_2};
-            block_w1_new = {s10_2, s11_2, s12_2, s13_2};
-            block_w2_new = {s20_2, s21_2, s22_2, s23_2};
-            block_w3_new = {s30_2, s31_2, s32_2, s33_2};
+            block_new    = addkey_main_block;
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
@@ -408,17 +388,18 @@ module aes_decipher_block(
 
         FINAL_UPDATE:
           begin
-            block_w0_new = {s00_1, s01_1, s02_1, s03_1};
-            block_w1_new = {s10_1, s11_1, s12_1, s13_1};
-            block_w2_new = {s20_1, s21_1, s22_1, s23_1};
-            block_w3_new = {s30_1, s31_1, s32_1, s33_1};
+            block_new    = addkey_final_block;
             block_w0_we  = 1;
             block_w1_we  = 1;
             block_w2_we  = 1;
             block_w3_we  = 1;
           end
+
+        default:
+          begin
+          end
       endcase // case (update_type)
-    end // block: round_logic
+    end // round_logic
 
 
   //----------------------------------------------------------------
@@ -438,7 +419,7 @@ module aes_decipher_block(
           num_rounds = AES128_ROUNDS;
         end
     end // num_rounds_mux
-  
+
 
   //----------------------------------------------------------------
   // sword_ctr
@@ -492,14 +473,13 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   always @*
     begin: decipher_ctrl
-      // Default assignments.
       sword_ctr_inc = 0;
       sword_ctr_rst = 0;
-      round_ctr_rst = 0;
       round_ctr_inc = 0;
-      update_type   = NO_UPDATE;
+      round_ctr_rst = 0;
       ready_new     = 0;
       ready_we      = 0;
+      update_type   = NO_UPDATE;
       dec_ctrl_new  = CTRL_IDLE;
       dec_ctrl_we   = 0;
 
@@ -518,9 +498,10 @@ module aes_decipher_block(
 
         CTRL_INIT:
           begin
+            round_ctr_inc = 1;
             sword_ctr_rst = 1;
             update_type   = INIT_UPDATE;
-            dec_ctrl_new  = CTRL_INIT;
+            dec_ctrl_new  = CTRL_SBOX;
             dec_ctrl_we   = 1;
           end
 
@@ -538,27 +519,21 @@ module aes_decipher_block(
         CTRL_MAIN:
           begin
             sword_ctr_rst = 1;
-            update_type   = MAIN_UPDATE;
             round_ctr_inc = 1;
-            if (round_ctr_reg == num_rounds)
+            if (round_ctr_reg < num_rounds)
               begin
-                dec_ctrl_new  = CTRL_FINAL;
+                update_type   = MAIN_UPDATE;
+                dec_ctrl_new  = CTRL_SBOX;
                 dec_ctrl_we   = 1;
               end
             else
               begin
-                dec_ctrl_new  = CTRL_SBOX;
-                dec_ctrl_we   = 1;
+                update_type  = FINAL_UPDATE;
+                ready_new    = 1;
+                ready_we     = 1;
+                dec_ctrl_new = CTRL_IDLE;
+                dec_ctrl_we  = 1;
               end
-          end
-
-        CTRL_FINAL:
-          begin
-            update_type  = FINAL_UPDATE;
-            ready_new    = 1;
-            ready_we     = 1;
-            dec_ctrl_new = CTRL_IDLE;
-            dec_ctrl_we  = 1;
           end
 
         default:
@@ -566,7 +541,6 @@ module aes_decipher_block(
             // Empty. Just here to make the synthesis tool happy.
           end
       endcase // case (dec_ctrl_reg)
-
     end // decipher_ctrl
 
 endmodule // aes_decipher_block
