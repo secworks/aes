@@ -145,7 +145,7 @@ module aes_decipher_block(
     end
   endfunction // mixw
 
-  function [127 : 0] mixcolumns(input [127 : 0] data);
+  function [127 : 0] inv_mixcolumns(input [127 : 0] data);
     reg [31 : 0] w0, w1, w2, w3;
     reg [31 : 0] ws0, ws1, ws2, ws3;
     begin
@@ -159,11 +159,11 @@ module aes_decipher_block(
       ws2 = mixw(w2);
       ws3 = mixw(w3);
 
-      mixcolumns = {ws0, ws1, ws2, ws3};
+      inv_mixcolumns = {ws0, ws1, ws2, ws3};
     end
-  endfunction // mixcolumns
+  endfunction // inv_mixcolumns
 
-  function [127 : 0] shiftrows(input [127 : 0] data);
+  function [127 : 0] inv_shiftrows(input [127 : 0] data);
     reg [31 : 0] w0, w1, w2, w3;
     reg [31 : 0] ws0, ws1, ws2, ws3;
     begin
@@ -177,9 +177,9 @@ module aes_decipher_block(
       ws2 = {w2[31 : 24], w3[23 : 16], w0[15 : 08], w1[07 : 00]};
       ws3 = {w3[31 : 24], w0[23 : 16], w1[15 : 08], w2[07 : 00]};
 
-      shiftrows = {ws0, ws1, ws2, ws3};
+      inv_shiftrows = {ws0, ws1, ws2, ws3};
     end
-  endfunction // shiftrows
+  endfunction // inv_shiftrows
 
   function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] rkey);
     begin
@@ -317,7 +317,7 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   always @*
     begin : round_logic
-      reg [127 : 0] old_block, shiftrows_block, mixcolumns_block;
+      reg [127 : 0] old_block, inv_shiftrows_block, inv_mixcolumns_block;
       reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
 
       block_new    = 128'h00000000000000000000000000000000;
@@ -327,12 +327,12 @@ module aes_decipher_block(
       block_w2_we  = 0;
       block_w3_we  = 0;
 
-      old_block          = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
-      shiftrows_block    = shiftrows(old_block);
-      mixcolumns_block   = mixcolumns(shiftrows_block);
-      addkey_init_block  = addroundkey(block, round_key);
-      addkey_main_block  = addroundkey(mixcolumns_block, round_key);
-      addkey_final_block = addroundkey(shiftrows_block, round_key);
+      old_block            = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
+      inv_shiftrows_block  = inv_shiftrows(old_block);
+      inv_mixcolumns_block = inv_mixcolumns(inv_shiftrows_block);
+      addkey_init_block    = addroundkey(block, round_key);
+      addkey_main_block    = addroundkey(inv_mixcolumns_block, round_key);
+      addkey_final_block   = addroundkey(inv_shiftrows_block, round_key);
 
       // Update based on update type.
       case (update_type)
@@ -455,12 +455,13 @@ module aes_decipher_block(
 
       if (round_ctr_rst)
         begin
+          round_ctr_new = 4'h0;
           round_ctr_we  = 1'b1;
         end
       else if (round_ctr_inc)
         begin
           round_ctr_new = round_ctr_reg + 1'b1;
-          round_ctr_we  = 1'b0;
+          round_ctr_we  = 1'b1;
         end
     end // round_ctr
 
