@@ -501,7 +501,6 @@ module aes_encipher_block(
             // Empty. Just here to make the synthesis tool happy.
           end
       endcase // case (enc_ctrl_reg)
-
     end // encipher_ctrl
 
 endmodule // aes_encipher_block
