@@ -14,17 +14,25 @@ implementation is iterative but process bytes in parallel with
 expansion and the core can thus not do key update in parallel with block
 processing.
 
-The encipher and decipher block processing are separated and basically
-self contained given access to a set of round keys and a block. This
-makes it possible to hard wire either encipher or decipher and allow the
-build tools to optimize away the other functionality which will reduce
-the size to about 50%. For cipher modes such as CTR, GCM decryption in
-the AES core will never be used and thus the decipher block processing
-can be removed.
+The encipher and decipher block processing datapathc are separated and
+basically self contained given access to a set of round keys and a
+block. This makes it possible to hard wire either encipher or decipher
+and allow the build tools to optimize away the other functionality which
+will reduce the size to about 50%. For cipher modes such as CTR, GCM
+decryption in the AES core will never be used and thus the decipher
+block processing can be removed.
 
 
 
 ## Status ##
+
+***(2014-11-26)***
+
+Encryption and decryption now passes all NIST test cases on block level
+as well as core level. The Python model can do encryption but not
+decryption. The Python model contains separate tests for key generation,
+mixcolumns and inverse mixcolumns.
+
 
 ***(2014-08-07)***
 
@@ -57,4 +65,3 @@ least both 128 and 256 bit keys. Possibly also 192 albeit nobody uses it
 ***(2014-02-21***:
 
 Initial commit. Nothing really here yet.
-
