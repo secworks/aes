@@ -99,7 +99,7 @@ module aes_decipher_block(
 
   function [7 : 0] gm8(input [7 : 0] op);
     begin
-      gm8 = gm4(gm4(op));
+      gm8 = gm2(gm4(op));
     end
   endfunction // gm8
 
