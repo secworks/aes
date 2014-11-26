@@ -191,17 +191,17 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   // Registers including update variables and write enable.
   //----------------------------------------------------------------
-  reg [1 : 0]  sword_ctr_reg;
-  reg [1 : 0]  sword_ctr_new;
-  reg          sword_ctr_we;
-  reg          sword_ctr_inc;
-  reg          sword_ctr_rst;
+  reg [1 : 0]   sword_ctr_reg;
+  reg [1 : 0]   sword_ctr_new;
+  reg           sword_ctr_we;
+  reg           sword_ctr_inc;
+  reg           sword_ctr_rst;
 
-  reg [3 : 0]  round_ctr_reg;
-  reg [3 : 0]  round_ctr_new;
-  reg          round_ctr_we;
-  reg          round_ctr_set;
-  reg          round_ctr_dec;
+  reg [3 : 0]   round_ctr_reg;
+  reg [3 : 0]   round_ctr_new;
+  reg           round_ctr_we;
+  reg           round_ctr_set;
+  reg           round_ctr_dec;
 
   reg [127 : 0] block_new;
   reg [31 : 0]  block_w0_reg;
@@ -213,13 +213,13 @@ module aes_decipher_block(
   reg           block_w2_we;
   reg           block_w3_we;
 
-  reg          ready_reg;
-  reg          ready_new;
-  reg          ready_we;
+  reg           ready_reg;
+  reg           ready_new;
+  reg           ready_we;
 
-  reg [2 : 0]  dec_ctrl_reg;
-  reg [2 : 0]  dec_ctrl_new;
-  reg          dec_ctrl_we;
+  reg [2 : 0]   dec_ctrl_reg;
+  reg [2 : 0]   dec_ctrl_new;
+  reg           dec_ctrl_we;
 
 
   //----------------------------------------------------------------
