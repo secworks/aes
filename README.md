@@ -23,6 +23,17 @@ decryption in the AES core will never be used and thus the decipher
 block processing can be removed.
 
 
+## Implementation details ##
+
+### Altera Cyclone IV GX ###
+- 7497 LEs
+- 2994 Regs
+- 96 MHz fmax
+- 5 cycles/round
+
+This means that we can do just about 2 Mblocks/s or 256 Mbps
+performance.
+
 
 ## Status ##
 
