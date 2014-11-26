@@ -127,7 +127,7 @@ module aes_decipher_block(
     end
   endfunction // gm14
 
-  function [31 : 0] mixw(input [31 : 0] w);
+  function [31 : 0] inv_mixw(input [31 : 0] w);
     reg [7 : 0] b0, b1, b2, b3;
     reg [7 : 0] mb0, mb1, mb2, mb3;
     begin
@@ -136,12 +136,12 @@ module aes_decipher_block(
       b2 = w[15 : 08];
       b3 = w[07 : 00];
 
-      mb0 = gm2(b0) ^ gm3(b1) ^ b2      ^ b3;
-      mb1 = b0      ^ gm2(b1) ^ gm3(b2) ^ b3;
-      mb2 = b0      ^ b1      ^ gm2(b2) ^ gm3(b3);
-      mb3 = gm3(b0) ^ b1      ^ b2      ^ gm2(b3);
+      mb0 = gm14(b0) ^ gm11(b1) ^ gm13(b2) ^ gm09(b3);
+      mb1 = gm09(b0) ^ gm14(b1) ^ gm11(b2) ^ gm13(b3);
+      mb2 = gm13(b0) ^ gm09(b1) ^ gm14(b2) ^ gm11(b3);
+      mb3 = gm11(b0) ^ gm13(b1) ^ gm09(b2) ^ gm14(b3);
 
-      mixw = {mb0, mb1, mb2, mb3};
+      inv_mixw = {mb0, mb1, mb2, mb3};
     end
   endfunction // mixw
 
@@ -154,10 +154,10 @@ module aes_decipher_block(
       w2 = data[063 : 032];
       w3 = data[031 : 000];
 
-      ws0 = mixw(w0);
-      ws1 = mixw(w1);
-      ws2 = mixw(w2);
-      ws3 = mixw(w3);
+      ws0 = inv_mixw(w0);
+      ws1 = inv_mixw(w1);
+      ws2 = inv_mixw(w2);
+      ws3 = inv_mixw(w3);
 
       inv_mixcolumns = {ws0, ws1, ws2, ws3};
     end
@@ -382,7 +382,8 @@ module aes_decipher_block(
           begin
             addkey_block         = addroundkey(old_block, round_key);
             inv_mixcolumns_block = inv_mixcolumns(addkey_block);
-            block_new            = inv_shiftrows(inv_mixcolumns_block);
+            inv_shiftrows_block  = inv_shiftrows(inv_mixcolumns_block);
+            block_new            = inv_shiftrows_block;
             block_w0_we          = 1;
             block_w1_we          = 1;
             block_w2_we          = 1;
