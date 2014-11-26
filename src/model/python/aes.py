@@ -771,6 +771,30 @@ def aes_decipher_block(key, block):
 
 
 #-------------------------------------------------------------------
+# test_mixcolumns()
+#
+# Test the mixcolumns and inverse mixcolumns operations using
+# some simple test values.
+#-------------------------------------------------------------------
+def test_mixcolumns():
+    nist_aes128_key = (0x2b7e1516, 0x28aed2a6, 0xabf71588, 0x09cf4f3c)
+
+    print("Test of mixcolumns and inverse mixcolumns:")
+    mixresult = mixcolumns(nist_aes128_key)
+    inv_mixresult = inv_mixcolumns(mixresult)
+
+    print("Test of mixw ochi inv_mixw:")
+    testw = 0xdb135345
+    expw  = 0x8e4da1bc
+    mixresult = mixw(testw)
+    inv_mixresult = inv_mixw(mixresult)
+    print("Testword:   0x%08x" % testw)
+    print("expexted:   0x%08x" % expw)
+    print("mixword:    0x%08x" % mixresult)
+    print("invmixword: 0x%08x" % inv_mixresult)
+
+
+#-------------------------------------------------------------------
 # test_aes()
 #
 # Test the AES implementation with 128 and 256 bit keys.
@@ -1014,7 +1038,8 @@ def main():
     print("============================")
     print
 
-    test_aes()
+    test_mixcolumns()
+    # test_aes()
 
 
 #-------------------------------------------------------------------
