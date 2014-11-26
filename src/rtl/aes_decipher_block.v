@@ -490,7 +490,6 @@ module aes_decipher_block(
 
         CTRL_INIT:
           begin
-            round_ctr_dec = 1;
             sword_ctr_rst = 1;
             update_type   = INIT_UPDATE;
             dec_ctrl_new  = CTRL_SBOX;
@@ -503,6 +502,7 @@ module aes_decipher_block(
             update_type   = SBOX_UPDATE;
             if (sword_ctr_reg == 2'h3)
               begin
+                round_ctr_dec = 1;
                 dec_ctrl_new  = CTRL_MAIN;
                 dec_ctrl_we   = 1;
               end
@@ -511,7 +511,6 @@ module aes_decipher_block(
         CTRL_MAIN:
           begin
             sword_ctr_rst = 1;
-            round_ctr_dec = 1;
             if (round_ctr_reg > 0)
               begin
                 update_type   = MAIN_UPDATE;
