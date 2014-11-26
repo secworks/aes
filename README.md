@@ -34,6 +34,11 @@ block processing can be removed.
 This means that we can do just about 2 Mblocks/s or 256 Mbps
 performance.
 
+Removing the decipher module yields:
+- 5497 LEs
+- 2855 Regs
+- 106 MHz fmax
+
 
 ## Status ##
 
