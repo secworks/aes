@@ -217,7 +217,7 @@ def gm4(b):
 # The specific Galois Multiplication by eight for a given byte.
 #-------------------------------------------------------------------
 def gm8(b):
-    return gm4(gm4(b))
+    return gm2(gm4(b))
 
 
 #-------------------------------------------------------------------
