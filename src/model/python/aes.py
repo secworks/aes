@@ -758,7 +758,7 @@ def aes_decipher_block(key, block):
         print("  Round %02d" % i)
         print("  ---------")
 
-        tmp_block1 = addroundkey(round_keys[i], tmp_block4)
+        tmp_block1 = addroundkey(round_keys[(len(round_keys) - i - 1)], tmp_block4)
         tmp_block2 = inv_mixcolumns(tmp_block1)
         tmp_block3 = inv_shiftrows(tmp_block2)
         tmp_block4 = inv_subbytes(tmp_block3)
