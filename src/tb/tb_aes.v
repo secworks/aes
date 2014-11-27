@@ -50,7 +50,7 @@ module tb_aes();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG     = 1;
+  parameter DEBUG     = 0;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD      = 2 * CLK_HALF_PERIOD;
@@ -310,11 +310,11 @@ module tb_aes();
 
 
   //----------------------------------------------------------------
-  // read_block()
+  // read_result()
   //
   // Read the result block in the dut.
   //----------------------------------------------------------------
-  task read_block();
+  task read_result();
     begin
       read_word(ADDR_RESULT0);
       result_data[127 : 096] = read_data;
@@ -325,7 +325,7 @@ module tb_aes();
       read_word(ADDR_RESULT3);
       result_data[031 : 000] = read_data;
     end
-  endtask // read_block
+  endtask // read_result
 
 
   //----------------------------------------------------------------
@@ -335,8 +335,13 @@ module tb_aes();
   // key length and then trigger init processing.
   //----------------------------------------------------------------
   task init_key(input [255 : 0] key, input key_length);
-    reg ctrl;
     begin
+      if (DEBUG)
+        begin
+          $display("key length: 0x%01x", key_length);
+          $display("Initializing key expansion for key: 0x%016x", key);
+        end
+
       write_word(ADDR_KEY0, key[255  : 224]);
       write_word(ADDR_KEY1, key[223  : 192]);
       write_word(ADDR_KEY2, key[191  : 160]);
@@ -346,9 +351,14 @@ module tb_aes();
       write_word(ADDR_KEY6, key[63   :  32]);
       write_word(ADDR_KEY7, key[31   :   0]);
 
-      read_word(ADDR_CTRL);
-      ctrl = read_data | (key_length <<< 3) | 8'h01;
-      write_word(ADDR_CTRL, ctrl);
+      if (key_length)
+        begin
+          write_word(ADDR_CTRL, 8'h81);
+        end
+      else
+        begin
+          write_word(ADDR_CTRL, 8'h01);
+        end
 
       #(100 * CLK_PERIOD);
     end
@@ -366,49 +376,41 @@ module tb_aes();
                                   input           key_length,
                                   input [127 : 0] block,
                                   input [127 : 0] expected);
-   begin
-     $display("*** TC %0d ECB mode test started.", tc_number);
-     tc_ctr = tc_ctr + 1;
+    begin
+      $display("*** TC %0d ECB mode test started.", tc_number);
+      tc_ctr = tc_ctr + 1;
 
-     // Init the cipher with the given key and length.
-     init_key(key, key_length);
+      init_key(key, key_length);
+      write_block(block);
 
-//     tb_key = key;
-//     tb_keylen = key_length;
-//     tb_init = 1;
-//     #(2 * CLK_PERIOD);
-//     tb_init = 0;
-//     wait_ready();
-//
-//     $display("Key expansion done");
-//     $display("");
-//
-//     dump_keys();
+      if (encdec)
+        begin
+          write_word(ADDR_CTRL, 8'h42);
+        end
+      else
+        begin
+          write_word(ADDR_CTRL, 8'h02);
+        end
 
+      #(100 * CLK_PERIOD);
 
-     // Perform encipher och decipher operation on the block.
-//     tb_encdec = encdec;
-//     tb_block = block;
-//     tb_next = 1;
-//     #(2 * CLK_PERIOD);
-//     tb_next = 0;
-//     wait_ready();
-//
-//     if (tb_result == expected)
-//       begin
-//         $display("*** TC %0d successful.", tc_number);
-//         $display("");
-//       end
-//     else
-//       begin
-//         $display("*** ERROR: TC %0d NOT successful.", tc_number);
-//         $display("Expected: 0x%032x", expected);
-//         $display("Got:      0x%032x", tb_result);
-//         $display("");
-//
-//         error_ctr = error_ctr + 1;
-//       end
-   end
+      read_result();
+
+      if (result_data == expected)
+        begin
+          $display("*** TC %0d successful.", tc_number);
+          $display("");
+        end
+      else
+        begin
+          $display("*** ERROR: TC %0d NOT successful.", tc_number);
+          $display("Expected: 0x%032x", expected);
+          $display("Got:      0x%032x", result_data);
+          $display("");
+
+          error_ctr = error_ctr + 1;
+        end
+    end
   endtask // ecb_mode_single_block_test
 
 
