@@ -832,7 +832,7 @@ def test_aes():
 #    enc_result256_3 = aes_encipher_block(nist_aes256_key, nist_plaintext3)
 #
     print("Doing block decryption.")
-#    dec_result128_0 = aes_decipher_block(nist_aes128_key, nist_exp128_0)
+    dec_result128_0 = aes_decipher_block(nist_aes128_key, nist_exp128_0)
 #    dec_result128_1 = aes_decipher_block(nist_aes128_key, nist_exp128_1)
 #    dec_result128_2 = aes_decipher_block(nist_aes128_key, nist_exp128_2)
 #    dec_result128_3 = aes_decipher_block(nist_aes128_key, nist_exp128_3)
