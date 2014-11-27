@@ -329,11 +329,13 @@ module tb_aes();
 
 
   //----------------------------------------------------------------
-  // write_key()
+  // init_key()
   //
-  // Write the given key and key length.
+  // init the key in the dut by writing the given key and
+  // key length and then trigger init processing.
   //----------------------------------------------------------------
-  task write_key(input [255 : 0] key, input key_length);
+  task init_key(input [255 : 0] key, input key_length);
+    reg ctrl;
     begin
       write_word(ADDR_KEY0, key[255  : 224]);
       write_word(ADDR_KEY1, key[223  : 192]);
@@ -344,8 +346,13 @@ module tb_aes();
       write_word(ADDR_KEY6, key[63   :  32]);
       write_word(ADDR_KEY7, key[31   :   0]);
 
+      read_word(ADDR_CTRL);
+      ctrl = read_data | (key_length <<< 3) | 8'h01;
+      write_word(ADDR_CTRL, ctrl);
+
+      #(100 * CLK_PERIOD);
     end
-  endtask // write_block
+  endtask // init_key
 
 
   //----------------------------------------------------------------
@@ -364,7 +371,7 @@ module tb_aes();
      tc_ctr = tc_ctr + 1;
 
      // Init the cipher with the given key and length.
-     write_key(key, key_length);
+     init_key(key, key_length);
 
 //     tb_key = key;
 //     tb_keylen = key_length;
