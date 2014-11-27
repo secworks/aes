@@ -98,7 +98,7 @@ sim-top: top.sim
 clean:
 	rm -f decipher.sim
 	rm -f encipher.sim
-	rm -f keygen.sim
+	rm -f keymem.sim
 	rm -f core.sim
 	rm -f top.sim
 
