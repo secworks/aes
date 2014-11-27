@@ -44,6 +44,7 @@ DECIPHER_SRC=../src/rtl/aes_decipher_block.v
 CORE_SRC=../src/rtl/aes_core.v $(KEYMEM_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC) $(DECIPHER_SRC)
 TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
+TB_TOP_SRC =../src/tb/tb_aes.v
 TB_CORE_SRC =../src/tb/tb_aes_core.v
 TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
 TB_ENCIPHER_SRC =../src/tb/tb_aes_encipher_block.v
@@ -52,15 +53,14 @@ TB_DECIPHER_SRC =../src/tb/tb_aes_decipher_block.v
 CC=iverilog
 
 
-all: core.sim core keymem.sim encipher.sim decipher.sim
+all: top.sim core.sim core keymem.sim encipher.sim decipher.sim
 
-core: $(CORE_SRC)
-	$(CC) -o core $(CORE_SRC)
+top.sim: $(TB_TOP_SRC) $(TOP_SRC)
+	$(CC) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
 
 
-core.sim: $(TB_CORE_SRC) core
+core.sim: $(TB_CORE_SRC) $(CORE_SRC)
 	$(CC) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
-
 
 
 keymem.sim:  $(TB_KEYMEM_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
@@ -91,12 +91,16 @@ sim-core: core.sim
 	./core.sim
 
 
+sim-top: top.sim
+	./top.sim
+
+
 clean:
 	rm -f decipher.sim
 	rm -f encipher.sim
 	rm -f keygen.sim
 	rm -f core.sim
-	rm -f core
+	rm -f top.sim
 
 
 help:
@@ -104,14 +108,18 @@ help:
 	@echo ""
 	@echo "Supported targets:"
 	@echo "------------------"
-	@echo "all:         Build all simulation targets."
-	@echo "core:        Build the core simulation target."
-	@echo "keymem:      Build the keymem simulation target."
-	@echo "sim-core:    Run core level simulation."
-	@echo "sim-keymem   Run keymem simulation."
-	@echo "sim-encipher Run encipher block simulation."
-	@echo "sim-decipher Run decipher block simulation."
-	@echo "clean:       Delete all built files."
+	@echo "all:          Build all simulation targets."
+	@echo "top.sim:      Build top level simulation target."
+	@echo "core.sim:     Build core level simulation target."
+	@echo "keymem.sim:   Build key memory simulation target."
+	@echo "encipher.sim: Build encipher block simulation target."
+	@echo "decipher.sim: Build decipher block simulation target."
+	@echo "sim-top:      Run top level simulation."
+	@echo "sim-core:     Run core level simulation."
+	@echo "sim-keymem    Run keymem simulation."
+	@echo "sim-encipher  Run encipher block simulation."
+	@echo "sim-decipher  Run decipher block simulation."
+	@echo "clean:        Delete all built files."
 
 #===================================================================
 # EOF Makefile
