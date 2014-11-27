@@ -106,6 +106,7 @@ module tb_aes();
   reg [31 : 0]  tc_ctr;
 
   reg [31 : 0]  read_data;
+  reg [127 : 0] result_data;
 
   reg           tb_clk;
   reg           tb_reset_n;
@@ -269,6 +270,21 @@ module tb_aes();
 
 
   //----------------------------------------------------------------
+  // write_block()
+  //
+  // Write the given block to the dut.
+  //----------------------------------------------------------------
+  task write_block(input [127 : 0] block);
+    begin
+      write_word(ADDR_BLOCK0, block[127  :  96]);
+      write_word(ADDR_BLOCK1, block[95   :  64]);
+      write_word(ADDR_BLOCK2, block[63   :  32]);
+      write_word(ADDR_BLOCK3, block[31   :   0]);
+    end
+  endtask // write_block
+
+
+  //----------------------------------------------------------------
   // read_word()
   //
   // Read a data word from the given address in the DUT.
@@ -294,6 +310,45 @@ module tb_aes();
 
 
   //----------------------------------------------------------------
+  // read_block()
+  //
+  // Read the result block in the dut.
+  //----------------------------------------------------------------
+  task read_block();
+    begin
+      read_word(ADDR_RESULT0);
+      result_data[127 : 096] = read_data;
+      read_word(ADDR_RESULT1);
+      result_data[095 : 064] = read_data;
+      read_word(ADDR_RESULT2);
+      result_data[063 : 032] = read_data;
+      read_word(ADDR_RESULT3);
+      result_data[031 : 000] = read_data;
+    end
+  endtask // read_block
+
+
+  //----------------------------------------------------------------
+  // write_key()
+  //
+  // Write the given key and key length.
+  //----------------------------------------------------------------
+  task write_key(input [255 : 0] key, input key_length);
+    begin
+      write_word(ADDR_KEY0, key[255  : 224]);
+      write_word(ADDR_KEY1, key[223  : 192]);
+      write_word(ADDR_KEY2, key[191  : 160]);
+      write_word(ADDR_KEY3, key[159  : 128]);
+      write_word(ADDR_KEY4, key[127  :  96]);
+      write_word(ADDR_KEY5, key[95   :  64]);
+      write_word(ADDR_KEY6, key[63   :  32]);
+      write_word(ADDR_KEY7, key[31   :   0]);
+
+    end
+  endtask // write_block
+
+
+  //----------------------------------------------------------------
   // ecb_mode_single_block_test()
   //
   // Perform ECB mode encryption or decryption single block test.
@@ -309,6 +364,8 @@ module tb_aes();
      tc_ctr = tc_ctr + 1;
 
      // Init the cipher with the given key and length.
+     write_key(key, key_length);
+
 //     tb_key = key;
 //     tb_keylen = key_length;
 //     tb_init = 1;
