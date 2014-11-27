@@ -62,10 +62,10 @@ module aes(
   parameter ADDR_CTRL        = 8'h08;
   parameter CTRL_INIT_BIT    = 0;
   parameter CTRL_NEXT_BIT    = 1;
-  parameter CTRL_ENCDEC_BIT  = 2;
-  parameter CTRL_KEYLEN_BIT  = 3;
 
   parameter ADDR_CONFIG      = 8'h09;
+  parameter CTRL_ENCDEC_BIT  = 0;
+  parameter CTRL_KEYLEN_BIT  = 1;
 
   parameter ADDR_STATUS      = 8'h0a;
   parameter STATUS_READY_BIT = 0;
