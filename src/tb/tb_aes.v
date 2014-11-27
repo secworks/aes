@@ -179,7 +179,14 @@ module tb_aes();
       $display("cycle: 0x%016x", cycle_ctr);
       $display("State of DUT");
       $display("------------");
+      $display("ctrl_reg:   init   = 0x%01x, next   = 0x%01x", dut.init_reg, dut.next_reg);
+      $display("config_reg: encdec = 0x%01x, length = 0x%01x ", dut.encdec_reg, dut.keylen_reg);
       $display("");
+
+      $display("block: 0x%08x, 0x%08x, 0x%08x, 0x%08x",
+               dut.block0_reg, dut.block1_reg, dut.block2_reg, dut.block3_reg);
+      $display("");
+
     end
   endtask // dump_dut_state
 
@@ -353,12 +360,14 @@ module tb_aes();
 
       if (key_length)
         begin
-          write_word(ADDR_CTRL, 8'h81);
+          write_word(ADDR_CONFIG, 8'h02);
         end
       else
         begin
-          write_word(ADDR_CTRL, 8'h01);
+          write_word(ADDR_CONFIG, 8'h00);
         end
+
+      write_word(ADDR_CTRL, 8'h01);
 
       #(100 * CLK_PERIOD);
     end
@@ -382,15 +391,10 @@ module tb_aes();
 
       init_key(key, key_length);
       write_block(block);
+      dump_dut_state();
 
-      if (encdec)
-        begin
-          write_word(ADDR_CTRL, 8'h42);
-        end
-      else
-        begin
-          write_word(ADDR_CTRL, 8'h02);
-        end
+      write_word(ADDR_CONFIG, (8'h00 + (key_length << 1)+ encdec));
+      write_word(ADDR_CTRL, 8'h02);
 
       #(100 * CLK_PERIOD);
 
