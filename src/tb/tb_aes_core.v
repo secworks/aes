@@ -50,7 +50,7 @@ module tb_aes_core();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG     = 1;
+  parameter DEBUG     = 0;
   parameter DUMP_WAIT = 0;
 
   parameter CLK_HALF_PERIOD = 1;
