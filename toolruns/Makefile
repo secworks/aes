@@ -53,7 +53,7 @@ TB_DECIPHER_SRC =../src/tb/tb_aes_decipher_block.v
 CC=iverilog
 
 
-all: top.sim core.sim core keymem.sim encipher.sim decipher.sim
+all: top.sim core.sim keymem.sim encipher.sim decipher.sim
 
 top.sim: $(TB_TOP_SRC) $(TOP_SRC)
 	$(CC) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
