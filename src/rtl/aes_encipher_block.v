@@ -280,12 +280,12 @@ module aes_encipher_block(
       reg [127 : 0] old_block, shiftrows_block, mixcolumns_block;
       reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
 
-      block_new    = 128'h00000000000000000000000000000000;
-      muxed_sboxw  = 32'h00000000;
-      block_w0_we  = 0;
-      block_w1_we  = 0;
-      block_w2_we  = 0;
-      block_w3_we  = 0;
+      block_new   = 128'h00000000000000000000000000000000;
+      muxed_sboxw = 32'h00000000;
+      block_w0_we = 0;
+      block_w1_we = 0;
+      block_w2_we = 0;
+      block_w3_we = 0;
 
       old_block          = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
       shiftrows_block    = shiftrows(old_block);
