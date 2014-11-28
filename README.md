@@ -31,26 +31,26 @@ of cycles to two cycles for each round.
 The core has been implemented in Altera and Xilinx FPGA devices.
 
 ### Altera Cyclone IV GX ###
-- 7497 LEs
+- 7426 LEs
 - 2994 Regs
 - 96 MHz fmax
-- 5 cycles/round
+- 46 cycles/block
 
-This means that we can do just about 2 Mblocks/s or 256 Mbps
+This means that we can do more than 2 Mblocks/s or 256 Mbps
 performance.
 
 Removing the decipher module yields:
 - 5497 LEs
 - 2855 Regs
 - 106 MHz fmax
-- 5 cycles/round
+- 46 cycles/block
 
 
 ### Xilinx Spartan6LX-3 ###
 - 2576 slices
 - 3000 regs
 - 100 MHz
-- 5 cycles/round
+- 46 cycles/block
 
 
 ## Status ##
