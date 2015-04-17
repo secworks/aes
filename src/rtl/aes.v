@@ -55,44 +55,44 @@ module aes(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter ADDR_NAME0       = 8'h00;
-  parameter ADDR_NAME1       = 8'h01;
-  parameter ADDR_VERSION     = 8'h02;
+  localparam ADDR_NAME0       = 8'h00;
+  localparam ADDR_NAME1       = 8'h01;
+  localparam ADDR_VERSION     = 8'h02;
 
-  parameter ADDR_CTRL        = 8'h08;
-  parameter CTRL_INIT_BIT    = 0;
-  parameter CTRL_NEXT_BIT    = 1;
+  localparam ADDR_CTRL        = 8'h08;
+  localparam CTRL_INIT_BIT    = 0;
+  localparam CTRL_NEXT_BIT    = 1;
 
-  parameter ADDR_CONFIG      = 8'h09;
-  parameter CTRL_ENCDEC_BIT  = 0;
-  parameter CTRL_KEYLEN_BIT  = 1;
+  localparam ADDR_CONFIG      = 8'h09;
+  localparam CTRL_ENCDEC_BIT  = 0;
+  localparam CTRL_KEYLEN_BIT  = 1;
 
-  parameter ADDR_STATUS      = 8'h0a;
-  parameter STATUS_READY_BIT = 0;
-  parameter STATUS_VALID_BIT = 1;
+  localparam ADDR_STATUS      = 8'h0a;
+  localparam STATUS_READY_BIT = 0;
+  localparam STATUS_VALID_BIT = 1;
 
-  parameter ADDR_KEY0        = 8'h10;
-  parameter ADDR_KEY1        = 8'h11;
-  parameter ADDR_KEY2        = 8'h12;
-  parameter ADDR_KEY3        = 8'h13;
-  parameter ADDR_KEY4        = 8'h14;
-  parameter ADDR_KEY5        = 8'h15;
-  parameter ADDR_KEY6        = 8'h16;
-  parameter ADDR_KEY7        = 8'h17;
+  localparam ADDR_KEY0        = 8'h10;
+  localparam ADDR_KEY1        = 8'h11;
+  localparam ADDR_KEY2        = 8'h12;
+  localparam ADDR_KEY3        = 8'h13;
+  localparam ADDR_KEY4        = 8'h14;
+  localparam ADDR_KEY5        = 8'h15;
+  localparam ADDR_KEY6        = 8'h16;
+  localparam ADDR_KEY7        = 8'h17;
 
-  parameter ADDR_BLOCK0      = 8'h20;
-  parameter ADDR_BLOCK1      = 8'h21;
-  parameter ADDR_BLOCK2      = 8'h22;
-  parameter ADDR_BLOCK3      = 8'h23;
+  localparam ADDR_BLOCK0      = 8'h20;
+  localparam ADDR_BLOCK1      = 8'h21;
+  localparam ADDR_BLOCK2      = 8'h22;
+  localparam ADDR_BLOCK3      = 8'h23;
 
-  parameter ADDR_RESULT0     = 8'h30;
-  parameter ADDR_RESULT1     = 8'h31;
-  parameter ADDR_RESULT2     = 8'h32;
-  parameter ADDR_RESULT3     = 8'h33;
+  localparam ADDR_RESULT0     = 8'h30;
+  localparam ADDR_RESULT1     = 8'h31;
+  localparam ADDR_RESULT2     = 8'h32;
+  localparam ADDR_RESULT3     = 8'h33;
 
-  parameter CORE_NAME0       = 32'h6165732d; // "aes-"
-  parameter CORE_NAME1       = 32'h31323820; // "128 "
-  parameter CORE_VERSION     = 32'h302e3530; // "0.50"
+  localparam CORE_NAME0       = 32'h6165732d; // "aes-"
+  localparam CORE_NAME1       = 32'h31323820; // "128 "
+  localparam CORE_VERSION     = 32'h302e3530; // "0.50"
 
 
   //----------------------------------------------------------------
