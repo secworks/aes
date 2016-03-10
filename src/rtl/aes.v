@@ -237,14 +237,10 @@ module aes(
           result_reg     <= core_result;
 
           if (init_we)
-            begin
-              init_reg <= init_new;
-            end
+            init_reg <= init_new;
 
           if (next_we)
-            begin
-              next_reg <= next_new;
-            end
+            next_reg <= next_new;
 
           if (config_we)
             begin
@@ -253,64 +249,40 @@ module aes(
             end
 
           if (key0_we)
-            begin
-              key0_reg <= write_data;
-            end
+            key0_reg <= write_data;
 
           if (key1_we)
-            begin
-              key1_reg <= write_data;
-            end
+            key1_reg <= write_data;
 
           if (key2_we)
-            begin
-              key2_reg <= write_data;
-            end
+            key2_reg <= write_data;
 
           if (key3_we)
-            begin
-              key3_reg <= write_data;
-            end
+            key3_reg <= write_data;
 
           if (key4_we)
-            begin
-              key4_reg <= write_data;
-            end
+            key4_reg <= write_data;
 
           if (key5_we)
-            begin
-              key5_reg <= write_data;
-            end
+            key5_reg <= write_data;
 
           if (key6_we)
-            begin
-              key6_reg <= write_data;
-            end
+            key6_reg <= write_data;
 
           if (key7_we)
-            begin
-              key7_reg <= write_data;
-            end
+            key7_reg <= write_data;
 
           if (block0_we)
-            begin
-              block0_reg <= write_data;
-            end
+            block0_reg <= write_data;
 
           if (block1_we)
-            begin
-              block1_reg <= write_data;
-            end
+            block1_reg <= write_data;
 
           if (block2_we)
-            begin
-              block2_reg <= write_data;
-            end
+            block2_reg <= write_data;
 
           if (block3_we)
-            begin
-              block3_reg <= write_data;
-            end
+            block3_reg <= write_data;
         end
     end // reg_update
 
@@ -389,70 +361,19 @@ module aes(
                     next_set = write_data[CTRL_NEXT_BIT];
                   end
 
-                ADDR_CONFIG:
-                  begin
-                    config_we = 1;
-                  end
-
-                ADDR_KEY0:
-                  begin
-                    key0_we = 1;
-                  end
-
-                ADDR_KEY1:
-                  begin
-                    key1_we = 1;
-                  end
-
-                ADDR_KEY2:
-                  begin
-                    key2_we = 1;
-                  end
-
-                ADDR_KEY3:
-                  begin
-                    key3_we = 1;
-                  end
-
-                ADDR_KEY4:
-                  begin
-                    key4_we = 1;
-                  end
-
-                ADDR_KEY5:
-                  begin
-                    key5_we = 1;
-                  end
-
-                ADDR_KEY6:
-                  begin
-                    key6_we = 1;
-                  end
-
-                ADDR_KEY7:
-                  begin
-                    key7_we = 1;
-                  end
-
-                ADDR_BLOCK0:
-                  begin
-                    block0_we = 1;
-                  end
-
-                ADDR_BLOCK1:
-                  begin
-                    block1_we = 1;
-                  end
-
-                ADDR_BLOCK2:
-                  begin
-                    block2_we = 1;
-                  end
-
-                ADDR_BLOCK3:
-                  begin
-                    block3_we = 1;
-                  end
+                ADDR_CONFIG: config_we = 1;
+                ADDR_KEY0:   key0_we = 1;
+                ADDR_KEY1:   key1_we = 1;
+                ADDR_KEY2:   key2_we = 1;
+                ADDR_KEY3:   key3_we = 1;
+                ADDR_KEY4:   key4_we = 1;
+                ADDR_KEY5:   key5_we = 1;
+                ADDR_KEY6:   key6_we = 1;
+                ADDR_KEY7:   key7_we = 1;
+                ADDR_BLOCK0: block0_we = 1;
+                ADDR_BLOCK1: block1_we = 1;
+                ADDR_BLOCK2: block2_we = 1;
+                ADDR_BLOCK3: block3_we = 1;
 
                 default:
                   begin
@@ -465,111 +386,27 @@ module aes(
             begin
               case (address)
                 // Read operations.
-                ADDR_NAME0:
-                  begin
-                    tmp_read_data = CORE_NAME0;
-                  end
-
-                ADDR_NAME1:
-                  begin
-                    tmp_read_data = CORE_NAME1;
-                  end
-
-                ADDR_VERSION:
-                  begin
-                    tmp_read_data = CORE_VERSION;
-                  end
-
-                ADDR_CTRL:
-                  begin
-                    tmp_read_data = {28'h0000000, keylen_reg, encdec_reg,
-                                     next_reg, init_reg};
-                  end
-
-                ADDR_STATUS:
-                  begin
-                    tmp_read_data = {30'h00000000, valid_reg, ready_reg};
-                  end
-
-                ADDR_KEY0:
-                  begin
-                    tmp_read_data = key0_reg;
-                  end
-
-                ADDR_KEY1:
-                  begin
-                    tmp_read_data = key1_reg;
-                  end
-
-                ADDR_KEY2:
-                  begin
-                    tmp_read_data = key2_reg;
-                  end
-
-                ADDR_KEY3:
-                  begin
-                    tmp_read_data = key3_reg;
-                  end
-
-                ADDR_KEY4:
-                  begin
-                    tmp_read_data = key4_reg;
-                  end
-
-                ADDR_KEY5:
-                  begin
-                    tmp_read_data = key5_reg;
-                  end
-
-                ADDR_KEY6:
-                  begin
-                    tmp_read_data = key6_reg;
-                  end
-
-                ADDR_KEY7:
-                  begin
-                    tmp_read_data = key7_reg;
-                  end
-
-                ADDR_BLOCK0:
-                  begin
-                    tmp_read_data = block0_reg;
-                  end
-
-                ADDR_BLOCK1:
-                  begin
-                    tmp_read_data = block1_reg;
-                  end
-
-                ADDR_BLOCK2:
-                  begin
-                    tmp_read_data = block2_reg;
-                  end
-
-                ADDR_BLOCK3:
-                  begin
-                    tmp_read_data = block3_reg;
-                  end
-
-                ADDR_RESULT0:
-                  begin
-                    tmp_read_data = result_reg[127 : 96];
-                  end
-
-                ADDR_RESULT1:
-                  begin
-                    tmp_read_data = result_reg[95 : 64];
-                  end
-
-                ADDR_RESULT2:
-                  begin
-                    tmp_read_data = result_reg[63 : 32];
-                  end
-
-                ADDR_RESULT3:
-                  begin
-                    tmp_read_data = result_reg[31 : 0];
-                  end
+                ADDR_NAME0:   tmp_read_data = CORE_NAME0;
+                ADDR_NAME1:   tmp_read_data = CORE_NAME1;
+                ADDR_VERSION: tmp_read_data = CORE_VERSION;
+                ADDR_CTRL:    tmp_read_data = {28'h0, keylen_reg, encdec_reg, next_reg, init_reg};
+                ADDR_STATUS:  tmp_read_data = {30'h00000000, valid_reg, ready_reg};
+                ADDR_KEY0:    tmp_read_data = key0_reg;
+                ADDR_KEY1:    tmp_read_data = key1_reg;
+                ADDR_KEY2:    tmp_read_data = key2_reg;
+                ADDR_KEY3:    tmp_read_data = key3_reg;
+                ADDR_KEY4:    tmp_read_data = key4_reg;
+                ADDR_KEY5:    tmp_read_data = key5_reg;
+                ADDR_KEY6:    tmp_read_data = key6_reg;
+                ADDR_KEY7:    tmp_read_data = key7_reg;
+                ADDR_BLOCK0:  tmp_read_data = block0_reg;
+                ADDR_BLOCK1:  tmp_read_data = block1_reg;
+                ADDR_BLOCK2:  tmp_read_data = block2_reg;
+                ADDR_BLOCK3:  tmp_read_data = block3_reg;
+                ADDR_RESULT0: tmp_read_data = result_reg[127 : 96];
+                ADDR_RESULT1: tmp_read_data = result_reg[95 : 64];
+                ADDR_RESULT2: tmp_read_data = result_reg[63 : 32];
+                ADDR_RESULT3: tmp_read_data = result_reg[31 : 0];
 
                 default:
                   begin
