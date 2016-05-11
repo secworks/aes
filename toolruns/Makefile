@@ -51,6 +51,7 @@ TB_ENCIPHER_SRC =../src/tb/tb_aes_encipher_block.v
 TB_DECIPHER_SRC =../src/tb/tb_aes_decipher_block.v
 
 CC=iverilog
+LINT=verilator
 
 
 all: top.sim core.sim keymem.sim encipher.sim decipher.sim
@@ -95,6 +96,10 @@ sim-top: top.sim
 	./top.sim
 
 
+lint:
+	verilator +1364-2001ext+ --lint-only -Wall $(TOP_SRC)
+
+
 clean:
 	rm -f decipher.sim
 	rm -f encipher.sim
@@ -109,6 +114,7 @@ help:
 	@echo "Supported targets:"
 	@echo "------------------"
 	@echo "all:          Build all simulation targets."
+	@echo "lint:         Lint all rtl source files."
 	@echo "top.sim:      Build top level simulation target."
 	@echo "core.sim:     Build core level simulation target."
 	@echo "keymem.sim:   Build key memory simulation target."
