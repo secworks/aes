@@ -8,30 +8,30 @@
 // Author: Joachim Strombergson
 // Copyright (c) 2014, Secworks Sweden AB
 // All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or 
-// without modification, are permitted provided that the following 
-// conditions are met: 
-// 
-// 1. Redistributions of source code must retain the above copyright 
-//    notice, this list of conditions and the following disclaimer. 
-// 
-// 2. Redistributions in binary form must reproduce the above copyright 
-//    notice, this list of conditions and the following disclaimer in 
-//    the documentation and/or other materials provided with the 
-//    distribution. 
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+//
+// Redistribution and use in source and binary forms, with or
+// without modification, are permitted provided that the following
+// conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in
+//    the documentation and/or other materials provided with the
+//    distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+// FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+// COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 // BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
-// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
-// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 // ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 //======================================================================
@@ -46,7 +46,7 @@
 // Test module.
 //------------------------------------------------------------------
 module tb_aes_key_mem();
-  
+
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
@@ -66,7 +66,7 @@ module tb_aes_key_mem();
   parameter AES_DECIPHER = 1'b0;
   parameter AES_ENCIPHER = 1'b1;
 
-  
+
   //----------------------------------------------------------------
   // Register and Wire declarations.
   //----------------------------------------------------------------
@@ -86,7 +86,7 @@ module tb_aes_key_mem();
   wire [31 : 0]  tb_sboxw;
   wire [31 : 0]  tb_new_sboxw;
 
-  
+
   //----------------------------------------------------------------
   // Device Under Test.
   //----------------------------------------------------------------
@@ -108,19 +108,19 @@ module tb_aes_key_mem();
 
   // The DUT requirees Sboxes.
   aes_sbox sbox(.sboxw(tb_sboxw), .new_sboxw(tb_new_sboxw));
-  
+
 
   //----------------------------------------------------------------
   // clk_gen
   //
   // Always running clock generator process.
   //----------------------------------------------------------------
-  always 
+  always
     begin : clk_gen
       #CLK_HALF_PERIOD;
       tb_clk = !tb_clk;
     end // clk_gen
-    
+
 
   //----------------------------------------------------------------
   // sys_monitor()
@@ -138,13 +138,13 @@ module tb_aes_key_mem();
         end
     end
 
-  
+
   //----------------------------------------------------------------
   // dump_dut_state()
   //
   // Dump the state of the dump when needed.
   //----------------------------------------------------------------
-  task dump_dut_state();
+  task dump_dut_state;
     begin
       $display("State of DUT");
       $display("------------");
@@ -189,14 +189,14 @@ module tb_aes_key_mem();
         end
     end
   endtask // dump_dut_state
-  
-  
+
+
   //----------------------------------------------------------------
   // reset_dut()
   //
   // Toggle reset to put the DUT into a well known state.
   //----------------------------------------------------------------
-  task reset_dut();
+  task reset_dut;
     begin
       $display("*** Toggle reset.");
       tb_reset_n = 0;
@@ -205,19 +205,19 @@ module tb_aes_key_mem();
     end
   endtask // reset_dut
 
-  
+
   //----------------------------------------------------------------
   // init_sim()
   //
   // Initialize all counters and testbed functionality as well
   // as setting the DUT inputs to defined values.
   //----------------------------------------------------------------
-  task init_sim();
+  task init_sim;
     begin
       cycle_ctr = 0;
       error_ctr = 0;
       tc_ctr    = 0;
-      
+
       tb_clk     = 0;
       tb_reset_n = 1;
       tb_key     = {8{32'h00000000}};
@@ -237,7 +237,7 @@ module tb_aes_key_mem();
   // when the dut is actively processing and will in fact at some
   // point set the flag.
   //----------------------------------------------------------------
-  task wait_ready();
+  task wait_ready;
     begin
       while (!tb_ready)
         begin
@@ -280,7 +280,7 @@ module tb_aes_key_mem();
   // Test 128 bit keys. Due to array problems, the result check
   // is fairly ugly.
   //----------------------------------------------------------------
-  task test_key_128(input [255 : 0] key, 
+  task test_key_128(input [255 : 0] key,
                     input [127 : 0] expected00,
                     input [127 : 0] expected01,
                     input [127 : 0] expected02,
@@ -375,14 +375,14 @@ module tb_aes_key_mem();
       tc_ctr = tc_ctr + 1;
     end
   endtask // test_key_256
-  
+
 
   //----------------------------------------------------------------
   // display_test_result()
   //
   // Display the accumulated test results.
   //----------------------------------------------------------------
-  task display_test_result();
+  task display_test_result;
     begin
       if (error_ctr == 0)
         begin
@@ -390,16 +390,16 @@ module tb_aes_key_mem();
         end
       else
         begin
-          $display("*** %02d tests completed - %02d test cases did not complete successfully.", 
+          $display("*** %02d tests completed - %02d test cases did not complete successfully.",
                    tc_ctr, error_ctr);
         end
     end
   endtask // display_test_result
-                         
-    
+
+
   //----------------------------------------------------------------
   // aes_key_mem_test
-  // The main test functionality. 
+  // The main test functionality.
   //----------------------------------------------------------------
   initial
     begin : aes_key_mem_test
@@ -428,7 +428,7 @@ module tb_aes_key_mem();
       reg [127 : 0] expected_12;
       reg [127 : 0] expected_13;
       reg [127 : 0] expected_14;
-      
+
       $display("   -= Testbench for aes key mem started =-");
       $display("    =====================================");
       $display("");
@@ -440,7 +440,7 @@ module tb_aes_key_mem();
       $display("State after reset:");
       dump_dut_state();
       $display("");
-      
+
       #(100 *CLK_PERIOD);
 
       // AES-128 test case 1 key and expected values.
@@ -642,7 +642,7 @@ module tb_aes_key_mem();
                    expected_08, expected_09, expected_10, expected_11,
                    expected_12, expected_13, expected_14);
 
-      
+
       display_test_result();
       $display("");
       $display("*** AES core simulation done. ***");

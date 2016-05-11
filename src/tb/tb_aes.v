@@ -174,7 +174,7 @@ module tb_aes();
   //
   // Dump the state of the dump when needed.
   //----------------------------------------------------------------
-  task dump_dut_state();
+  task dump_dut_state;
     begin
       $display("cycle: 0x%016x", cycle_ctr);
       $display("State of DUT");
@@ -196,7 +196,7 @@ module tb_aes();
   //
   // Toggle reset to put the DUT into a well known state.
   //----------------------------------------------------------------
-  task reset_dut();
+  task reset_dut;
     begin
       $display("*** Toggle reset.");
       tb_reset_n = 0;
@@ -213,7 +213,7 @@ module tb_aes();
   //
   // Display the accumulated test results.
   //----------------------------------------------------------------
-  task display_test_results();
+  task display_test_results;
     begin
       if (error_ctr == 0)
         begin
@@ -234,19 +234,19 @@ module tb_aes();
   // Initialize all counters and testbed functionality as well
   // as setting the DUT inputs to defined values.
   //----------------------------------------------------------------
-  task init_sim();
+  task init_sim;
     begin
-      cycle_ctr          = 0;
-      error_ctr          = 0;
-      tc_ctr             = 0;
+      cycle_ctr     = 0;
+      error_ctr     = 0;
+      tc_ctr        = 0;
 
-      tb_clk             = 0;
-      tb_reset_n         = 1;
+      tb_clk        = 0;
+      tb_reset_n    = 1;
 
-      tb_cs              = 0;
-      tb_we              = 0;
-      tb_address         = 8'h00;
-      tb_write_data      = 32'h00000000;
+      tb_cs         = 0;
+      tb_we         = 0;
+      tb_address    = 8'h00;
+      tb_write_data = 32'h00000000;
     end
   endtask // init_sim
 
@@ -321,7 +321,7 @@ module tb_aes();
   //
   // Read the result block in the dut.
   //----------------------------------------------------------------
-  task read_result();
+  task read_result;
     begin
       read_word(ADDR_RESULT0);
       result_data[127 : 096] = read_data;
@@ -423,7 +423,7 @@ module tb_aes();
   //
   // Main test task will perform complete NIST test of AES.
   //----------------------------------------------------------------
-  task aes_test();
+  task aes_test;
     reg [255 : 0] nist_aes128_key;
     reg [255 : 0] nist_aes256_key;
 
@@ -528,7 +528,6 @@ module tb_aes();
   //----------------------------------------------------------------
   initial
     begin : main
-
       $display("   -= Testbench for AES started =-");
       $display("    ==============================");
       $display("");

@@ -137,7 +137,7 @@ module tb_aes_core();
   //
   // Dump the state of the dump when needed.
   //----------------------------------------------------------------
-  task dump_dut_state();
+  task dump_dut_state;
     begin
       $display("State of DUT");
       $display("------------");
@@ -164,7 +164,7 @@ module tb_aes_core();
   //
   // Dump the keys in the key memory of the dut.
   //----------------------------------------------------------------
-  task dump_keys();
+  task dump_keys;
     begin
       $display("State of key memory in DUT:");
       $display("key[00] = 0x%016x", dut.keymem.key_mem[00]);
@@ -192,7 +192,7 @@ module tb_aes_core();
   //
   // Toggle reset to put the DUT into a well known state.
   //----------------------------------------------------------------
-  task reset_dut();
+  task reset_dut;
     begin
       $display("*** Toggle reset.");
       tb_reset_n = 0;
@@ -208,7 +208,7 @@ module tb_aes_core();
   // Initialize all counters and testbed functionality as well
   // as setting the DUT inputs to defined values.
   //----------------------------------------------------------------
-  task init_sim();
+  task init_sim;
     begin
       cycle_ctr = 0;
       error_ctr = 0;
@@ -232,7 +232,7 @@ module tb_aes_core();
   //
   // Display the accumulated test results.
   //----------------------------------------------------------------
-  task display_test_result();
+  task display_test_result;
     begin
       if (error_ctr == 0)
         begin
@@ -256,7 +256,7 @@ module tb_aes_core();
   // when the dut is actively processing and will in fact at some
   // point set the flag.
   //----------------------------------------------------------------
-  task wait_ready();
+  task wait_ready;
     begin
       while (!tb_ready)
         begin
@@ -279,7 +279,7 @@ module tb_aes_core();
   // when the dut is actively processing a block and will in fact
   // at some point set the flag.
   //----------------------------------------------------------------
-  task wait_valid();
+  task wait_valid;
     begin
       while (!tb_result_valid)
         begin
