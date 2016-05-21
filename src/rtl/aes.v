@@ -203,26 +203,26 @@ module aes(
     begin
       if (!reset_n)
         begin
-          block0_reg <= 32'h00000000;
-          block1_reg <= 32'h00000000;
-          block2_reg <= 32'h00000000;
-          block3_reg <= 32'h00000000;
+          block0_reg <= 32'h0;
+          block1_reg <= 32'h0;
+          block2_reg <= 32'h0;
+          block3_reg <= 32'h0;
 
-          key0_reg   <= 32'h00000000;
-          key1_reg   <= 32'h00000000;
-          key2_reg   <= 32'h00000000;
-          key3_reg   <= 32'h00000000;
-          key4_reg   <= 32'h00000000;
-          key5_reg   <= 32'h00000000;
-          key6_reg   <= 32'h00000000;
-          key7_reg   <= 32'h00000000;
+          key0_reg   <= 32'h0;
+          key1_reg   <= 32'h0;
+          key2_reg   <= 32'h0;
+          key3_reg   <= 32'h0;
+          key4_reg   <= 32'h0;
+          key5_reg   <= 32'h0;
+          key6_reg   <= 32'h0;
+          key7_reg   <= 32'h0;
 
           init_reg   <= 0;
           next_reg   <= 0;
           encdec_reg <= 0;
           keylen_reg <= 0;
 
-          result_reg <= 128'h00000000000000000000000000000000;
+          result_reg <= 128'h0;
           valid_reg  <= 0;
           ready_reg  <= 0;
         end
@@ -301,7 +301,7 @@ module aes(
       block1_we     = 0;
       block2_we     = 0;
       block3_we     = 0;
-      tmp_read_data = 32'h00000000;
+      tmp_read_data = 32'h0;
       tmp_error     = 0;
 
       if (cs)
@@ -345,7 +345,7 @@ module aes(
                 ADDR_NAME1:   tmp_read_data = CORE_NAME1;
                 ADDR_VERSION: tmp_read_data = CORE_VERSION;
                 ADDR_CTRL:    tmp_read_data = {28'h0, keylen_reg, encdec_reg, next_reg, init_reg};
-                ADDR_STATUS:  tmp_read_data = {30'h00000000, valid_reg, ready_reg};
+                ADDR_STATUS:  tmp_read_data = {30'h0, valid_reg, ready_reg};
                 ADDR_KEY0:    tmp_read_data = key0_reg;
                 ADDR_KEY1:    tmp_read_data = key1_reg;
                 ADDR_KEY2:    tmp_read_data = key2_reg;
