@@ -53,7 +53,22 @@ Removing the decipher module yields:
 - 46 cycles/block
 
 
+### Xilinx Artix 7 200T-3 ###
+- 2298 slices
+- 2989 regs
+- 97 MHz
+- 46 cycles/block
+
+
 ## Status ##
+
+***(2016-09-06)***
+
+Updated implementation results with results from Xilinx Artix-7. There
+has also been done several minor fixes to shorten the code size, clarify
+the implementation etc. But the functionality of the core has not been
+altered. The core has been used in several designs.
+
 
 ***(2014-11-28)***
 
