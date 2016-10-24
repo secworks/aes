@@ -57,23 +57,23 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter AES_128_BIT_KEY = 1'h0;
-  parameter AES_256_BIT_KEY = 1'h1;
+  localparam AES_128_BIT_KEY = 1'h0;
+  localparam AES_256_BIT_KEY = 1'h1;
 
-  parameter AES128_ROUNDS = 4'ha;
-  parameter AES256_ROUNDS = 4'he;
+  localparam AES128_ROUNDS = 4'ha;
+  localparam AES256_ROUNDS = 4'he;
 
-  parameter NO_UPDATE    = 3'h0;
-  parameter INIT_UPDATE  = 3'h1;
-  parameter SBOX_UPDATE  = 3'h2;
-  parameter MAIN_UPDATE  = 3'h3;
-  parameter FINAL_UPDATE = 3'h4;
+  localparam NO_UPDATE    = 3'h0;
+  localparam INIT_UPDATE  = 3'h1;
+  localparam SBOX_UPDATE  = 3'h2;
+  localparam MAIN_UPDATE  = 3'h3;
+  localparam FINAL_UPDATE = 3'h4;
 
-  parameter CTRL_IDLE  = 3'h0;
-  parameter CTRL_INIT  = 3'h1;
-  parameter CTRL_SBOX  = 3'h2;
-  parameter CTRL_MAIN  = 3'h3;
-  parameter CTRL_FINAL = 3'h4;
+  localparam CTRL_IDLE  = 3'h0;
+  localparam CTRL_INIT  = 3'h1;
+  localparam CTRL_SBOX  = 3'h2;
+  localparam CTRL_MAIN  = 3'h3;
+  localparam CTRL_FINAL = 3'h4;
 
 
   //----------------------------------------------------------------

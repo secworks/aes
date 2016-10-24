@@ -60,9 +60,9 @@ module aes_core(
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter CTRL_IDLE  = 2'h0;
-  parameter CTRL_INIT  = 2'h1;
-  parameter CTRL_NEXT  = 2'h2;
+  localparam CTRL_IDLE  = 2'h0;
+  localparam CTRL_INIT  = 2'h1;
+  localparam CTRL_NEXT  = 2'h2;
 
 
   //----------------------------------------------------------------
