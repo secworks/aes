@@ -2,7 +2,7 @@
 //
 // aes_key_mem.v
 // -------------
-// The AES key memort including round key generator.
+// The AES key memory including round key generator.
 //
 //
 // Author: Joachim Strombergson
