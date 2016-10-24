@@ -216,10 +216,10 @@ module aes_encipher_block(
     begin: reg_update
       if (!reset_n)
         begin
-          block_w0_reg  <= 32'h00000000;
-          block_w1_reg  <= 32'h00000000;
-          block_w2_reg  <= 32'h00000000;
-          block_w3_reg  <= 32'h00000000;
+          block_w0_reg  <= 32'h0;
+          block_w1_reg  <= 32'h0;
+          block_w2_reg  <= 32'h0;
+          block_w3_reg  <= 32'h0;
           sword_ctr_reg <= 2'h0;
           round_ctr_reg <= 4'h0;
           ready_reg     <= 1;
@@ -280,8 +280,8 @@ module aes_encipher_block(
       reg [127 : 0] old_block, shiftrows_block, mixcolumns_block;
       reg [127 : 0] addkey_init_block, addkey_main_block, addkey_final_block;
 
-      block_new   = 128'h00000000000000000000000000000000;
-      muxed_sboxw = 32'h00000000;
+      block_new   = 128'h0;
+      muxed_sboxw = 32'h0;
       block_w0_we = 0;
       block_w1_we = 0;
       block_w2_we = 0;

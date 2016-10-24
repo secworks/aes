@@ -256,10 +256,10 @@ module aes_decipher_block(
     begin: reg_update
       if (!reset_n)
         begin
-          block_w0_reg  <= 32'h00000000;
-          block_w1_reg  <= 32'h00000000;
-          block_w2_reg  <= 32'h00000000;
-          block_w3_reg  <= 32'h00000000;
+          block_w0_reg  <= 32'h0;
+          block_w1_reg  <= 32'h0;
+          block_w2_reg  <= 32'h0;
+          block_w3_reg  <= 32'h0;
           sword_ctr_reg <= 2'h0;
           round_ctr_reg <= 4'h0;
           ready_reg     <= 1;
@@ -320,11 +320,11 @@ module aes_decipher_block(
       reg [127 : 0] old_block, inv_shiftrows_block, inv_mixcolumns_block;
       reg [127 : 0] addkey_block;
 
-      inv_shiftrows_block  = 128'h00000000000000000000000000000000;
-      inv_mixcolumns_block = 128'h00000000000000000000000000000000;
-      addkey_block         = 128'h00000000000000000000000000000000;
-      block_new            = 128'h00000000000000000000000000000000;
-      tmp_sboxw            = 32'h00000000;
+      inv_shiftrows_block  = 128'h0;
+      inv_mixcolumns_block = 128'h0;
+      addkey_block         = 128'h0;
+      block_new            = 128'h0;
+      tmp_sboxw            = 32'h0;
       block_w0_we          = 0;
       block_w1_we          = 0;
       block_w2_we          = 0;
