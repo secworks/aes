@@ -228,7 +228,6 @@ module aes_decipher_block(
   reg [31 : 0]  tmp_sboxw;
   wire [31 : 0] new_sboxw;
   reg [2 : 0]   update_type;
-  reg [3 : 0]   num_rounds;
 
 
   //----------------------------------------------------------------
