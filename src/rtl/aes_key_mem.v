@@ -135,24 +135,24 @@ module aes_key_mem(
     begin: reg_update
       if (!reset_n)
         begin
-          key_mem [0]      <= 128'h00000000000000000000000000000000;
-          key_mem [1]      <= 128'h00000000000000000000000000000000;
-          key_mem [2]      <= 128'h00000000000000000000000000000000;
-          key_mem [3]      <= 128'h00000000000000000000000000000000;
-          key_mem [4]      <= 128'h00000000000000000000000000000000;
-          key_mem [5]      <= 128'h00000000000000000000000000000000;
-          key_mem [6]      <= 128'h00000000000000000000000000000000;
-          key_mem [7]      <= 128'h00000000000000000000000000000000;
-          key_mem [8]      <= 128'h00000000000000000000000000000000;
-          key_mem [9]      <= 128'h00000000000000000000000000000000;
-          key_mem [10]     <= 128'h00000000000000000000000000000000;
-          key_mem [11]     <= 128'h00000000000000000000000000000000;
-          key_mem [12]     <= 128'h00000000000000000000000000000000;
-          key_mem [13]     <= 128'h00000000000000000000000000000000;
-          key_mem [14]     <= 128'h00000000000000000000000000000000;
-          prev_key0_reg    <= 128'h00000000000000000000000000000000;
-          prev_key1_reg    <= 128'h00000000000000000000000000000000;
-          rcon_reg         <= 8'h00;
+          key_mem [0]      <= 128'h0;
+          key_mem [1]      <= 128'h0;
+          key_mem [2]      <= 128'h0;
+          key_mem [3]      <= 128'h0;
+          key_mem [4]      <= 128'h0;
+          key_mem [5]      <= 128'h0;
+          key_mem [6]      <= 128'h0;
+          key_mem [7]      <= 128'h0;
+          key_mem [8]      <= 128'h0;
+          key_mem [9]      <= 128'h0;
+          key_mem [10]     <= 128'h0;
+          key_mem [11]     <= 128'h0;
+          key_mem [12]     <= 128'h0;
+          key_mem [13]     <= 128'h0;
+          key_mem [14]     <= 128'h0;
+          prev_key0_reg    <= 128'h0;
+          prev_key1_reg    <= 128'h0;
+          rcon_reg         <= 8'h0;
           ready_reg        <= 0;
           round_ctr_reg    <= 4'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
@@ -220,17 +220,17 @@ module aes_key_mem(
       reg [31 : 0] rconw, rotstw, tw, trw;
 
       // Default assignments.
-      key_mem_new   = 128'h00000000000000000000000000000000;
+      key_mem_new   = 128'h0;
       key_mem_we    = 0;
-      prev_key0_new = 128'h00000000000000000000000000000000;
+      prev_key0_new = 128'h0;
       prev_key0_we  = 0;
-      prev_key1_new = 128'h00000000000000000000000000000000;
+      prev_key1_new = 128'h0;
       prev_key1_we  = 0;
 
-      k0 = 32'h00000000;
-      k1 = 32'h00000000;
-      k2 = 32'h00000000;
-      k3 = 32'h00000000;
+      k0 = 32'h0;
+      k1 = 32'h0;
+      k2 = 32'h0;
+      k3 = 32'h0;
 
       rcon_set   = 1;
       rcon_next  = 0;
@@ -247,7 +247,7 @@ module aes_key_mem(
       w6 = prev_key1_reg[063 : 032];
       w7 = prev_key1_reg[031 : 000];
 
-      rconw = {rcon_reg, 24'h000000};
+      rconw = {rcon_reg, 24'h0};
       tmp_sboxw = w7;
       rotstw = {new_sboxw[23 : 00], new_sboxw[31 : 24]};
       trw = rotstw ^ rconw;
