@@ -48,8 +48,7 @@ module aes(
            // Data ports.
            input wire  [7 : 0]  address,
            input wire  [31 : 0] write_data,
-           output wire [31 : 0] read_data,
-           output wire          error
+           output wire [31 : 0] read_data
           );
 
   //----------------------------------------------------------------
@@ -123,7 +122,6 @@ module aes(
   // Wires.
   //----------------------------------------------------------------
   reg [31 : 0]   tmp_read_data;
-  reg            tmp_error;
 
   wire           core_encdec;
   wire           core_init;
@@ -140,7 +138,6 @@ module aes(
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign read_data = tmp_read_data;
-  assign error     = tmp_error;
 
   assign core_key = {key_reg[0], key_reg[1], key_reg[2], key_reg[3],
                      key_reg[4], key_reg[5], key_reg[6], key_reg[7]};
@@ -250,7 +247,6 @@ module aes(
       block2_we     = 0;
       block3_we     = 0;
       tmp_read_data = 32'h0;
-      tmp_error     = 0;
 
       if (cs)
         begin
@@ -275,7 +271,6 @@ module aes(
 
                 default:
                   begin
-                    tmp_error = 1;
                   end
               endcase // case (address)
             end // if (we)
@@ -302,7 +297,6 @@ module aes(
 
                 default:
                   begin
-                    tmp_error = 1;
                   end
               endcase // case (address)
             end
