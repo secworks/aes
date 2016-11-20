@@ -61,6 +61,20 @@ Removing the decipher module yields:
 
 
 ## Status ##
+***(2016-11-20)***
+
+HEADSUP
+The API addresses for config and status registers has been switched. The
+reason for this is all other cores provided have status on 0x09. And any
+possible config on 0x0a. This change aligns the core for easier
+integration, but breaks designs that uses the old version.
+
+The core VERSION string has been updated to reflect the API change.
+
+The core NAME has also been updated. Precviously the NAME contained
+"-128", indicating that the core only supports 128 bit key length. But
+the core does in fact support both 128 and 256 bit key lengths.
+
 
 ***(2016-09-06)***
 
