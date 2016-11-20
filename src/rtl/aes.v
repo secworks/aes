@@ -62,13 +62,13 @@ module aes(
   localparam CTRL_INIT_BIT    = 0;
   localparam CTRL_NEXT_BIT    = 1;
 
-  localparam ADDR_CONFIG      = 8'h09;
-  localparam CTRL_ENCDEC_BIT  = 0;
-  localparam CTRL_KEYLEN_BIT  = 1;
-
-  localparam ADDR_STATUS      = 8'h0a;
+  localparam ADDR_STATUS      = 8'h09;
   localparam STATUS_READY_BIT = 0;
   localparam STATUS_VALID_BIT = 1;
+
+  localparam ADDR_CONFIG      = 8'h0a;
+  localparam CTRL_ENCDEC_BIT  = 0;
+  localparam CTRL_KEYLEN_BIT  = 1;
 
   localparam ADDR_KEY0        = 8'h10;
   localparam ADDR_KEY7        = 8'h17;
@@ -83,9 +83,9 @@ module aes(
   localparam ADDR_RESULT2     = 8'h32;
   localparam ADDR_RESULT3     = 8'h33;
 
-  localparam CORE_NAME0       = 32'h6165732d; // "aes-"
-  localparam CORE_NAME1       = 32'h31323820; // "128 "
-  localparam CORE_VERSION     = 32'h302e3530; // "0.50"
+  localparam CORE_NAME0       = 32'h61657320; // "aes "
+  localparam CORE_NAME1       = 32'h20202020; // "    "
+  localparam CORE_VERSION     = 32'h302e3630; // "0.60"
 
 
   //----------------------------------------------------------------
