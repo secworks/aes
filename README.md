@@ -63,7 +63,7 @@ Removing the decipher module yields:
 ## Status ##
 ***(2016-11-20)***
 
-HEADSUP
+__HEADSUP__
 The API addresses for config and status registers has been switched. The
 reason for this is all other cores provided have status on 0x09. And any
 possible config on 0x0a. This change aligns the core for easier
