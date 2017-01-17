@@ -172,7 +172,7 @@ module tb_aes();
       $display("");
 
       $display("block: 0x%08x, 0x%08x, 0x%08x, 0x%08x",
-               dut.block0_reg, dut.block1_reg, dut.block2_reg, dut.block3_reg);
+               dut.block_reg[0], dut.block_reg[1], dut.block_reg[2], dut.block_reg[3]);
       $display("");
 
     end
