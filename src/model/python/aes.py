@@ -124,6 +124,24 @@ inv_sbox = [0x52, 0x09, 0x6a, 0xd5, 0x30, 0x36, 0xa5, 0x38,
 
 
 #-------------------------------------------------------------------
+# check_block()
+#
+# Check and report if a result block matches expected block.
+#-------------------------------------------------------------------
+def check_block(expected, result):
+    if (expected[0] == result[0]) and  (expected[1] == result[1]) and\
+         (expected[2] == result[2]) and  (expected[3] == result[3]):
+        print("OK. Result matches expected.")
+    else:
+        print("ERROR. Result does not match expected.")
+        print("Expected:")
+        print_block(expected)
+        print("Got:")
+        print_block(result)
+        print("")
+
+
+#-------------------------------------------------------------------
 # print_bytekeys()
 #
 # Print a set of round keys given as an array of bytes.
