@@ -132,6 +132,9 @@ def check_block(expected, result):
     if (expected[0] == result[0]) and  (expected[1] == result[1]) and\
          (expected[2] == result[2]) and  (expected[3] == result[3]):
         print("OK. Result matches expected.")
+        print("")
+        return 0
+
     else:
         print("ERROR. Result does not match expected.")
         print("Expected:")
@@ -139,6 +142,7 @@ def check_block(expected, result):
         print("Got:")
         print_block(result)
         print("")
+        return 1
 
 
 #-------------------------------------------------------------------
@@ -860,6 +864,8 @@ def test_aes():
     dec_result256_2 = aes_decipher_block(nist_aes256_key, nist_exp256_2)
     dec_result256_3 = aes_decipher_block(nist_aes256_key, nist_exp256_3)
 
+    tc_errors = 0
+    tc        = 0
 
     if VERBOSE:
         print("   AES Encipher tests")
@@ -870,89 +876,65 @@ def test_aes():
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_plaintext0)
-        print("Expected block out:")
-        print_block(nist_exp128_0)
-        print("Got block out:")
-        print_block(enc_result128_0)
-        print("")
+        tc_errors += check_block(nist_exp128_0, enc_result128_0)
+        tc += 1
 
         print("Test 1 for AES-128.")
         print("Key:")
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_plaintext1)
-        print("Expected block out:")
-        print_block(nist_exp128_1)
-        print("Got block out:")
-        print_block(enc_result128_1)
-        print("")
+        tc_errors += check_block(nist_exp128_1, enc_result128_1)
+        tc += 1
 
         print("Test 2 for AES-128.")
         print("Key:")
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_plaintext2)
-        print("Expected block out:")
-        print_block(nist_exp128_2)
-        print("Got block out:")
-        print_block(enc_result128_2)
-        print("")
+        tc_errors += check_block(nist_exp128_2, enc_result128_2)
+        tc += 1
 
         print("Test 3 for AES-128.")
         print("Key:")
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_plaintext3)
-        print("Expected block out:")
-        print_block(nist_exp128_3)
-        print("Got block out:")
-        print_block(enc_result128_3)
-        print("")
-
+        tc_errors += check_block(nist_exp128_3, enc_result128_3)
+        tc += 1
 
         print("Test 0 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_plaintext0)
-        print("Expected block out:")
-        print_block(nist_exp256_0)
-        print("Got block out:")
-        print_block(enc_result256_0)
-        print("")
+        tc_errors += check_block(nist_exp256_0, enc_result256_0)
+        tc += 1
 
         print("Test 1 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_plaintext1)
-        print("Expected block out:")
-        print_block(nist_exp256_1)
-        print("Got block out:")
-        print_block(enc_result256_1)
-        print("")
+        tc_errors += check_block(nist_exp256_1, enc_result256_1)
+        tc += 1
 
         print("Test 2 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_plaintext2)
-        print("Expected block out:")
-        print_block(nist_exp256_2)
-        print("Got block out:")
-        print_block(enc_result256_2)
-        print("")
+        tc_errors += check_block(nist_exp256_2, enc_result256_2)
+        tc += 1
 
         print("Test 3 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_plaintext3)
-        print("Expected block out:")
-        print_block(nist_exp256_3)
-        print("Got block out:")
-        print_block(enc_result256_3)
-        print("")
+        tc_errors += check_block(nist_exp256_3, enc_result256_3)
+        tc += 1
+
 
         print("")
         print("   AES Decipher tests")
@@ -963,88 +945,70 @@ def test_aes():
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_exp128_0)
-        print("Expected block out:")
-        print_block(nist_plaintext0)
-        print("Got block out:")
-        print_block(dec_result128_0)
-        print("")
+        tc_errors += check_block(nist_plaintext0, dec_result128_0)
+        tc += 1
 
         print("Test 1 for AES-128.")
         print("Key:")
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_exp128_1)
-        print("Expected block out:")
-        print_block(nist_plaintext1)
-        print("Got block out:")
-        print_block(dec_result128_1)
-        print("")
+        tc_errors += check_block(nist_plaintext1, dec_result128_1)
+        tc += 1
 
         print("Test 2 for AES-128.")
         print("Key:")
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_exp128_2)
-        print("Expected block out:")
-        print_block(nist_plaintext2)
-        print("Got block out:")
-        print_block(dec_result128_2)
-        print("")
+        tc_errors += check_block(nist_plaintext2, dec_result128_2)
+        tc += 1
 
         print("Test 3 for AES-128.")
         print("Key:")
         print_key(nist_aes128_key)
         print("Block in:")
         print_block(nist_exp128_3)
-        print("Expected block out:")
-        print_block(nist_plaintext3)
-        print("Got block out:")
-        print_block(dec_result128_3)
-        print("")
+        tc_errors += check_block(nist_plaintext3, dec_result128_3)
+        tc += 1
 
         print("Test 0 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_exp256_0)
-        print("Expected block out:")
-        print_block(nist_plaintext0)
-        print("Got block out:")
-        print_block(dec_result256_0)
-        print("")
+        tc_errors += check_block(nist_plaintext0, dec_result256_0)
+        tc += 1
 
         print("Test 1 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_exp256_1)
-        print("Expected block out:")
-        print_block(nist_plaintext1)
-        print("Got block out:")
-        print_block(dec_result256_1)
-        print("")
+        tc_errors += check_block(nist_plaintext1, dec_result256_1)
+        tc += 1
 
         print("Test 2 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_exp256_2)
-        print("Expected block out:")
-        print_block(nist_plaintext2)
-        print("Got block out:")
-        print_block(dec_result256_2)
-        print("")
+        tc_errors += check_block(nist_plaintext2, dec_result256_2)
+        tc += 1
 
         print("Test 3 for AES-256.")
         print("Key:")
         print_key(nist_aes256_key)
         print("Block in:")
         print_block(nist_exp256_3)
-        print("Expected block out:")
-        print_block(nist_plaintext3)
-        print("Got block out:")
-        print_block(dec_result256_3)
-        print("")
+        tc_errors += check_block(nist_plaintext3, dec_result256_3)
+        tc += 1
+
+        print("Number of test cases executed: %d" % tc)
+        if (tc_errors == 0):
+            print("All test cases OK.")
+        else:
+            print("Number of failing test cases: %d" % tc_errors)
 
 
 #-------------------------------------------------------------------
