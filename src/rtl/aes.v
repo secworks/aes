@@ -249,27 +249,20 @@ module aes(
 
           else
             begin
-              if ((address >= ADDR_KEY0) && (address <= ADDR_KEY7))
-                tmp_read_data = key_reg[address[2 : 0]];
-
-              if ((address >= ADDR_BLOCK0) && (address <= ADDR_BLOCK3))
-                tmp_read_data = block_reg[address[1 : 0]];
-
               case (address)
                 ADDR_NAME0:   tmp_read_data = CORE_NAME0;
                 ADDR_NAME1:   tmp_read_data = CORE_NAME1;
                 ADDR_VERSION: tmp_read_data = CORE_VERSION;
                 ADDR_CTRL:    tmp_read_data = {28'h0, keylen_reg, encdec_reg, next_reg, init_reg};
                 ADDR_STATUS:  tmp_read_data = {30'h0, valid_reg, ready_reg};
-                ADDR_RESULT0: tmp_read_data = result_reg[127 : 96];
-                ADDR_RESULT1: tmp_read_data = result_reg[95 : 64];
-                ADDR_RESULT2: tmp_read_data = result_reg[63 : 32];
-                ADDR_RESULT3: tmp_read_data = result_reg[31 : 0];
 
                 default:
                   begin
                   end
               endcase // case (address)
+
+              if ((address >= ADDR_RESULT0) && (address <= ADDR_RESULT3))
+                tmp_read_data = result_reg[(3 - (address - ADDR_RESULT0)) * 32 +: 32];
             end
         end
     end // addr_decoder
