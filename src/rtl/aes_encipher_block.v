@@ -228,44 +228,28 @@ module aes_encipher_block(
       else
         begin
           if (block_w0_we)
-            begin
-              block_w0_reg <= block_new[127 : 096];
-            end
+            block_w0_reg <= block_new[127 : 096];
 
           if (block_w1_we)
-            begin
-              block_w1_reg <= block_new[095 : 064];
-            end
+            block_w1_reg <= block_new[095 : 064];
 
           if (block_w2_we)
-            begin
-              block_w2_reg <= block_new[063 : 032];
-            end
+            block_w2_reg <= block_new[063 : 032];
 
           if (block_w3_we)
-            begin
-              block_w3_reg <= block_new[031 : 000];
-            end
+            block_w3_reg <= block_new[031 : 000];
 
           if (sword_ctr_we)
-            begin
-              sword_ctr_reg <= sword_ctr_new;
-            end
+            sword_ctr_reg <= sword_ctr_new;
 
           if (round_ctr_we)
-            begin
-              round_ctr_reg <= round_ctr_new;
-            end
+            round_ctr_reg <= round_ctr_new;
 
           if (ready_we)
-            begin
-              ready_reg <= ready_new;
-            end
+            ready_reg <= ready_new;
 
           if (enc_ctrl_we)
-            begin
-              enc_ctrl_reg <= enc_ctrl_new;
-            end
+            enc_ctrl_reg <= enc_ctrl_new;
         end
     end // reg_update
 
