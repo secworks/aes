@@ -238,8 +238,8 @@ module aes_core(
   //----------------------------------------------------------------
   always @*
     begin : encdec_mux
-      enc_next = 0;
-      dec_next = 0;
+      enc_next = 1'b0;
+      dec_next = 1'b0;
 
       if (encdec)
         begin
@@ -269,64 +269,64 @@ module aes_core(
   //----------------------------------------------------------------
   always @*
     begin : aes_core_ctrl
-      init_state        = 0;
-      ready_new         = 0;
-      ready_we          = 0;
-      result_valid_new  = 0;
-      result_valid_we   = 0;
+      init_state        = 1'b0;
+      ready_new         = 1'b0;
+      ready_we          = 1'b0;
+      result_valid_new  = 1'b0;
+      result_valid_we   = 1'b0;
       aes_core_ctrl_new = CTRL_IDLE;
-      aes_core_ctrl_we  = 0;
+      aes_core_ctrl_we  = 1'b0;
 
       case (aes_core_ctrl_reg)
         CTRL_IDLE:
           begin
             if (init)
               begin
-                init_state        = 1;
-                ready_new         = 0;
-                ready_we          = 1;
-                result_valid_new  = 0;
-                result_valid_we   = 1;
+                init_state        = 1'b1;
+                ready_new         = 1'b0;
+                ready_we          = 1'b1;
+                result_valid_new  = 1'b0;
+                result_valid_we   = 1'b1;
                 aes_core_ctrl_new = CTRL_INIT;
-                aes_core_ctrl_we  = 1;
+                aes_core_ctrl_we  = 1'b1;
               end
             else if (next)
               begin
-                init_state        = 0;
-                ready_new         = 0;
-                ready_we          = 1;
-                result_valid_new  = 0;
-                result_valid_we   = 1;
+                init_state        = 1'b0;
+                ready_new         = 1'b0;
+                ready_we          = 1'b1;
+                result_valid_new  = 1'b0;
+                result_valid_we   = 1'b1;
                 aes_core_ctrl_new = CTRL_NEXT;
-                aes_core_ctrl_we  = 1;
+                aes_core_ctrl_we  = 1'b1;
               end
           end
 
         CTRL_INIT:
           begin
-            init_state = 1;
+            init_state = 1'b1;
 
             if (key_ready)
               begin
-                ready_new         = 1;
-                ready_we          = 1;
+                ready_new         = 1'b1;
+                ready_we          = 1'b1;
                 aes_core_ctrl_new = CTRL_IDLE;
-                aes_core_ctrl_we  = 1;
+                aes_core_ctrl_we  = 1'b1;
               end
           end
 
         CTRL_NEXT:
           begin
-            init_state = 0;
+            init_state = 1'b0;
 
             if (muxed_ready)
               begin
-                ready_new         = 1;
-                ready_we          = 1;
-                result_valid_new  = 1;
-                result_valid_we   = 1;
+                ready_new         = 1'b1;
+                ready_we          = 1'b1;
+                result_valid_new  = 1'b1;
+                result_valid_we   = 1'b1;
                 aes_core_ctrl_new = CTRL_IDLE;
-                aes_core_ctrl_we  = 1;
+                aes_core_ctrl_we  = 1'b1;
              end
           end
 

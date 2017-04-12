@@ -181,14 +181,14 @@ module aes(
           for (i = 0 ; i < 8 ; i = i + 1)
             key_reg[i] <= 32'h0;
 
-          init_reg   <= 0;
-          next_reg   <= 0;
-          encdec_reg <= 0;
-          keylen_reg <= 0;
+          init_reg   <= 1'b0;
+          next_reg   <= 1'b0;
+          encdec_reg <= 1'b0;
+          keylen_reg <= 1'b0;
 
           result_reg <= 128'h0;
-          valid_reg  <= 0;
-          ready_reg  <= 0;
+          valid_reg  <= 1'b0;
+          ready_reg  <= 1'b0;
         end
       else
         begin
@@ -220,11 +220,11 @@ module aes(
   //----------------------------------------------------------------
   always @*
     begin : api
-      init_new      = 0;
-      next_new      = 0;
-      config_we     = 0;
-      key_we        = 0;
-      block_we      = 0;
+      init_new      = 1'b0;
+      next_new      = 1'b0;
+      config_we     = 1'b0;
+      key_we        = 1'b0;
+      block_we      = 1'b0;
       tmp_read_data = 32'h0;
 
       if (cs)
@@ -238,13 +238,13 @@ module aes(
                 end
 
               if (address == ADDR_CONFIG)
-                config_we = 1;
+                config_we = 1'b1;
 
               if ((address >= ADDR_KEY0) && (address <= ADDR_KEY7))
-                key_we = 1;
+                key_we = 1'b1;
 
               if ((address >= ADDR_BLOCK0) && (address <= ADDR_BLOCK3))
-                block_we = 1;
+                block_we = 1'b1;
             end // if (we)
 
           else

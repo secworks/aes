@@ -153,7 +153,7 @@ module aes_key_mem(
           prev_key0_reg    <= 128'h0;
           prev_key1_reg    <= 128'h0;
           rcon_reg         <= 8'h0;
-          ready_reg        <= 0;
+          ready_reg        <= 1'b0;
           round_ctr_reg    <= 4'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
         end
@@ -221,19 +221,19 @@ module aes_key_mem(
 
       // Default assignments.
       key_mem_new   = 128'h0;
-      key_mem_we    = 0;
+      key_mem_we    = 1'b0;
       prev_key0_new = 128'h0;
-      prev_key0_we  = 0;
+      prev_key0_we  = 1'b0;
       prev_key1_new = 128'h0;
-      prev_key1_we  = 0;
+      prev_key1_we  = 1'b0;
 
       k0 = 32'h0;
       k1 = 32'h0;
       k2 = 32'h0;
       k3 = 32'h0;
 
-      rcon_set   = 1;
-      rcon_next  = 0;
+      rcon_set   = 1'b1;
+      rcon_next  = 1'b0;
 
       // Extract words and calculate intermediate values.
       // Perform rotation of sbox word etc.
@@ -256,8 +256,8 @@ module aes_key_mem(
       // Generate the specific round keys.
       if (round_key_update)
         begin
-          rcon_set   = 0;
-          key_mem_we = 1;
+          rcon_set   = 1'b0;
+          key_mem_we = 1'b1;
           case (keylen)
             AES_128_BIT_KEY:
               begin
@@ -265,8 +265,8 @@ module aes_key_mem(
                   begin
                     key_mem_new   = key[255 : 128];
                     prev_key1_new = key[255 : 128];
-                    prev_key1_we  = 1;
-                    rcon_next     = 1;
+                    prev_key1_we  = 1'b1;
+                    rcon_next     = 1'b1;
                   end
                 else
                   begin
@@ -277,8 +277,8 @@ module aes_key_mem(
 
                     key_mem_new   = {k0, k1, k2, k3};
                     prev_key1_new = {k0, k1, k2, k3};
-                    prev_key1_we  = 1;
-                    rcon_next     = 1;
+                    prev_key1_we  = 1'b1;
+                    rcon_next     = 1'b1;
                   end
               end
 
@@ -288,14 +288,14 @@ module aes_key_mem(
                   begin
                     key_mem_new   = key[255 : 128];
                     prev_key0_new = key[255 : 128];
-                    prev_key0_we  = 1;
+                    prev_key0_we  = 1'b1;
                   end
                 else if (round_ctr_reg == 1)
                   begin
                     key_mem_new   = key[127 : 0];
                     prev_key1_new = key[127 : 0];
-                    prev_key1_we  = 1;
-                    rcon_next     = 1;
+                    prev_key1_we  = 1'b1;
+                    rcon_next     = 1'b1;
                   end
                 else
                   begin
@@ -312,15 +312,15 @@ module aes_key_mem(
                         k1 = w1 ^ w0 ^ tw;
                         k2 = w2 ^ w1 ^ w0 ^ tw;
                         k3 = w3 ^ w2 ^ w1 ^ w0 ^ tw;
-                        rcon_next = 1;
+                        rcon_next = 1'b1;
                       end
 
                     // Store the generated round keys.
                     key_mem_new   = {k0, k1, k2, k3};
                     prev_key1_new = {k0, k1, k2, k3};
-                    prev_key1_we  = 1;
+                    prev_key1_we  = 1'b1;
                     prev_key0_new = prev_key1_reg;
-                    prev_key0_we  = 1;
+                    prev_key0_we  = 1'b1;
                   end
               end
 
@@ -342,20 +342,20 @@ module aes_key_mem(
     begin : rcon_logic
       reg [7 : 0] tmp_rcon;
       rcon_new = 8'h00;
-      rcon_we  = 0;
+      rcon_we  = 1'b0;
 
       tmp_rcon = {rcon_reg[6 : 0], 1'b0} ^ (8'h1b & {8{rcon_reg[7]}});
 
       if (rcon_set)
         begin
           rcon_new = 8'h8d;
-          rcon_we  = 1;
+          rcon_we  = 1'b1;
         end
 
       if (rcon_next)
         begin
-          rcon_new  = tmp_rcon[7 : 0];
-          rcon_we  = 1;
+          rcon_new = tmp_rcon[7 : 0];
+          rcon_we  = 1'b1;
         end
     end
 
@@ -368,18 +368,18 @@ module aes_key_mem(
   always @*
     begin : round_ctr
       round_ctr_new = 4'h0;
-      round_ctr_we  = 0;
+      round_ctr_we  = 1'b0;
 
       if (round_ctr_rst)
         begin
           round_ctr_new = 4'h0;
-          round_ctr_we  = 1;
+          round_ctr_we  = 1'b1;
         end
 
       else if (round_ctr_inc)
         begin
           round_ctr_new = round_ctr_reg + 1'b1;
-          round_ctr_we  = 1;
+          round_ctr_we  = 1'b1;
         end
     end
 
@@ -420,50 +420,50 @@ module aes_key_mem(
   always @*
     begin: key_mem_ctrl
       // Default assignments.
-      ready_new        = 0;
-      ready_we         = 0;
-      round_key_update = 0;
-      round_ctr_rst    = 0;
-      round_ctr_inc    = 0;
+      ready_new        = 1'b0;
+      ready_we         = 1'b0;
+      round_key_update = 1'b0;
+      round_ctr_rst    = 1'b0;
+      round_ctr_inc    = 1'b0;
       key_mem_ctrl_new = CTRL_IDLE;
-      key_mem_ctrl_we  = 0;
+      key_mem_ctrl_we  = 1'b0;
 
       case(key_mem_ctrl_reg)
         CTRL_IDLE:
           begin
             if (init)
               begin
-                ready_new        = 0;
-                ready_we         = 1;
+                ready_new        = 1'b0;
+                ready_we         = 1'b1;
                 key_mem_ctrl_new = CTRL_INIT;
-                key_mem_ctrl_we  = 1;
+                key_mem_ctrl_we  = 1'b1;
               end
           end
 
         CTRL_INIT:
           begin
-            round_ctr_rst    = 1;
+            round_ctr_rst    = 1'b1;
             key_mem_ctrl_new = CTRL_GENERATE;
-            key_mem_ctrl_we  = 1;
+            key_mem_ctrl_we  = 1'b1;
           end
 
         CTRL_GENERATE:
           begin
-            round_ctr_inc    = 1;
-            round_key_update = 1;
+            round_ctr_inc    = 1'b1;
+            round_key_update = 1'b1;
             if (round_ctr_reg == num_rounds)
               begin
                 key_mem_ctrl_new = CTRL_DONE;
-                key_mem_ctrl_we  = 1;
+                key_mem_ctrl_we  = 1'b1;
               end
           end
 
         CTRL_DONE:
           begin
-            ready_new        = 1;
-            ready_we         = 1;
+            ready_new        = 1'b1;
+            ready_we         = 1'b1;
             key_mem_ctrl_new = CTRL_IDLE;
-            key_mem_ctrl_we  = 1;
+            key_mem_ctrl_we  = 1'b1;
           end
 
         default:

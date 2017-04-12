@@ -261,7 +261,7 @@ module aes_decipher_block(
           block_w3_reg  <= 32'h0;
           sword_ctr_reg <= 2'h0;
           round_ctr_reg <= 4'h0;
-          ready_reg     <= 1;
+          ready_reg     <= 1'b1;
           dec_ctrl_reg  <= CTRL_IDLE;
         end
       else
@@ -308,10 +308,10 @@ module aes_decipher_block(
       addkey_block         = 128'h0;
       block_new            = 128'h0;
       tmp_sboxw            = 32'h0;
-      block_w0_we          = 0;
-      block_w1_we          = 0;
-      block_w2_we          = 0;
-      block_w3_we          = 0;
+      block_w0_we          = 1'b0;
+      block_w1_we          = 1'b0;
+      block_w2_we          = 1'b0;
+      block_w3_we          = 1'b0;
 
       old_block            = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
 
@@ -324,10 +324,10 @@ module aes_decipher_block(
             addkey_block        = addroundkey(old_block, round_key);
             inv_shiftrows_block = inv_shiftrows(addkey_block);
             block_new           = inv_shiftrows_block;
-            block_w0_we         = 1;
-            block_w1_we         = 1;
-            block_w2_we         = 1;
-            block_w3_we         = 1;
+            block_w0_we         = 1'b1;
+            block_w1_we         = 1'b1;
+            block_w2_we         = 1'b1;
+            block_w3_we         = 1'b1;
           end
 
         SBOX_UPDATE:
@@ -338,25 +338,25 @@ module aes_decipher_block(
               2'h0:
                 begin
                   tmp_sboxw   = block_w0_reg;
-                  block_w0_we = 1;
+                  block_w0_we = 1'b1;
                 end
 
               2'h1:
                 begin
                   tmp_sboxw   = block_w1_reg;
-                  block_w1_we = 1;
+                  block_w1_we = 1'b1;
                 end
 
               2'h2:
                 begin
                   tmp_sboxw   = block_w2_reg;
-                  block_w2_we = 1;
+                  block_w2_we = 1'b1;
                 end
 
               2'h3:
                 begin
                   tmp_sboxw   = block_w3_reg;
-                  block_w3_we = 1;
+                  block_w3_we = 1'b1;
                 end
             endcase // case (sbox_mux_ctrl_reg)
           end
@@ -367,19 +367,19 @@ module aes_decipher_block(
             inv_mixcolumns_block = inv_mixcolumns(addkey_block);
             inv_shiftrows_block  = inv_shiftrows(inv_mixcolumns_block);
             block_new            = inv_shiftrows_block;
-            block_w0_we          = 1;
-            block_w1_we          = 1;
-            block_w2_we          = 1;
-            block_w3_we          = 1;
+            block_w0_we          = 1'b1;
+            block_w1_we          = 1'b1;
+            block_w2_we          = 1'b1;
+            block_w3_we          = 1'b1;
           end
 
         FINAL_UPDATE:
           begin
             block_new    = addroundkey(old_block, round_key);
-            block_w0_we  = 1;
-            block_w1_we  = 1;
-            block_w2_we  = 1;
-            block_w3_we  = 1;
+            block_w0_we  = 1'b1;
+            block_w1_we  = 1'b1;
+            block_w2_we  = 1'b1;
+            block_w3_we  = 1'b1;
           end
 
         default:
@@ -449,65 +449,65 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   always @*
     begin: decipher_ctrl
-      sword_ctr_inc = 0;
-      sword_ctr_rst = 0;
-      round_ctr_dec = 0;
-      round_ctr_set = 0;
-      ready_new     = 0;
-      ready_we      = 0;
+      sword_ctr_inc = 1'b0;
+      sword_ctr_rst = 1'b0;
+      round_ctr_dec = 1'b0;
+      round_ctr_set = 1'b0;
+      ready_new     = 1'b0;
+      ready_we      = 1'b0;
       update_type   = NO_UPDATE;
       dec_ctrl_new  = CTRL_IDLE;
-      dec_ctrl_we   = 0;
+      dec_ctrl_we   = 1'b0;
 
       case(dec_ctrl_reg)
         CTRL_IDLE:
           begin
             if (next)
               begin
-                round_ctr_set = 1;
-                ready_new     = 0;
-                ready_we      = 1;
+                round_ctr_set = 1'b1;
+                ready_new     = 1'b0;
+                ready_we      = 1'b1;
                 dec_ctrl_new  = CTRL_INIT;
-                dec_ctrl_we   = 1;
+                dec_ctrl_we   = 1'b1;
               end
           end
 
         CTRL_INIT:
           begin
-            sword_ctr_rst = 1;
+            sword_ctr_rst = 1'b1;
             update_type   = INIT_UPDATE;
             dec_ctrl_new  = CTRL_SBOX;
-            dec_ctrl_we   = 1;
+            dec_ctrl_we   = 1'b1;
           end
 
         CTRL_SBOX:
           begin
-            sword_ctr_inc = 1;
+            sword_ctr_inc = 1'b1;
             update_type   = SBOX_UPDATE;
             if (sword_ctr_reg == 2'h3)
               begin
-                round_ctr_dec = 1;
+                round_ctr_dec = 1'b1;
                 dec_ctrl_new  = CTRL_MAIN;
-                dec_ctrl_we   = 1;
+                dec_ctrl_we   = 1'b1;
               end
           end
 
         CTRL_MAIN:
           begin
-            sword_ctr_rst = 1;
+            sword_ctr_rst = 1'b1;
             if (round_ctr_reg > 0)
               begin
                 update_type   = MAIN_UPDATE;
                 dec_ctrl_new  = CTRL_SBOX;
-                dec_ctrl_we   = 1;
+                dec_ctrl_we   = 1'b1;
               end
             else
               begin
                 update_type  = FINAL_UPDATE;
-                ready_new    = 1;
-                ready_we     = 1;
+                ready_new    = 1'b1;
+                ready_we     = 1'b1;
                 dec_ctrl_new = CTRL_IDLE;
-                dec_ctrl_we  = 1;
+                dec_ctrl_we  = 1'b1;
               end
           end
 
