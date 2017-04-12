@@ -194,19 +194,13 @@ module aes_core(
       else
         begin
           if (result_valid_we)
-            begin
-              result_valid_reg <= result_valid_new;
-            end
+            result_valid_reg <= result_valid_new;
 
           if (ready_we)
-            begin
-              ready_reg <= ready_new;
-            end
+            ready_reg <= ready_new;
 
           if (aes_core_ctrl_we)
-            begin
-              aes_core_ctrl_reg <= aes_core_ctrl_new;
-            end
+            aes_core_ctrl_reg <= aes_core_ctrl_new;
         end
     end // reg_update
 

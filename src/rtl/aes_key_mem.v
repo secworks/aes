@@ -160,39 +160,25 @@ module aes_key_mem(
       else
         begin
           if (round_ctr_we)
-            begin
-              round_ctr_reg <= round_ctr_new;
-            end
+            round_ctr_reg <= round_ctr_new;
 
           if (ready_we)
-            begin
-              ready_reg <= ready_new;
-            end
+            ready_reg <= ready_new;
 
           if (rcon_we)
-            begin
-              rcon_reg <= rcon_new;
-            end
+            rcon_reg <= rcon_new;
 
           if (key_mem_we)
-            begin
-              key_mem[round_ctr_reg] <= key_mem_new;
-            end
+            key_mem[round_ctr_reg] <= key_mem_new;
 
           if (prev_key0_we)
-            begin
-              prev_key0_reg <= prev_key0_new;
-            end
+            prev_key0_reg <= prev_key0_new;
 
           if (prev_key1_we)
-            begin
-              prev_key1_reg <= prev_key1_new;
-            end
+            prev_key1_reg <= prev_key1_new;
 
           if (key_mem_ctrl_we)
-            begin
-              key_mem_ctrl_reg <= key_mem_ctrl_new;
-            end
+            key_mem_ctrl_reg <= key_mem_ctrl_new;
         end
     end // reg_update
 
