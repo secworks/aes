@@ -133,25 +133,13 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @ (posedge clk or negedge reset_n)
     begin: reg_update
+      integer i;
+
       if (!reset_n)
         begin
-          key_mem [0]      <= 128'h0;
-          key_mem [1]      <= 128'h0;
-          key_mem [2]      <= 128'h0;
-          key_mem [3]      <= 128'h0;
-          key_mem [4]      <= 128'h0;
-          key_mem [5]      <= 128'h0;
-          key_mem [6]      <= 128'h0;
-          key_mem [7]      <= 128'h0;
-          key_mem [8]      <= 128'h0;
-          key_mem [9]      <= 128'h0;
-          key_mem [10]     <= 128'h0;
-          key_mem [11]     <= 128'h0;
-          key_mem [12]     <= 128'h0;
-          key_mem [13]     <= 128'h0;
-          key_mem [14]     <= 128'h0;
-          prev_key0_reg    <= 128'h0;
-          prev_key1_reg    <= 128'h0;
+          for (i = 0 ; i < 4 ; i = i + 1)
+            key_mem [i] <= 128'h0;
+
           rcon_reg         <= 8'h0;
           ready_reg        <= 1'b0;
           round_ctr_reg    <= 4'h0;
