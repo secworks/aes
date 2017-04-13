@@ -42,13 +42,22 @@ module aes_inv_sbox(
 
 
   //----------------------------------------------------------------
-  // Wires.
+  // The inverse sbox array.
   //----------------------------------------------------------------
   wire [7 : 0] inv_sbox [0 : 255];
 
 
   //----------------------------------------------------------------
-  // Concurrent assignments for ports.
+  // Four parallel muxes.
+  //----------------------------------------------------------------
+  assign new_sword[31 : 24] = inv_sbox[sword[31 : 24]];
+  assign new_sword[23 : 16] = inv_sbox[sword[23 : 16]];
+  assign new_sword[15 : 08] = inv_sbox[sword[15 : 08]];
+  assign new_sword[07 : 00] = inv_sbox[sword[07 : 00]];
+
+
+  //----------------------------------------------------------------
+  // Creating the contents of the array.
   //----------------------------------------------------------------
   assign inv_sbox[8'h00] = 8'h52;
   assign inv_sbox[8'h01] = 8'h09;
@@ -306,11 +315,6 @@ module aes_inv_sbox(
   assign inv_sbox[8'hfd] = 8'h21;
   assign inv_sbox[8'hfe] = 8'h0c;
   assign inv_sbox[8'hff] = 8'h7d;
-
-  assign new_sword[31 : 24] = inv_sbox[sword[31 : 24]];
-  assign new_sword[23 : 16] = inv_sbox[sword[23 : 16]];
-  assign new_sword[15 : 08] = inv_sbox[sword[15 : 08]];
-  assign new_sword[07 : 00] = inv_sbox[sword[07 : 00]];
 
 endmodule // aes_inv_sbox
 

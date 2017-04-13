@@ -44,13 +44,22 @@ module aes_sbox(
 
 
   //----------------------------------------------------------------
-  // Wires.
+  // The sbox array.
   //----------------------------------------------------------------
   wire [7 : 0] sbox [0 : 255];
 
 
   //----------------------------------------------------------------
-  // Concurrent assignments for ports.
+  // Four parallel muxes.
+  //----------------------------------------------------------------
+  assign new_sboxw[31 : 24] = sbox[sboxw[31 : 24]];
+  assign new_sboxw[23 : 16] = sbox[sboxw[23 : 16]];
+  assign new_sboxw[15 : 08] = sbox[sboxw[15 : 08]];
+  assign new_sboxw[07 : 00] = sbox[sboxw[07 : 00]];
+
+
+  //----------------------------------------------------------------
+  // Creating the sbox array contents.
   //----------------------------------------------------------------
   assign sbox[8'h00] = 8'h63;
   assign sbox[8'h01] = 8'h7c;
@@ -308,12 +317,6 @@ module aes_sbox(
   assign sbox[8'hfd] = 8'h54;
   assign sbox[8'hfe] = 8'hbb;
   assign sbox[8'hff] = 8'h16;
-
-
-  assign new_sboxw[31 : 24] = sbox[sboxw[31 : 24]];
-  assign new_sboxw[23 : 16] = sbox[sboxw[23 : 16]];
-  assign new_sboxw[15 : 08] = sbox[sboxw[15 : 08]];
-  assign new_sboxw[07 : 00] = sbox[sboxw[07 : 00]];
 
 endmodule // aes_sbox
 
