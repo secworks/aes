@@ -30,6 +30,13 @@ of cycles to two cycles for each round.
 ## Implementation results ##
 The core has been implemented in Altera and Xilinx FPGA devices.
 
+### Altera Cyclone V GX ###
+- 2624 ALMs
+- 3123 Regs
+- 96 MHz
+- 46 cycles/block
+
+
 ### Altera Cyclone IV GX ###
 - 7426 LEs
 - 2994 Regs
@@ -61,6 +68,14 @@ Removing the decipher module yields:
 
 
 ## Status ##
+***(2017-04-13)***
+
+Some code cleanup to make it more readable and remove warnings from some
+parsers. No functional changes.
+
+Added implementation results for Altera Cyclone V GX.
+
+
 ***(2016-11-20)***
 
 __HEADSUP__
