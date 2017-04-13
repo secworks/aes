@@ -233,7 +233,7 @@ module aes_decipher_block(
   //----------------------------------------------------------------
   // Instantiations.
   //----------------------------------------------------------------
-  aes_inv_sbox inv_sbox(.sword(tmp_sboxw), .new_sword(new_sboxw));
+  aes_inv_sbox inv_sbox_inst(.sword(tmp_sboxw), .new_sword(new_sboxw));
 
 
   //----------------------------------------------------------------
