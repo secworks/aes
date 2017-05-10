@@ -27,7 +27,22 @@ increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
 
-## Implementation results ##
+## Implementation results - ASIC ##
+
+The core has been implemented in standard cell ASIC processes.
+
+### TSMC 180 nm ###
+Target frequency: 20 MHz
+Complete flow from RTL to placed gates. Automatic clock gating and scan
+insertion.
+
+- 8 kCells
+- Aera: 520 x 520 um
+- Good timing margin with no big cells and buffers.
+
+
+## Implementation results - FPGA ##
+
 The core has been implemented in Altera and Xilinx FPGA devices.
 
 ### Altera Cyclone V GX ###
@@ -68,6 +83,14 @@ Removing the decipher module yields:
 
 
 ## Status ##
+***(2017-05-10)***
+
+Updated with results from ASIC implementation in TSMC 180 nm process.
+
+Removed timescale directives from testbenches which are not needed and
+just makes simulation with other cores harder.
+
+
 ***(2017-04-13)***
 
 Some code cleanup to make it more readable and remove warnings from some
