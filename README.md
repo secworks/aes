@@ -1,5 +1,5 @@
 aes
-======
+===
 
 Verilog implementation of the symmetric block cipher AES (Advanced
 Encryption Standard) as specified in the NIST document [FIPS 197](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf).
