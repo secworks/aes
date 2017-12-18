@@ -26,6 +26,9 @@ achived by just having a single S-box. Similarly the performane can be
 increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
+## Status ##
+The core is completed, has been used in FPGAs and in ASIC.
+
 
 ## Implementation results - ASIC ##
 
@@ -82,7 +85,7 @@ Removing the decipher module yields:
 - 46 cycles/block
 
 
-## Status ##
+## Development Log ##
 ***(2017-05-10)***
 
 Updated with results from ASIC implementation in TSMC 180 nm process.
