@@ -77,8 +77,6 @@ module aes(
   localparam ADDR_BLOCK3      = 8'h23;
 
   localparam ADDR_RESULT0     = 8'h30;
-  localparam ADDR_RESULT1     = 8'h31;
-  localparam ADDR_RESULT2     = 8'h32;
   localparam ADDR_RESULT3     = 8'h33;
 
   localparam CORE_NAME0       = 32'h61657320; // "aes "
