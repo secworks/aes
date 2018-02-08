@@ -51,7 +51,9 @@ TB_ENCIPHER_SRC =../src/tb/tb_aes_encipher_block.v
 TB_DECIPHER_SRC =../src/tb/tb_aes_decipher_block.v
 
 CC=iverilog
+
 LINT=verilator
+LINTFLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 
 
 all: top.sim core.sim keymem.sim encipher.sim decipher.sim
@@ -96,8 +98,8 @@ sim-top: top.sim
 	./top.sim
 
 
-lint:
-	verilator +1364-2001ext+ --lint-only -Wall $(TOP_SRC)
+lint:  $(TOP_SRC)
+	$(LINT) $(LINTFLAGS) $(TOP_SRC)
 
 
 clean:
