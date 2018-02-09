@@ -50,32 +50,33 @@ TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
 TB_ENCIPHER_SRC =../src/tb/tb_aes_encipher_block.v
 TB_DECIPHER_SRC =../src/tb/tb_aes_decipher_block.v
 
-CC=iverilog
+CC = iverilog
+CC_FLAGS = -Wall
 
-LINT=verilator
-LINTFLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
+LINT = verilator
+LINT_FLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 
 
 all: top.sim core.sim keymem.sim encipher.sim decipher.sim
 
 top.sim: $(TB_TOP_SRC) $(TOP_SRC)
-	$(CC) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
+	$(CC) $(CC_FLAGS) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
 
 
 core.sim: $(TB_CORE_SRC) $(CORE_SRC)
-	$(CC) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
+	$(CC) $(CC_FLAGS) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
 
 
 keymem.sim:  $(TB_KEYMEM_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
-	$(CC) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
 
 
 encipher.sim:  $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
-	$(CC) -o encipher.sim $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o encipher.sim $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
 
 
 decipher.sim:  $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
-	$(CC) -o decipher.sim $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o decipher.sim $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
 
 
 sim-keymem: keymem.sim
@@ -99,7 +100,7 @@ sim-top: top.sim
 
 
 lint:  $(TOP_SRC)
-	$(LINT) $(LINTFLAGS) $(TOP_SRC)
+	$(LINT) $(LINT_FLAGS) $(TOP_SRC)
 
 
 clean:
