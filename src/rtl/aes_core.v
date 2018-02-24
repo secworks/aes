@@ -165,7 +165,7 @@ module aes_core(
                     );
 
 
-  aes_sbox sbox_inst(.sboxw(muxed_sboxw), .new_sboxw(new_sboxw));
+  aes_sbox sbox(.sboxw(muxed_sboxw), .new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
