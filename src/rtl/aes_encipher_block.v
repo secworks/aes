@@ -397,17 +397,9 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   always @*
     begin: encipher_ctrl
-      reg [3 : 0]  num_rounds;
+      reg [3 : 0] num_rounds;
 
-      if (keylen == AES_256_BIT_KEY)
-        begin
-          num_rounds = AES256_ROUNDS;
-        end
-      else
-        begin
-          num_rounds = AES128_ROUNDS;
-        end
-
+      // Default assignments.
       sword_ctr_inc = 1'b0;
       sword_ctr_rst = 1'b0;
       round_ctr_inc = 1'b0;
@@ -417,6 +409,15 @@ module aes_encipher_block(
       update_type   = NO_UPDATE;
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 1'b0;
+
+      if (keylen == AES_256_BIT_KEY)
+        begin
+          num_rounds = AES256_ROUNDS;
+        end
+      else
+        begin
+          num_rounds = AES128_ROUNDS;
+        end
 
       case(enc_ctrl_reg)
         CTRL_IDLE:

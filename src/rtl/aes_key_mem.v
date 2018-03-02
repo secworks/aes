@@ -111,7 +111,6 @@ module aes_key_mem(
   reg [31 : 0] tmp_sboxw;
 
   reg           round_key_update;
-  reg [3 : 0]   num_rounds;
 
   reg [127 : 0] tmp_round_key;
 
@@ -366,6 +365,8 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin: key_mem_ctrl
+      reg [3 : 0] num_rounds;
+
       // Default assignments.
       ready_new        = 1'b0;
       ready_we         = 1'b0;
