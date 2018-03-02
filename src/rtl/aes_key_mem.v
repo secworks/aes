@@ -108,19 +108,17 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [31 : 0] tmp_sboxw;
-
+  reg [31 : 0]  tmp_sboxw;
   reg           round_key_update;
-
   reg [127 : 0] tmp_round_key;
 
 
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
-  assign round_key  = tmp_round_key;
-  assign ready      = ready_reg;
-  assign sboxw      = tmp_sboxw;
+  assign round_key = tmp_round_key;
+  assign ready     = ready_reg;
+  assign sboxw     = tmp_sboxw;
 
 
   //----------------------------------------------------------------
@@ -136,7 +134,7 @@ module aes_key_mem(
 
       if (!reset_n)
         begin
-          for (i = 0 ; i < AES_256_NUM_ROUNDS ; i = i + 1)
+          for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
             key_mem [i] <= 128'h0;
 
           rcon_reg         <= 8'h0;
