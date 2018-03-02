@@ -359,33 +359,6 @@ module aes_key_mem(
 
 
   //----------------------------------------------------------------
-  // num_rounds_logic
-  //
-  // Logic to select the number of rounds to generate keys for
-  //----------------------------------------------------------------
-  always @*
-    begin : num_rounds_logic
-      num_rounds = 4'h0;
-
-      case (keylen)
-        AES_128_BIT_KEY:
-          begin
-            num_rounds = AES_128_NUM_ROUNDS;
-          end
-
-        AES_256_BIT_KEY:
-          begin
-            num_rounds = AES_256_NUM_ROUNDS;
-          end
-
-        default:
-          begin
-          end
-      endcase // case (keylen)
-    end
-
-
-  //----------------------------------------------------------------
   // key_mem_ctrl
   //
   //
@@ -401,6 +374,11 @@ module aes_key_mem(
       round_ctr_inc    = 1'b0;
       key_mem_ctrl_new = CTRL_IDLE;
       key_mem_ctrl_we  = 1'b0;
+
+      if (keylen == AES_128_BIT_KEY)
+        num_rounds = AES_128_NUM_ROUNDS;
+      else
+        num_rounds = AES_256_NUM_ROUNDS;
 
       case(key_mem_ctrl_reg)
         CTRL_IDLE:
