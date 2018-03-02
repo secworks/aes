@@ -137,7 +137,7 @@ module aes_key_mem(
 
       if (!reset_n)
         begin
-          for (i = 0 ; i < 4 ; i = i + 1)
+          for (i = 0 ; i < AES_256_NUM_ROUNDS ; i = i + 1)
             key_mem [i] <= 128'h0;
 
           rcon_reg         <= 8'h0;
