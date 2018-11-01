@@ -60,8 +60,8 @@ module aes_key_mem(
   localparam AES_128_BIT_KEY = 1'h0;
   localparam AES_256_BIT_KEY = 1'h1;
 
-  localparam AES_128_NUM_ROUNDS = 4'ha;
-  localparam AES_256_NUM_ROUNDS = 4'he;
+  localparam AES_128_NUM_ROUNDS = 10;
+  localparam AES_256_NUM_ROUNDS = 14;
 
   localparam CTRL_IDLE     = 3'h0;
   localparam CTRL_INIT     = 3'h1;
