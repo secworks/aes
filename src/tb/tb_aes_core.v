@@ -293,6 +293,7 @@ module tb_aes_core();
      $display("*** TC %0d ECB mode test started.", tc_number);
      tc_ctr = tc_ctr + 1;
 
+
      // Init the cipher with the given key and length.
      tb_key = key;
      tb_keylen = key_length;
@@ -303,7 +304,6 @@ module tb_aes_core();
 
      $display("Key expansion done");
      $display("");
-
      dump_keys();
 
 
@@ -331,6 +331,108 @@ module tb_aes_core();
        end
    end
   endtask // ecb_mode_single_block_test
+
+
+
+  //----------------------------------------------------------------
+  // ecb_dual_keys_test
+  //
+  // Perform ECB mode encryption with two separate keys with
+  // different length to check that the dual key functionality
+  // works.
+  //----------------------------------------------------------------
+  task ecb_dual_keys_test(input [7 : 0]   tc_number,
+                          input [255 : 0] key_128,
+                          input [255 : 0] key_256,
+                          input [127 : 0] block,
+                          input [127 : 0] expected_128,
+                          input [127 : 0] expected_256);
+   begin
+     $display("*** TC %0d ECB mode dual key test started.", tc_number);
+     tc_ctr = tc_ctr + 1;
+
+
+     // Dump the contents of the key banks, pull reset and then dump again
+     // to show that all key bits are really cleared.
+     dump_keys();
+     reset_dut();
+     dump_keys();
+
+     // Init the cipher with the two different keys with different lengths.
+     tb_key = key_128;
+     tb_keylen = 1'h0;
+     tb_key_bank = 1'h0;
+     tb_init = 1'h1;
+     #(2 * CLK_PERIOD);
+     tb_init = 1'h0;
+     wait_ready();
+
+     tb_key = key_256;
+     tb_keylen = 1'h1;
+     tb_key_bank = 1'h1;
+     tb_init = 1'h1;
+     #(2 * CLK_PERIOD);
+     tb_init = 1'h0;
+     wait_ready();
+
+     $display("Key expansion of two separate keys done.");
+     $display("");
+
+     dump_keys();
+
+
+     // Perform encipher operation on the block with 128 bit key.
+     tb_encdec   = 1'h1;
+     tb_keylen   = 1'h0;
+     tb_block    = block;
+     tb_key_bank = 1'h0;
+     tb_next     = 1'h1;
+     #(2 * CLK_PERIOD);
+     tb_next = 1'h0;
+     wait_ready();
+
+     if (tb_result == expected_128)
+       begin
+         $display("*** TC %0d, for 128 bit key successful.", tc_number);
+         $display("");
+       end
+     else
+       begin
+         $display("*** ERROR: TC %0d for 128 bit key NOT successful.", tc_number);
+         $display("Expected: 0x%032x", expected_128);
+         $display("Got:      0x%032x", tb_result);
+         $display("");
+
+         error_ctr = error_ctr + 1;
+       end
+
+
+     // Perform encipher operation on the block with 128 bit key.
+     tb_encdec   = 1'h1;
+     tb_keylen   = 1'h1;
+     tb_block    = block;
+     tb_key_bank = 1'h1;
+     tb_next     = 1'h1;
+     #(2 * CLK_PERIOD);
+     tb_next = 1'h0;
+     wait_ready();
+
+     if (tb_result == expected_256)
+       begin
+         $display("*** TC %0d, for 256 bit key successful.", tc_number);
+         $display("");
+       end
+     else
+       begin
+         $display("*** ERROR: TC %0d for 256 bit key NOT successful.", tc_number);
+         $display("Expected: 0x%032x", expected_256);
+         $display("Got:      0x%032x", tb_result);
+         $display("");
+
+         error_ctr = error_ctr + 1;
+       end
+   end
+  endtask // ecb_dual_keys_test
 
 
   //----------------------------------------------------------------
@@ -445,6 +547,8 @@ module tb_aes_core();
       ecb_mode_single_block_test(8'h17, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected3, nist_plaintext3);
 
+      ecb_dual_keys_test(8'h18, nist_aes128_key, nist_aes256_key, nist_plaintext0,
+                         nist_ecb_128_enc_expected0, nist_ecb_256_enc_expected0);
 
       display_test_result();
       $display("");
