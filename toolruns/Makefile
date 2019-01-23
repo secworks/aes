@@ -117,7 +117,6 @@ help:
 	@echo "Supported targets:"
 	@echo "------------------"
 	@echo "all:          Build all simulation targets."
-	@echo "lint:         Lint all rtl source files."
 	@echo "top.sim:      Build top level simulation target."
 	@echo "core.sim:     Build core level simulation target."
 	@echo "keymem.sim:   Build key memory simulation target."
@@ -128,6 +127,7 @@ help:
 	@echo "sim-keymem    Run keymem simulation."
 	@echo "sim-encipher  Run encipher block simulation."
 	@echo "sim-decipher  Run decipher block simulation."
+	@echo "lint:         Lint all rtl source files."
 	@echo "clean:        Delete all built files."
 
 #===================================================================
