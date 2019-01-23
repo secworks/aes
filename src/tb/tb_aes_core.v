@@ -547,6 +547,10 @@ module tb_aes_core();
       ecb_mode_single_block_test(8'h17, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected3, nist_plaintext3);
 
+
+      $display("");
+      $display("ECB dual keys tests");
+      $display("-------------------");
       ecb_dual_keys_test(8'h18, nist_aes128_key, nist_aes256_key, nist_plaintext0,
                          nist_ecb_128_enc_expected0, nist_ecb_256_enc_expected0);
 

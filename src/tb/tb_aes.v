@@ -174,7 +174,6 @@ module tb_aes();
       $display("block: 0x%08x, 0x%08x, 0x%08x, 0x%08x",
                dut.block_reg[0], dut.block_reg[1], dut.block_reg[2], dut.block_reg[3]);
       $display("");
-
     end
   endtask // dump_dut_state
 
@@ -329,7 +328,7 @@ module tb_aes();
   // init the key in the dut by writing the given key and
   // key length and then trigger init processing.
   //----------------------------------------------------------------
-  task init_key(input [255 : 0] key, input key_length);
+  task init_key(input [255 : 0] key, input bank, input key_length);
     begin
       if (DEBUG)
         begin
@@ -346,15 +345,7 @@ module tb_aes();
       write_word(ADDR_KEY6, key[63   :  32]);
       write_word(ADDR_KEY7, key[31   :   0]);
 
-      if (key_length)
-        begin
-          write_word(ADDR_CONFIG, 8'h02);
-        end
-      else
-        begin
-          write_word(ADDR_CONFIG, 8'h00);
-        end
-
+      write_word(ADDR_CONFIG, {bank, key_length, 1'h1});
       write_word(ADDR_CTRL, 8'h01);
 
       #(100 * CLK_PERIOD);
@@ -377,7 +368,7 @@ module tb_aes();
       $display("*** TC %0d ECB mode test started.", tc_number);
       tc_ctr = tc_ctr + 1;
 
-      init_key(key, key_length);
+      init_key(key, 1'h0, key_length);
       write_block(block);
       dump_dut_state();
 
@@ -397,6 +388,75 @@ module tb_aes();
         begin
           $display("*** ERROR: TC %0d NOT successful.", tc_number);
           $display("Expected: 0x%032x", expected);
+          $display("Got:      0x%032x", result_data);
+          $display("");
+
+          error_ctr = error_ctr + 1;
+        end
+    end
+  endtask // ecb_mode_single_block_test
+
+
+  //----------------------------------------------------------------
+  // ecb_dual_keys_test()
+  //
+  // Perform ECB mode encryption with two separate keys that
+  // are initialized before being used.
+  //----------------------------------------------------------------
+  task ecb_dual_keys_test(input [7 : 0]   tc_number,
+                          input [255 : 0] key_128,
+                          input [255 : 0] key_256,
+                          input [127 : 0] block,
+                          input [127 : 0] expected_128,
+                          input [127 : 0] expected_256);
+    begin
+      $display("*** TC %0d ECB mode dual keys test started.", tc_number);
+      tc_ctr = tc_ctr + 1;
+
+      // Expand the two given keys into separate banks.
+      // bank 0 should contain the expanded 128 bit key.
+      // bank 1 should contain the expanded 256 bit key.
+      init_key(key_128, 1'h0, 1'h0);
+      init_key(key_256, 1'h1, 1'h1);
+      write_block(block);
+      dump_dut_state();
+
+
+      // Perform encrypt with 128 bit key in bank 0
+      write_word(ADDR_CONFIG, {1'h0, 1'h0, 1'h1});
+      write_word(ADDR_CTRL, 8'h02);
+      #(100 * CLK_PERIOD);
+      read_result();
+      if (result_data == expected_128)
+        begin
+          $display("*** TC %0d 128 bit encrypt dual keys bank 0 successful.", tc_number);
+          $display("");
+        end
+      else
+        begin
+          $display("*** ERROR: TC %0d 128 bit encrypt dual keys bank 0 NOT successful.", tc_number);
+          $display("Expected: 0x%032x", expected_128);
+          $display("Got:      0x%032x", result_data);
+          $display("");
+
+          error_ctr = error_ctr + 1;
+        end
+
+
+      // Perform encrypt with 256 bit key in bank 1
+      write_word(ADDR_CONFIG, {1'h1, 1'h1, 1'h1});
+      write_word(ADDR_CTRL, 8'h02);
+      #(100 * CLK_PERIOD);
+      read_result();
+      if (result_data == expected_256)
+        begin
+          $display("*** TC %0d 256 bit encrypt, dual keys bank 1 successful.", tc_number);
+          $display("");
+        end
+      else
+        begin
+          $display("*** ERROR: TC %0d 256 bit encrypt dual keys bank 1 NOT successful.", tc_number);
+          $display("Expected: 0x%032x", expected_256);
           $display("Got:      0x%032x", result_data);
           $display("");
 
@@ -505,6 +565,12 @@ module tb_aes();
 
       ecb_mode_single_block_test(8'h17, AES_DECIPHER, nist_aes256_key, AES_256_BIT_KEY,
                                  nist_ecb_256_enc_expected3, nist_plaintext3);
+
+      $display("");
+      $display("ECB dual keys tests");
+      $display("-------------------");
+      ecb_dual_keys_test(8'h18, nist_aes128_key, nist_aes256_key, nist_plaintext0,
+                         nist_ecb_128_enc_expected0, nist_ecb_256_enc_expected0);
     end
   endtask // aes_test
 
