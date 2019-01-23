@@ -72,6 +72,7 @@ module tb_aes_core();
   wire           tb_ready;
   reg [255 : 0]  tb_key;
   reg            tb_keylen;
+  reg            tb_key_bank;
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_result;
   wire           tb_result_valid;
@@ -91,6 +92,7 @@ module tb_aes_core();
 
                .key(tb_key),
                .keylen(tb_keylen),
+               .key_bank(tb_key_bank),
 
                .block(tb_block),
                .result(tb_result)
@@ -159,23 +161,16 @@ module tb_aes_core();
   // Dump the keys in the key memory of the dut.
   //----------------------------------------------------------------
   task dump_keys;
-    begin
-      $display("State of key memory in DUT:");
-      $display("key[00] = 0x%016x", dut.keymem.key_mem[00]);
-      $display("key[01] = 0x%016x", dut.keymem.key_mem[01]);
-      $display("key[02] = 0x%016x", dut.keymem.key_mem[02]);
-      $display("key[03] = 0x%016x", dut.keymem.key_mem[03]);
-      $display("key[04] = 0x%016x", dut.keymem.key_mem[04]);
-      $display("key[05] = 0x%016x", dut.keymem.key_mem[05]);
-      $display("key[06] = 0x%016x", dut.keymem.key_mem[06]);
-      $display("key[07] = 0x%016x", dut.keymem.key_mem[07]);
-      $display("key[08] = 0x%016x", dut.keymem.key_mem[08]);
-      $display("key[09] = 0x%016x", dut.keymem.key_mem[09]);
-      $display("key[10] = 0x%016x", dut.keymem.key_mem[10]);
-      $display("key[11] = 0x%016x", dut.keymem.key_mem[11]);
-      $display("key[12] = 0x%016x", dut.keymem.key_mem[12]);
-      $display("key[13] = 0x%016x", dut.keymem.key_mem[13]);
-      $display("key[14] = 0x%016x", dut.keymem.key_mem[14]);
+    begin : dump_keys
+      integer i;
+      $display("State of key memory bank 0 in DUT:");
+      for (i = 0 ; i < 15 ; i = i + 1)
+        $display("key[0x%02d] = 0x%016x", i, dut.keymem.key_mem0[i]);
+      $display("");
+
+      $display("State of key memory bank 1 in DUT:");
+      for (i = 0 ; i < 15 ; i = i + 1)
+        $display("key[0x%02d] = 0x%016x", i, dut.keymem.key_mem1[i]);
       $display("");
     end
   endtask // dump_keys
@@ -208,15 +203,15 @@ module tb_aes_core();
       error_ctr = 0;
       tc_ctr    = 0;
 
-      tb_clk     = 0;
-      tb_reset_n = 1;
-      tb_encdec  = 0;
-      tb_init    = 0;
-      tb_next    = 0;
-      tb_key     = {8{32'h00000000}};
-      tb_keylen  = 0;
-
-      tb_block  = {4{32'h00000000}};
+      tb_clk      = 1'h0;
+      tb_reset_n  = 1'h1;
+      tb_init     = 1'h0;
+      tb_next     = 1'h0;
+      tb_key      = 256'h0;
+      tb_encdec   = 1'h0;
+      tb_keylen   = 1'h0;
+      tb_key_bank = 1'h0;
+      tb_block    = 128'h0;
     end
   endtask // init_sim
 
@@ -399,13 +394,13 @@ module tb_aes_core();
       ecb_mode_single_block_test(8'h01, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                  nist_plaintext0, nist_ecb_128_enc_expected0);
 
-     ecb_mode_single_block_test(8'h02, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
-                                nist_plaintext1, nist_ecb_128_enc_expected1);
+      ecb_mode_single_block_test(8'h02, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
+                                 nist_plaintext1, nist_ecb_128_enc_expected1);
 
-     ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
+      ecb_mode_single_block_test(8'h03, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                 nist_plaintext2, nist_ecb_128_enc_expected2);
 
-     ecb_mode_single_block_test(8'h04, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
+      ecb_mode_single_block_test(8'h04, AES_ENCIPHER, nist_aes128_key, AES_128_BIT_KEY,
                                 nist_plaintext3, nist_ecb_128_enc_expected3);
 
 

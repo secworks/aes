@@ -43,6 +43,7 @@ module aes_key_mem(
                    input wire [255 : 0]  key,
                    input wire            keylen,
                    input wire            init,
+                   input wire            key_bank,
 
                    input wire    [3 : 0] round,
                    output wire [127 : 0] round_key,
@@ -72,7 +73,8 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Registers.
   //----------------------------------------------------------------
-  reg [127 : 0] key_mem [0 : 14];
+  reg [127 : 0] key_mem0 [0 : 14];
+  reg [127 : 0] key_mem1 [0 : 14];
   reg [127 : 0] key_mem_new;
   reg           key_mem_we;
 
@@ -135,7 +137,10 @@ module aes_key_mem(
       if (!reset_n)
         begin
           for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
-            key_mem [i] <= 128'h0;
+            begin
+              key_mem0 [i] <= 128'h0;
+              key_mem1 [i] <= 128'h0;
+            end
 
           rcon_reg         <= 8'h0;
           ready_reg        <= 1'b0;
@@ -154,7 +159,12 @@ module aes_key_mem(
             rcon_reg <= rcon_new;
 
           if (key_mem_we)
-            key_mem[round_ctr_reg] <= key_mem_new;
+            begin
+              if (key_bank)
+                key_mem1[round_ctr_reg] <= key_mem_new;
+              else
+                key_mem0[round_ctr_reg] <= key_mem_new;
+            end
 
           if (prev_key0_we)
             prev_key0_reg <= prev_key0_new;
@@ -171,11 +181,15 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // key_mem_read
   //
-  // Combinational read port for the key memory.
+  // Combinational read port for the key memory including
+  // selection of the key from one of two key banks.
   //----------------------------------------------------------------
   always @*
     begin : key_mem_read
-      tmp_round_key = key_mem[round];
+      if (key_bank)
+        tmp_round_key = key_mem1[round];
+      else
+        tmp_round_key = key_mem0[round];
     end // key_mem_read
 
 

@@ -48,6 +48,7 @@ module aes_core(
 
                 input wire [255 : 0]  key,
                 input wire            keylen,
+                input wire            key_bank,
 
                 input wire [127 : 0]  block,
                 output wire [127 : 0] result,
@@ -155,6 +156,7 @@ module aes_core(
                      .key(key),
                      .keylen(keylen),
                      .init(init),
+                     .key_bank(key_bank),
 
                      .round(muxed_round_nr),
                      .round_key(round_key),
