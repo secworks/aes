@@ -67,7 +67,7 @@ core.sim: $(TB_CORE_SRC) $(CORE_SRC)
 	$(CC) $(CC_FLAGS) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
 
 
-keymem.sim:  $(TB_KEYMEM_SRC) $(KEYGEN_SRC) $(SBOX_SRC)
+keymem.sim:  $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
 	$(CC) $(CC_FLAGS) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
 
 
