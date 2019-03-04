@@ -54,7 +54,6 @@ module tb_aes_key_mem();
   parameter AES_256_BIT_KEY = 1;
 
   parameter AES_128_NUM_ROUNDS = 10;
-  parameter AES_192_NUM_ROUNDS = 12;
   parameter AES_256_NUM_ROUNDS = 14;
 
   parameter AES_DECIPHER = 1'b0;
