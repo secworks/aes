@@ -1,6 +1,6 @@
 //======================================================================
 //
-// aes.core.v
+// aes_core.v
 // ----------
 // The AES core. This core supports key size of 128, and 256 bits.
 // Most of the functionality is within the submodules.
