@@ -137,21 +137,23 @@ module aes_key_mem(
           for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
             key_mem [i] <= 128'h0;
 
-          rcon_reg         <= 8'h0;
           ready_reg        <= 1'b0;
+          rcon_reg         <= 8'h0;
           round_ctr_reg    <= 4'h0;
+          prev_key0_reg    <= 128'h0;
+          prev_key1_reg    <= 128'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
-          if (round_ctr_we)
-            round_ctr_reg <= round_ctr_new;
-
           if (ready_we)
             ready_reg <= ready_new;
 
           if (rcon_we)
             rcon_reg <= rcon_new;
+
+          if (round_ctr_we)
+            round_ctr_reg <= round_ctr_new;
 
           if (key_mem_we)
             key_mem[round_ctr_reg] <= key_mem_new;
