@@ -31,6 +31,20 @@ increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
 
+## Usage
+
+### Usage sequence:
+1. Load the key to be used by writing to the key register words.
+2. Set the key length by writing to the config register.
+3. Initialize key expansion by writing a one to the init bit in the control register.
+4. Wait for the ready bit in the status register to be cleared and then to be set again. This means that the key expansion has been completed.
+5. Write the cleartext block to the block registers.
+6. Start block processing by writing a one to the next bit in the control register.
+7. Wait for the ready bit in the status register to be cleared and then to be set again. This means that the data block has been processed.
+8. Read out the ciphertext block from the result registers.
+
+
+
 ## Status ##
 The core is completed, has been used in FPGAs and in ASIC. The core is
 well tested and mature.
