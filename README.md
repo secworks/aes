@@ -1,8 +1,12 @@
 aes
 ===
 
-Verilog implementation of the symmetric block cipher AES (Advanced
-Encryption Standard) as specified in the NIST document [FIPS 197](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf).
+Verilog implementation of the [symmetric block cipher AES (NIST FIPS 197)](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf).
+
+
+## Status ##
+The core is completed, has been used in several FPGA and ASIC
+designs. The core is well tested and mature.
 
 
 ## Introduction ##
@@ -31,6 +35,32 @@ increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
 
+## Branches ##
+
+There are several branches available that provides different versions of
+the core. The branches are not planned to be merged into master. The
+branches available that provides versions of the core are:
+
+
+**on-the-fly-keygen**
+
+This version of AES implements the key expansion using an on-the-fly
+mechanism. This allows the initial key expansion to be removed. This
+saves a number of cycles and also remove almost 1800 registers needed to
+store the round keys. Note that this versiob of AES only supports
+encryption. On-the-fly key generation does not work with
+decryption. Decryption must be handled by the block cipher mode - for
+example CTR.
+
+
+**dual-keys**
+
+This version of AES supports two separate banks of expanded keys to
+allow fast key switching between two keys. This is useful for example in
+an AEAD mode with CBC + CMAC implemented using a single AES core.
+
+
+
 ## Usage
 
 ### Usage sequence:
@@ -43,11 +73,6 @@ of cycles to two cycles for each round.
 7. Wait for the ready bit in the status register to be cleared and then to be set again. This means that the data block has been processed.
 8. Read out the ciphertext block from the result registers.
 
-
-
-## Status ##
-The core is completed, has been used in FPGAs and in ASIC. The core is
-well tested and mature.
 
 
 ## Implementation results - ASIC ##
