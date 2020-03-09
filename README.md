@@ -1,8 +1,12 @@
 aes
-======
+===
 
-Verilog implementation of the symmetric block cipher AES (Advanced
-Encryption Standard) as specified in the NIST document [FIPS 197](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf).
+Verilog implementation of the [symmetric block cipher AES (NIST FIPS 197)](http://csrc.nist.gov/publications/fips/fips197/fips-197.pdf).
+
+
+## Status ##
+The core is completed, has been used in several FPGA and ASIC
+designs. The core is well tested and mature.
 
 
 ## Introduction ##
@@ -15,16 +19,60 @@ can thus not do key update in parallel with block processing.
 
 The encipher and decipher block processing datapaths are separated and
 basically self contained given access to a set of round keys and a
-block. This makes it possible to hard wire either encipher or decipher
-and allow the build tools to optimize away the other functionality which
-will reduce the size to about 50%. For cipher modes such as CTR, GCM
-decryption in the AES core will never be used and thus the decipher
+block. This makes it possible to hard wire the core to only encipher or
+decipher operation. This allows the synthesis/build tools to optimize
+away the other functionality which will reduce the size to about
+50%. This has been tested to verify that decryption is removed and the
+core still works.
+
+For cipher modes such as CTR, CCM, CMAC, GCM the decryption
+functionality in the AES core will never be used and thus the decipher
 block processing can be removed.
 
 This is a fairly compact implementation. Further reduction could be
 achived by just having a single S-box. Similarly the performane can be
 increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
+
+
+## Branches ##
+
+There are several branches available that provides different versions of
+the core. The branches are not planned to be merged into master. The
+branches available that provides versions of the core are:
+
+
+**on-the-fly-keygen**
+
+This version of AES implements the key expansion using an on-the-fly
+mechanism. This allows the initial key expansion to be removed. This
+saves a number of cycles and also remove almost 1800 registers needed to
+store the round keys. Note that this versiob of AES only supports
+encryption. On-the-fly key generation does not work with
+decryption. Decryption must be handled by the block cipher mode - for
+example CTR.
+
+
+**dual-keys**
+
+This version of AES supports two separate banks of expanded keys to
+allow fast key switching between two keys. This is useful for example in
+an AEAD mode with CBC + CMAC implemented using a single AES core.
+
+
+
+## Usage
+
+### Usage sequence:
+1. Load the key to be used by writing to the key register words.
+2. Set the key length by writing to the config register.
+3. Initialize key expansion by writing a one to the init bit in the control register.
+4. Wait for the ready bit in the status register to be cleared and then to be set again. This means that the key expansion has been completed.
+5. Write the cleartext block to the block registers.
+6. Start block processing by writing a one to the next bit in the control register.
+7. Wait for the ready bit in the status register to be cleared and then to be set again. This means that the data block has been processed.
+8. Read out the ciphertext block from the result registers.
+
 
 
 ## Implementation results - ASIC ##
@@ -80,89 +128,3 @@ Removing the decipher module yields:
 - 2989 regs
 - 97 MHz
 - 46 cycles/block
-
-
-## Status ##
-***(2017-05-10)***
-
-Updated with results from ASIC implementation in TSMC 180 nm process.
-
-Removed timescale directives from testbenches which are not needed and
-just makes simulation with other cores harder.
-
-
-***(2017-04-13)***
-
-Some code cleanup to make it more readable and remove warnings from some
-parsers. No functional changes.
-
-Added implementation results for Altera Cyclone V GX.
-
-
-***(2016-11-20)***
-
-__HEADSUP__
-The API addresses for config and status registers has been switched. The
-reason for this is all other cores provided have status on 0x09. And any
-possible config on 0x0a. This change aligns the core for easier
-integration, but breaks designs that uses the old version.
-
-The core VERSION string has been updated to reflect the API change.
-
-The core NAME has also been updated. Precviously the NAME contained
-"-128", indicating that the core only supports 128 bit key length. But
-the core does in fact support both 128 and 256 bit key lengths.
-
-
-***(2016-09-06)***
-
-Updated implementation results with results from Xilinx Artix-7. There
-has also been done several minor fixes to shorten the code size, clarify
-the implementation etc. But the functionality of the core has not been
-altered. The core has been used in several designs.
-
-
-***(2014-11-28)***
-
-Top level simulation now passes all NISTs tests.
-
-
-***(2014-11-26)***
-
-Encryption and decryption now passes all NIST test cases on block level
-as well as core level. The Python model can do encryption but not
-decryption. The Python model contains separate tests for key generation,
-mixcolumns and inverse mixcolumns.
-
-
-***(2014-08-07)***
-
-Round key generation for both AES-128 and AES-256 now works when tested
-separately. Datapaths and core are yet to be debugged.
-
-
-***(2014-07-27)***
-
-Reworked the partitioning of block registers, round counters etc -
-basically a rather big change. The block processing is now pretty much
-self contained machines. Removed support for 192 bit keys.
-
-
-***(2014-04-26)***
-
-Most of the RTL completed but not yet debugged. The key expansion is
-still lacking. The architecture has been reworked several times, but
-this one looks promising.
-
-
-***(2014-03-19)***
-
-Several commits done up to this date. Halfway there.
-Changed name of repo to simply 'aes' to reflect that we will support at
-least both 128 and 256 bit keys. Possibly also 192 albeit nobody uses it
-(afaik).
-
-
-***(2014-02-21***:
-
-Initial commit. Nothing really here yet.

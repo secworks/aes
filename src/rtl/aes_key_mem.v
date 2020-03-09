@@ -60,8 +60,8 @@ module aes_key_mem(
   localparam AES_128_BIT_KEY = 1'h0;
   localparam AES_256_BIT_KEY = 1'h1;
 
-  localparam AES_128_NUM_ROUNDS = 4'ha;
-  localparam AES_256_NUM_ROUNDS = 4'he;
+  localparam AES_128_NUM_ROUNDS = 10;
+  localparam AES_256_NUM_ROUNDS = 14;
 
   localparam CTRL_IDLE     = 3'h0;
   localparam CTRL_INIT     = 3'h1;
@@ -108,20 +108,17 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [31 : 0] tmp_sboxw;
-
+  reg [31 : 0]  tmp_sboxw;
   reg           round_key_update;
-  reg [3 : 0]   num_rounds;
-
   reg [127 : 0] tmp_round_key;
 
 
   //----------------------------------------------------------------
   // Concurrent assignments for ports.
   //----------------------------------------------------------------
-  assign round_key  = tmp_round_key;
-  assign ready      = ready_reg;
-  assign sboxw      = tmp_sboxw;
+  assign round_key = tmp_round_key;
+  assign ready     = ready_reg;
+  assign sboxw     = tmp_sboxw;
 
 
   //----------------------------------------------------------------
@@ -137,24 +134,26 @@ module aes_key_mem(
 
       if (!reset_n)
         begin
-          for (i = 0 ; i < 4 ; i = i + 1)
+          for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
             key_mem [i] <= 128'h0;
 
-          rcon_reg         <= 8'h0;
           ready_reg        <= 1'b0;
+          rcon_reg         <= 8'h0;
           round_ctr_reg    <= 4'h0;
+          prev_key0_reg    <= 128'h0;
+          prev_key1_reg    <= 128'h0;
           key_mem_ctrl_reg <= CTRL_IDLE;
         end
       else
         begin
-          if (round_ctr_we)
-            round_ctr_reg <= round_ctr_new;
-
           if (ready_we)
             ready_reg <= ready_new;
 
           if (rcon_we)
             rcon_reg <= rcon_new;
+
+          if (round_ctr_we)
+            round_ctr_reg <= round_ctr_new;
 
           if (key_mem_we)
             key_mem[round_ctr_reg] <= key_mem_new;
@@ -359,33 +358,6 @@ module aes_key_mem(
 
 
   //----------------------------------------------------------------
-  // num_rounds_logic
-  //
-  // Logic to select the number of rounds to generate keys for
-  //----------------------------------------------------------------
-  always @*
-    begin : num_rounds_logic
-      num_rounds = 4'h0;
-
-      case (keylen)
-        AES_128_BIT_KEY:
-          begin
-            num_rounds = AES_128_NUM_ROUNDS;
-          end
-
-        AES_256_BIT_KEY:
-          begin
-            num_rounds = AES_256_NUM_ROUNDS;
-          end
-
-        default:
-          begin
-          end
-      endcase // case (keylen)
-    end
-
-
-  //----------------------------------------------------------------
   // key_mem_ctrl
   //
   //
@@ -393,6 +365,8 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin: key_mem_ctrl
+      reg [3 : 0] num_rounds;
+
       // Default assignments.
       ready_new        = 1'b0;
       ready_we         = 1'b0;
@@ -401,6 +375,11 @@ module aes_key_mem(
       round_ctr_inc    = 1'b0;
       key_mem_ctrl_new = CTRL_IDLE;
       key_mem_ctrl_we  = 1'b0;
+
+      if (keylen == AES_128_BIT_KEY)
+        num_rounds = AES_128_NUM_ROUNDS;
+      else
+        num_rounds = AES_256_NUM_ROUNDS;
 
       case(key_mem_ctrl_reg)
         CTRL_IDLE:
