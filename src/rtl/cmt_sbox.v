@@ -1,12 +1,38 @@
+//======================================================================
+//
+// cmt_sbox.v
+// ----------
+// An implementation of the AES S-box based on the work by the
+// Circuit Minimization Team (CMT) at Yale:
+// http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html
+//
+// The actual base for the code was found in an AES implementation by
+// Homer Hsing <homer.hsing@gmail.com>:
+// https://github.com/efabless/openlane/blob/master/designs/aes128/src/aes128.v
+//
+// Copyright 2012, Homer Hsing <homer.hsing@gmail.com>
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//======================================================================
+
 module cmt_sbox(input wire [7:0]  in, output wire [7:0] out);
   wire[0 : 7] s, x;
   wire [21:0] y;
   wire [67:0] t;
   wire [17:0] z;
 
-  assign x = in;
+  assign x   = in;
   assign out = s;
-
 
   assign y[14] = x[3] ^ x[5];
   assign y[13] = x[0] ^ x[6];
@@ -129,3 +155,7 @@ module cmt_sbox(input wire [7:0]  in, output wire [7:0] out);
   assign s[2] = ~t[55 ] ^ t[67];
 
 endmodule // cmt_sbox
+
+//======================================================================
+// EOF cmt_sbox.v
+//======================================================================
