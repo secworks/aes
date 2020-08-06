@@ -47,7 +47,7 @@ branches available that provides versions of the core are:
 This version of AES implements the key expansion using an on-the-fly
 mechanism. This allows the initial key expansion to be removed. This
 saves a number of cycles and also remove almost 1800 registers needed to
-store the round keys. Note that this versiob of AES only supports
+store the round keys. Note that this version of AES only supports
 encryption. On-the-fly key generation does not work with
 decryption. Decryption must be handled by the block cipher mode - for
 example CTR.
