@@ -2,12 +2,18 @@
 //
 // aes_sbox.v
 // ----------
-// The AES S-box. Basically a 256 Byte ROM. This implementation
-// contains four parallel S-boxes to handle a 32 bit word.
+// An implementation of the AES S-box based on the work by the
+// Circuit Minimization Team (CMT) at Yale:
+// http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html
+//
+// The specific circuit implemented is this:
+// http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/SLP_AES_113.txt
+//
+// This code is a straight mapping in of the equotions on that page.
 //
 //
 // Author: Joachim Strombergson
-// Copyright (c) 2014, Secworks Sweden AB
+// Copyright (c) 2020, Assured AB
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or
@@ -37,13 +43,12 @@
 //
 //======================================================================
 
-module aes_sbox(
-                input wire [31 : 0]  sboxw,
+module aes_sbox(input wire [31 : 0]  sboxw,
                 output wire [31 : 0] new_sboxw
                );
 
   //----------------------------------------------------------------
-  // Four parallel sboxes.
+  // Four parallel, combinational sboxes.
   //----------------------------------------------------------------
   assign new_sboxw[31 : 24] = s(sboxw[31 : 24]);
   assign new_sboxw[23 : 16] = s(sboxw[23 : 16]);
@@ -52,8 +57,7 @@ module aes_sbox(
 
 
   //----------------------------------------------------------------
-  // cmt_s
-  // Fuction that implements the S-box using gates.
+  // Function that implements the S-box using gates.
   //----------------------------------------------------------------
   function [0 : 7] s(input [0 : 7] u);
     begin : cmt_s
@@ -178,7 +182,6 @@ module aes_sbox(
       s[02] = ~t[55] ^ t[67];
     end
   endfunction // s
-
 endmodule // aes_sbox
 
 //======================================================================
