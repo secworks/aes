@@ -36,7 +36,7 @@
 #
 #===================================================================
 
-SBOX_SRC=../src/rtl/aes_sbox.v ../src/rtl/cmt_sbox.v
+SBOX_SRC=../src/rtl/aes_sbox.v
 INV_SBOX_SRC=../src/rtl/aes_inv_sbox.v
 KEYMEM_SRC=../src/rtl/aes_key_mem.v
 ENCIPHER_SRC=../src/rtl/aes_encipher_block.v
