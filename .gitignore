@@ -1,0 +1,13 @@
+# Gitignore for Poly1305
+## Generated files
+test_poly1305
+*.sim
+
+## Log files
+*.log
+
+## Toolruns subdirs
+/toolruns/quartus
+/toolruns/ise/
+/toolruns/vivado
+/toolruns/modelsim
