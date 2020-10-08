@@ -42,26 +42,66 @@ the core. The branches are not planned to be merged into master. The
 branches available that provides versions of the core are:
 
 
-**on-the-fly-keygen**
+### on-the-fly-keygen ###
 
 This version of AES implements the key expansion using an on-the-fly
 mechanism. This allows the initial key expansion to be removed. This
 saves a number of cycles and also remove almost 1800 registers needed to
-store the round keys. Note that this versiob of AES only supports
+store the round keys. Note that this version of AES only supports
 encryption. On-the-fly key generation does not work with
 decryption. Decryption must be handled by the block cipher mode - for
 example CTR.
 
 
-**dual-keys**
+### dual-keys ###
 
 This version of AES supports two separate banks of expanded keys to
 allow fast key switching between two keys. This is useful for example in
 an AEAD mode with CBC + CMAC implemented using a single AES core.
 
 
+### cmt-sbox ###
 
-## Usage
+An experimental version of the core in which the S-box is implemented
+using circuit minimized logic functions of a ROM table. The specific
+table used is
+[http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/SLP_AES_113.txt](the
+113 gate circuit) by the [http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html](CMT team at Yale).
+
+Some area and performance results using the cmt_sbox compared to
+master.
+
+#### Altera
+- Tool: Quartus Prime 19.1.0
+- Device: Cyclone V (5CGXFC7C7F23C8)
+- master (S-box implemented with a table)
+  - ALMs: 2599
+  - Regs: 3184
+  - Fmax: 93 MHz
+  - aes_sbox: 160 ALUTs
+
+- cmt_sbox
+  - ALMs: 2759
+  - Regs: 3147
+  - Fmax: 69 MHz
+  - aes_sbox: 363 ALUTs
+
+
+#### Xilinx
+- Tool: Vivado 2019.2
+- Device: Kintex-7 (7k70tfbv676-1)
+- master:
+  - LUTs: 3020
+  - FFs: 2992
+  - Fmax: 125 MHz
+
+- cmt_sbox:
+  - LUTs: 2955
+  - FFs: 2992
+  - Fmax: 105 MHz
+
+
+## Core Usage
 
 ### Usage sequence:
 1. Load the key to be used by writing to the key register words.
