@@ -1,13 +1,26 @@
-# Gitignore for Poly1305
+#=======================================================================
+#
+# .gitignore
+# ----------
+# Gitignore for core projects.
+#=======================================================================
+
 ## Generated files
-test_poly1305
+test*
 *.sim
 
 ## Log files
 *.log
 
-## Toolruns subdirs
+
+## Subdirs in toolruns for vendor tools
 /toolruns/quartus
 /toolruns/ise/
 /toolruns/vivado
 /toolruns/modelsim
+/toolruns/libero
+/toolruns/icestorm
+
+#=======================================================================
+# EOF .gitignore
+#=======================================================================
