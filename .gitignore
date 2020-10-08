@@ -1,0 +1,26 @@
+#=======================================================================
+#
+# .gitignore
+# ----------
+# Gitignore for core projects.
+#=======================================================================
+
+## Generated files
+test*
+*.sim
+
+## Log files
+*.log
+
+
+## Subdirs in toolruns for vendor tools
+/toolruns/quartus
+/toolruns/ise/
+/toolruns/vivado
+/toolruns/modelsim
+/toolruns/libero
+/toolruns/icestorm
+
+#=======================================================================
+# EOF .gitignore
+#=======================================================================
