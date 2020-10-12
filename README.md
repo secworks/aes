@@ -156,6 +156,15 @@ Removing the decipher module yields:
 - 46 cycles/block
 
 
+### Microchip IGLOO 2 ###
+- Tool: Libero v 12.4
+- Device: M2GL090TS-1FG484I
+- LUTs: 6335
+- SLEs: 1376
+- BRAMs: 8
+- Fmax: 98.5 MHz
+
+
 ### Xilinx Spartan6LX-3 ###
 - 2576 slices
 - 3000 regs
