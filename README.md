@@ -65,8 +65,7 @@ an AEAD mode with CBC + CMAC implemented using a single AES core.
 An experimental version of the core in which the S-box is implemented
 using circuit minimized logic functions of a ROM table. The specific
 table used is
-[http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/SLP_AES_113.txt](the
-113 gate circuit) by the [http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html](CMT team at Yale).
+[the 113 gate circuit](http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/SLP_AES_113.txt) by the [CMT team at Yale](http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html).
 
 Some area and performance results using the cmt_sbox compared to
 master.
