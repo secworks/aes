@@ -37,6 +37,8 @@
 //
 //======================================================================
 
+`default_nettype none
+
 module aes_core(
                 input wire            clk,
                 input wire            reset_n,

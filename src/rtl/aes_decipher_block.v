@@ -38,6 +38,8 @@
 //
 //======================================================================
 
+`default_nettype none
+
 module aes_decipher_block(
                           input wire            clk,
                           input wire            reset_n,

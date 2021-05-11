@@ -35,6 +35,8 @@
 //
 //======================================================================
 
+`default_nettype none
+
 module aes_inv_sbox(
                     input wire  [31 : 0] sword,
                     output wire [31 : 0] new_sword
