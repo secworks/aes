@@ -1,0 +1,64 @@
+CAPI=2:
+
+name : secworks:crypto:aes:0
+
+filesets:
+  rtl:
+    files:
+      - src/rtl/aes_core.v
+      - src/rtl/aes.v
+      - src/rtl/aes_key_mem.v
+      - src/rtl/aes_encipher_block.v
+      - src/rtl/aes_inv_sbox.v
+      - src/rtl/aes_sbox.v
+      - src/rtl/aes_decipher_block.v
+    file_type : verilogSource
+
+  tb:
+    files:
+      - src/tb/tb_aes.v
+      - src/tb/tb_aes_key_mem.v
+      - src/tb/tb_aes_core.v
+      - src/tb/tb_aes_decipher_block.v
+      - src/tb/tb_aes_encipher_block.v
+    file_type : verilogSource
+
+  openlane: {files : [data/sky130.tcl : {file_type : tclSource}]}
+
+targets:
+  default:
+    filesets: [rtl]
+
+  lint:
+    default_tool : verilator
+    filesets : [rtl]
+    tools:
+      verilator:
+        mode : lint-only
+    toplevel : aes
+
+  sky130:
+    default_tool: openlane
+    filesets: [rtl, openlane]
+    toplevel: aes
+
+  tb_aes: &tb
+    default_tool: icarus
+    filesets: [rtl, tb]
+    toplevel : tb_aes
+
+  tb_aes_key_mem:
+    <<: *tb
+    toplevel : tb_aes_key_mem
+
+  tb_aes_core:
+    <<: *tb
+    toplevel : tb_aes_core
+
+  tb_aes_decipher_block:
+    <<: *tb
+    toplevel : tb_aes_decipher_block
+
+  tb_aes_encipher_block:
+    <<: *tb
+    toplevel : tb_aes_encipher_block

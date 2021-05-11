@@ -1,0 +1,61 @@
+name: build-openlane-sky130
+on: [push]
+
+jobs:
+  build-aes:
+    runs-on: ubuntu-latest
+    env:
+      REPO : aes
+      VLNV : secworks:crypto:aes
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          path: aes
+      - name: Checkout pdk
+        uses: actions/checkout@v2
+        with:
+          repository: olofk/pdklite
+          path: pdklite
+      - run: echo "PDK_ROOT=$GITHUB_WORKSPACE/pdklite" >> $GITHUB_ENV
+      - run: echo "EDALIZE_LAUNCHER=${GITHUB_WORKSPACE}/$REPO/.github/workflows/openlane_runner.py" >> $GITHUB_ENV
+      - run: pip3 install --user -e "git+https://github.com/olofk/edalize.git#egg=edalize"
+      - run: pip3 install fusesoc
+#      - run: docker pull efabless/openlane:v0.12
+      - run: fusesoc library add $REPO $GITHUB_WORKSPACE/$REPO
+      - run: fusesoc run --target=sky130 $VLNV
+
+  sim-icarus:
+    runs-on: ubuntu-latest
+    env:
+      REPO : aes
+      VLNV : secworks:crypto:aes
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          path: aes
+      - run: sudo apt install iverilog
+      - run: pip3 install fusesoc
+      - run: fusesoc library add $REPO $GITHUB_WORKSPACE/$REPO
+      - run: fusesoc run --target=tb_aes_core $VLNV
+      - run: fusesoc run --target=tb_aes_decipher_block $VLNV
+      - run: fusesoc run --target=tb_aes_encipher_block $VLNV
+      - run: fusesoc run --target=tb_aes_key_mem $VLNV
+      - run: fusesoc run --target=tb_aes $VLNV
+
+  lint-verilator:
+    runs-on: ubuntu-latest
+    env:
+      REPO : aes
+      VLNV : secworks:crypto:aes
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          path: aes
+      - run: sudo apt install verilator
+      - run: pip3 install fusesoc
+      - run: fusesoc library add $REPO $GITHUB_WORKSPACE/$REPO
+      - run: fusesoc run --target=lint $VLNV
+    
