@@ -108,8 +108,10 @@ module aes_core(
 
   wire [31 : 0]  keymem_sboxw;
 
+/* verilator lint_off UNOPTFLAT */
   reg [31 : 0]   muxed_sboxw;
   wire [31 : 0]  new_sboxw;
+/* verilator lint_on UNOPTFLAT */
 
 
   //----------------------------------------------------------------
