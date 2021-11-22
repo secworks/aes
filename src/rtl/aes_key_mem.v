@@ -45,6 +45,7 @@ module aes_key_mem(
                    input wire [255 : 0]  key,
                    input wire            keylen,
                    input wire            init,
+                   input wire            next,
 
                    input wire    [3 : 0] round,
                    output wire [127 : 0] round_key,
@@ -65,11 +66,10 @@ module aes_key_mem(
   localparam AES_128_NUM_ROUNDS = 10;
   localparam AES_256_NUM_ROUNDS = 14;
 
-  localparam CTRL_IDLE     = 3'h0;
-  localparam CTRL_INIT     = 3'h1;
-  localparam CTRL_GENERATE = 3'h2;
-  localparam CTRL_CHECK    = 3'h3;
-  localparam CTRL_DONE     = 3'h4;
+  localparam CTRL_IDLE = 2'h0;
+  localparam CTRL_INIT = 2'h1;
+  localparam CTRL_NEXT = 2'h2;
+  localparam CTRL_DONE = 2'h3;
 
 
   //----------------------------------------------------------------
@@ -93,8 +93,8 @@ module aes_key_mem(
   reg         round_ctr_inc;
   reg         round_ctr_we;
 
-  reg [2 : 0] key_mem_ctrl_reg;
-  reg [2 : 0] key_mem_ctrl_new;
+  reg [1 : 0] key_mem_ctrl_reg;
+  reg [1 : 0] key_mem_ctrl_new;
   reg         key_mem_ctrl_we;
 
   reg         ready_reg;
@@ -401,6 +401,14 @@ module aes_key_mem(
                 key_mem_ctrl_new = CTRL_INIT;
                 key_mem_ctrl_we  = 1'b1;
               end
+
+            if (next)
+              begin
+                ready_new        = 1'b0;
+                ready_we         = 1'b1;
+                key_mem_ctrl_new = CTRL_NEXT;
+                key_mem_ctrl_we  = 1'b1;
+              end
           end
 
 
@@ -408,31 +416,17 @@ module aes_key_mem(
           begin
             round_key_init   = 1'b1;
             round_ctr_rst    = 1'b1;
-            key_mem_ctrl_new = CTRL_GENERATE;
+            key_mem_ctrl_new = CTRL_DONE;
             key_mem_ctrl_we  = 1'b1;
           end
 
 
-        CTRL_GENERATE:
+        CTRL_NEXT:
           begin
             round_ctr_inc    = 1'b1;
             round_key_update = 1'b1;
-            key_mem_ctrl_new = CTRL_CHECK;
+            key_mem_ctrl_new = CTRL_DONE;
             key_mem_ctrl_we  = 1'b1;
-          end
-
-
-        CTRL_CHECK:
-          begin
-            if (round_ctr_reg <= num_rounds)
-              begin
-                key_mem_ctrl_new = CTRL_GENERATE;
-                key_mem_ctrl_we  = 1'b1;
-              end
-            else begin
-              key_mem_ctrl_new = CTRL_DONE;
-              key_mem_ctrl_we  = 1'b1;
-            end
           end
 
 

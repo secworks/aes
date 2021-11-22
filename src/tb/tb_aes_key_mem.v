@@ -43,9 +43,9 @@ module tb_aes_key_mem();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG = 1;
-  parameter SHOW_SBOX = 0;
-  parameter SHOW_KEY_MEM = 1;
+  parameter DEBUG        = 1;
+  parameter SHOW_SBOX    = 0;
+  parameter SHOW_KEY_MEM = 0;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
@@ -72,6 +72,7 @@ module tb_aes_key_mem();
   reg [255 : 0]  tb_key;
   reg            tb_keylen;
   reg            tb_init;
+  reg            tb_next;
   reg [3 : 0]    tb_round;
   wire [127 : 0] tb_round_key;
   wire           tb_ready;
@@ -90,6 +91,7 @@ module tb_aes_key_mem();
                   .key(tb_key),
                   .keylen(tb_keylen),
                   .init(tb_init),
+                  .next(tb_next),
 
                   .round(tb_round),
                   .round_key(tb_round_key),
@@ -145,8 +147,8 @@ module tb_aes_key_mem();
       $display("------------");
       $display("Inputs and outputs:");
       $display("key       = 0x%032x", dut.key);
-      $display("keylen    = 0x%01x, init = 0x%01x, ready = 0x%01x",
-               dut.keylen, dut.init, dut.ready);
+      $display("keylen    = 0x%01x, init = 0x%01x, next = 0x%01x, ready = 0x%01x",
+               dut.keylen, dut.init, dut.next, dut.ready);
       $display("round     = 0x%02x", dut.round);
       $display("round_key = 0x%016x", dut.round_key);
       $display("");
@@ -233,6 +235,7 @@ module tb_aes_key_mem();
       tb_key     = {8{32'h00000000}};
       tb_keylen  = 0;
       tb_init    = 0;
+      tb_next    = 0;
       tb_round   = 4'h0;
     end
   endtask // init_sim
@@ -305,7 +308,9 @@ module tb_aes_key_mem();
                     input [127 : 0] expected09,
                     input [127 : 0] expected10
                    );
-    begin
+    begin : test_key_128
+      integer i;
+
       $display("** Testing with 128-bit key 0x%16x started **", key[255 : 128]);
       $display("");
 
@@ -315,8 +320,18 @@ module tb_aes_key_mem();
       #(2 * CLK_PERIOD);
       tb_init = 0;
       wait_ready();
+      #(CLK_PERIOD);
+      $display("** Testing with 128-bit key 0x%16x. Init done **");
 
-      $display("** Testing with 128-bit key 0x%16x keys generated **", key[255 : 128]);
+
+      for (i = 0; i < 11 ; i = i + 1) begin
+        tb_next = 1;
+        #(CLK_PERIOD);
+        tb_next = 0;
+        #(5 * CLK_PERIOD);
+      end
+
+      $display("** Testing with 128-bit key 0x%16x. Keys should have been generated **", key[255 : 128]);
 
       check_key(4'h0, expected00);
       check_key(4'h1, expected01);
@@ -361,7 +376,9 @@ module tb_aes_key_mem();
                     input [127 : 0] expected13,
                     input [127 : 0] expected14
                    );
-    begin
+    begin : test_key_256
+      integer i;
+
       $display("** Testing with 256-bit key 0x%32x", key[255 : 000]);
       $display("");
 
@@ -370,8 +387,20 @@ module tb_aes_key_mem();
       tb_init = 1;
       #(2 * CLK_PERIOD);
       tb_init = 0;
-
       wait_ready();
+      #(CLK_PERIOD);
+      $display("** Testing with 256-bit key 0x%32x. Init done **", key[255 : 000]);
+
+
+      for (i = 0; i < 15 ; i = i + 1) begin
+        tb_next = 1;
+        #(CLK_PERIOD);
+        tb_next = 0;
+        #(5 * CLK_PERIOD);
+      end
+
+      $display("** Testing with 256-bit key 0x%32x. Keys should have been generated **", key[255 : 000]);
+
 
       check_key(4'h0, expected00);
       check_key(4'h1, expected01);
