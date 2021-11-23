@@ -45,7 +45,6 @@ module tb_aes_key_mem();
   //----------------------------------------------------------------
   parameter DEBUG        = 1;
   parameter SHOW_SBOX    = 0;
-  parameter SHOW_KEY_MEM = 0;
 
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
@@ -171,23 +170,9 @@ module tb_aes_key_mem();
       $display("sboxw = 0x%04x, new_sboxw = 0x%04x, rconw = 0x%04x",
                dut.sboxw, dut.new_sboxw, dut.round_key_gen.rconw);
       $display("tw = 0x%04x, trw = 0x%04x", dut.round_key_gen.tw, dut.round_key_gen.trw);
-      $display("key_mem_new = 0x%016x, key_mem_we = 0x%01x",
-               dut.key_mem_new, dut.key_mem_we);
+      $display("round_key_reg = 0x%016x, round_key_new = 0x%016x, round_key_we = 0x%01x",
+               dut.round_key_reg, dut.round_key_new, dut.round_key_we);
       $display("");
-
-
-      if (SHOW_KEY_MEM)
-        begin
-          $display("Contents i key memory:");
-          $display("key_mem[00]: 0x%016x, key_mem[01]: 0x%016x", dut.key_mem[00], dut.key_mem[01]);
-          $display("key_mem[02]: 0x%016x, key_mem[03]: 0x%016x", dut.key_mem[02], dut.key_mem[03]);
-          $display("key_mem[04]: 0x%016x, key_mem[05]: 0x%016x", dut.key_mem[04], dut.key_mem[05]);
-          $display("key_mem[06]: 0x%016x, key_mem[07]: 0x%016x", dut.key_mem[06], dut.key_mem[07]);
-          $display("key_mem[08]: 0x%016x, key_mem[09]: 0x%016x", dut.key_mem[08], dut.key_mem[09]);
-          $display("key_mem[0a]: 0x%016x, key_mem[0b]: 0x%016x", dut.key_mem[10], dut.key_mem[11]);
-          $display("key_mem[0c]: 0x%016x, key_mem[0d]: 0x%016x", dut.key_mem[12], dut.key_mem[13]);
-          $display("key_mem[0e]: 0x%016x",                       dut.key_mem[14]);
-        end
 
 
       if (SHOW_SBOX)
@@ -290,6 +275,20 @@ module tb_aes_key_mem();
 
 
   //----------------------------------------------------------------
+  // next_key
+  //----------------------------------------------------------------
+  task next_key;
+    begin : next_key
+      tb_next = 1;
+      #(CLK_PERIOD);
+      tb_next = 0;
+      #(CLK_PERIOD);
+      wait_ready();
+    end
+  endtask // next_ket
+
+
+  //----------------------------------------------------------------
   // test_key_128()
   //
   // Test 128 bit keys. Due to array problems, the result check
@@ -309,8 +308,6 @@ module tb_aes_key_mem();
                     input [127 : 0] expected10
                    );
     begin : test_key_128
-      integer i;
-
       $display("** Testing with 128-bit key 0x%16x started **", key[255 : 128]);
       $display("");
 
@@ -324,25 +321,37 @@ module tb_aes_key_mem();
       $display("** Testing with 128-bit key 0x%16x. Init done **");
 
 
-      for (i = 0; i < 11 ; i = i + 1) begin
-        tb_next = 1;
-        #(CLK_PERIOD);
-        tb_next = 0;
-        #(5 * CLK_PERIOD);
-      end
-
-      $display("** Testing with 128-bit key 0x%16x. Keys should have been generated **", key[255 : 128]);
-
+      next_key();
       check_key(4'h0, expected00);
+
+      next_key();
       check_key(4'h1, expected01);
+
+      next_key();
       check_key(4'h2, expected02);
+
+      next_key();
       check_key(4'h3, expected03);
+
+      next_key();
       check_key(4'h4, expected04);
+
+      next_key();
       check_key(4'h5, expected05);
+
+      next_key();
       check_key(4'h6, expected06);
+
+      next_key();
       check_key(4'h7, expected07);
+
+      next_key();
       check_key(4'h8, expected08);
+
+      next_key();
       check_key(4'h9, expected09);
+
+      next_key();
       check_key(4'ha, expected10);
 
       tc_ctr = tc_ctr + 1;
@@ -392,30 +401,49 @@ module tb_aes_key_mem();
       $display("** Testing with 256-bit key 0x%32x. Init done **", key[255 : 000]);
 
 
-      for (i = 0; i < 15 ; i = i + 1) begin
-        tb_next = 1;
-        #(CLK_PERIOD);
-        tb_next = 0;
-        #(5 * CLK_PERIOD);
-      end
-
-      $display("** Testing with 256-bit key 0x%32x. Keys should have been generated **", key[255 : 000]);
-
-
+      next_key();
       check_key(4'h0, expected00);
+
+      next_key();
       check_key(4'h1, expected01);
+
+      next_key();
       check_key(4'h2, expected02);
+
+      next_key();
       check_key(4'h3, expected03);
+
+      next_key();
       check_key(4'h4, expected04);
+
+      next_key();
       check_key(4'h5, expected05);
+
+      next_key();
       check_key(4'h6, expected06);
+
+      next_key();
       check_key(4'h7, expected07);
+
+      next_key();
       check_key(4'h8, expected08);
+
+      next_key();
       check_key(4'h9, expected09);
+
+      next_key();
       check_key(4'ha, expected10);
+
+      next_key();
       check_key(4'hb, expected11);
+
+      next_key();
       check_key(4'hc, expected12);
+
+      next_key();
       check_key(4'hd, expected13);
+
+      next_key();
       check_key(4'he, expected14);
 
       tc_ctr = tc_ctr + 1;

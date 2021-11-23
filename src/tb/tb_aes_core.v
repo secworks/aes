@@ -153,34 +153,6 @@ module tb_aes_core();
 
 
   //----------------------------------------------------------------
-  // dump_keys()
-  //
-  // Dump the keys in the key memory of the dut.
-  //----------------------------------------------------------------
-  task dump_keys;
-    begin
-      $display("State of key memory in DUT:");
-      $display("key[00] = 0x%016x", dut.keymem.key_mem[00]);
-      $display("key[01] = 0x%016x", dut.keymem.key_mem[01]);
-      $display("key[02] = 0x%016x", dut.keymem.key_mem[02]);
-      $display("key[03] = 0x%016x", dut.keymem.key_mem[03]);
-      $display("key[04] = 0x%016x", dut.keymem.key_mem[04]);
-      $display("key[05] = 0x%016x", dut.keymem.key_mem[05]);
-      $display("key[06] = 0x%016x", dut.keymem.key_mem[06]);
-      $display("key[07] = 0x%016x", dut.keymem.key_mem[07]);
-      $display("key[08] = 0x%016x", dut.keymem.key_mem[08]);
-      $display("key[09] = 0x%016x", dut.keymem.key_mem[09]);
-      $display("key[10] = 0x%016x", dut.keymem.key_mem[10]);
-      $display("key[11] = 0x%016x", dut.keymem.key_mem[11]);
-      $display("key[12] = 0x%016x", dut.keymem.key_mem[12]);
-      $display("key[13] = 0x%016x", dut.keymem.key_mem[13]);
-      $display("key[14] = 0x%016x", dut.keymem.key_mem[14]);
-      $display("");
-    end
-  endtask // dump_keys
-
-
-  //----------------------------------------------------------------
   // reset_dut()
   //
   // Toggle reset to put the DUT into a well known state.
@@ -307,8 +279,6 @@ module tb_aes_core();
 
      $display("Key expansion done");
      $display("");
-
-     dump_keys();
 
 
      // Perform encipher och decipher operation on the block.
