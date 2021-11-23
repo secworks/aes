@@ -95,7 +95,6 @@ module aes_core(
   wire [3 : 0]   enc_round_nr;
   wire [127 : 0] enc_new_block;
   wire           enc_ready;
-  wire [31 : 0]  enc_sboxw;
 
   reg            dec_next;
   wire [3 : 0]   dec_round_nr;
@@ -105,13 +104,6 @@ module aes_core(
   reg [127 : 0]  muxed_new_block;
   reg [3 : 0]    muxed_round_nr;
   reg            muxed_ready;
-
-  wire [31 : 0]  keymem_sboxw;
-
-/* verilator lint_off UNOPTFLAT */
-  reg [31 : 0]   muxed_sboxw;
-  wire [31 : 0]  new_sboxw;
-/* verilator lint_on UNOPTFLAT */
 
 
   //----------------------------------------------------------------
@@ -126,9 +118,6 @@ module aes_core(
                                .keylen(keylen),
                                .round(enc_round_nr),
                                .round_key(round_key),
-
-                               .sboxw(enc_sboxw),
-                               .new_sboxw(new_sboxw),
 
                                .block(block),
                                .new_block(enc_new_block),
@@ -162,14 +151,8 @@ module aes_core(
 
                      .round(muxed_round_nr),
                      .round_key(round_key),
-                     .ready(key_ready),
-
-                     .sboxw(keymem_sboxw),
-                     .new_sboxw(new_sboxw)
+                     .ready(key_ready)
                     );
-
-
-  aes_sbox sbox_inst(.sboxw(muxed_sboxw), .new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
@@ -207,25 +190,6 @@ module aes_core(
             aes_core_ctrl_reg <= aes_core_ctrl_new;
         end
     end // reg_update
-
-
-  //----------------------------------------------------------------
-  // sbox_mux
-  //
-  // Controls which of the encipher datapath or the key memory
-  // that gets access to the sbox.
-  //----------------------------------------------------------------
-  always @*
-    begin : sbox_mux
-      if (init_state)
-        begin
-          muxed_sboxw = keymem_sboxw;
-        end
-      else
-        begin
-          muxed_sboxw = enc_sboxw;
-        end
-    end // sbox_mux
 
 
   //----------------------------------------------------------------

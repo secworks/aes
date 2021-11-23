@@ -76,9 +76,6 @@ module tb_aes_key_mem();
   wire [127 : 0] tb_round_key;
   wire           tb_ready;
 
-  wire [31 : 0]  tb_sboxw;
-  wire [31 : 0]  tb_new_sboxw;
-
 
   //----------------------------------------------------------------
   // Device Under Test.
@@ -94,14 +91,8 @@ module tb_aes_key_mem();
 
                   .round(tb_round),
                   .round_key(tb_round_key),
-                  .ready(tb_ready),
-
-                  .sboxw(tb_sboxw),
-                  .new_sboxw(tb_new_sboxw)
+                  .ready(tb_ready)
                  );
-
-  // The DUT requirees Sboxes.
-  aes_sbox sbox(.sboxw(tb_sboxw), .new_sboxw(tb_new_sboxw));
 
 
   //----------------------------------------------------------------

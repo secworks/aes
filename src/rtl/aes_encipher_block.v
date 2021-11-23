@@ -50,9 +50,6 @@ module aes_encipher_block(
                           output wire [3 : 0]   round,
                           input wire [127 : 0]  round_key,
 
-                          output wire [31 : 0]  sboxw,
-                          input wire  [31 : 0]  new_sboxw,
-
                           input wire [127 : 0]  block,
                           output wire [127 : 0] new_block,
                           output wire           ready
@@ -194,15 +191,24 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [2 : 0]  update_type;
-  reg [31 : 0] muxed_sboxw;
+  reg [2 : 0] update_type;
+
+/* verilator lint_off UNOPTFLAT */
+  reg [31 : 0]  muxed_sboxw;
+  wire [31 : 0] new_sboxw;
+/* verilator lint_on UNOPTFLAT */
+
+
+  //----------------------------------------------------------------
+  // Instatiations.
+  //----------------------------------------------------------------
+  aes_sbox sbox_inst(.sboxw(muxed_sboxw), .new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
   assign round     = round_ctr_reg;
-  assign sboxw     = muxed_sboxw;
   assign new_block = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
   assign ready     = ready_reg;
 

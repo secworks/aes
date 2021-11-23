@@ -49,11 +49,7 @@ module aes_key_mem(
 
                    input wire    [3 : 0] round,
                    output wire [127 : 0] round_key,
-                   output wire           ready,
-
-
-                   output wire [31 : 0]  sboxw,
-                   input wire  [31 : 0]  new_sboxw
+                   output wire           ready
                   );
 
 
@@ -111,9 +107,18 @@ module aes_key_mem(
   //----------------------------------------------------------------
   // Wires.
   //----------------------------------------------------------------
-  reg [31 : 0]  tmp_sboxw;
+/* verilator lint_off UNOPTFLAT */
+  reg [31 : 0]  sboxw;
+  wire [31 : 0] new_sboxw;
+/* verilator lint_on UNOPTFLAT */
   reg           round_key_init;
   reg           round_key_update;
+
+
+  //----------------------------------------------------------------
+  // Instantiations.
+  //----------------------------------------------------------------
+  aes_sbox sbox_inst(.sboxw(sboxw), .new_sboxw(new_sboxw));
 
 
   //----------------------------------------------------------------
@@ -121,7 +126,6 @@ module aes_key_mem(
   //----------------------------------------------------------------
   assign round_key = round_key_reg;
   assign ready     = ready_reg;
-  assign sboxw     = tmp_sboxw;
 
 
   //----------------------------------------------------------------
@@ -209,7 +213,7 @@ module aes_key_mem(
       w7 = prev_key1_reg[031 : 000];
 
       rconw = {rcon_reg, 24'h0};
-      tmp_sboxw = w7;
+      sboxw = w7;
       rotstw = {new_sboxw[23 : 00], new_sboxw[31 : 24]};
       trw = rotstw ^ rconw;
       tw = new_sboxw;

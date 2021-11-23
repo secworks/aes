@@ -72,9 +72,6 @@ module tb_aes_encipher_block();
   wire [3 : 0]   tb_round;
   wire [127 : 0] tb_round_key;
 
-  wire [31 : 0]  tb_sboxw;
-  wire [31 : 0]  tb_new_sboxw;
-
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_new_block;
 
@@ -90,13 +87,6 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   // Device Under Test.
   //----------------------------------------------------------------
-  // We need an sbox for the tests.
-  aes_sbox sbox(
-                .sboxw(tb_sboxw),
-                .new_sboxw(tb_new_sboxw)
-               );
-
-
   // The device under test.
   aes_encipher_block dut(
                          .clk(tb_clk),
@@ -107,9 +97,6 @@ module tb_aes_encipher_block();
                          .keylen(tb_keylen),
                          .round(tb_round),
                          .round_key(tb_round_key),
-
-                         .sboxw(tb_sboxw),
-                         .new_sboxw(tb_new_sboxw),
 
                          .block(tb_block),
                          .new_block(tb_new_block),
@@ -170,7 +157,7 @@ module tb_aes_encipher_block();
 
       $display("Internal data values");
       $display("round_key = 0x%016x", dut.round_key);
-      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.sboxw, dut.new_sboxw);
+      $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.muxed_sboxw, dut.new_sboxw);
       $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
                dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
       $display("");
