@@ -89,7 +89,6 @@ module tb_aes_key_mem();
                   .init(tb_init),
                   .next(tb_next),
 
-                  .round(tb_round),
                   .round_key(tb_round_key),
                   .ready(tb_ready)
                  );
@@ -139,7 +138,6 @@ module tb_aes_key_mem();
       $display("key       = 0x%032x", dut.key);
       $display("keylen    = 0x%01x, init = 0x%01x, next = 0x%01x, ready = 0x%01x",
                dut.keylen, dut.init, dut.next, dut.ready);
-      $display("round     = 0x%02x", dut.round);
       $display("round_key = 0x%016x", dut.round_key);
       $display("");
 

@@ -47,7 +47,6 @@ module aes_key_mem(
                    input wire            init,
                    input wire            next,
 
-                   input wire    [3 : 0] round,
                    output wire [127 : 0] round_key,
                    output wire           ready
                   );
