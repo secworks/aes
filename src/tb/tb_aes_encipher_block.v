@@ -49,6 +49,8 @@ module tb_aes_encipher_block();
   parameter CLK_HALF_PERIOD = 1;
   parameter CLK_PERIOD = 2 * CLK_HALF_PERIOD;
 
+  parameter TIMEOUT_CYCLES = 1_000_000;
+
   parameter AES_128_BIT_KEY = 0;
   parameter AES_256_BIT_KEY = 1;
 
@@ -59,29 +61,32 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   // Register and Wire declarations.
   //----------------------------------------------------------------
-  reg [31 : 0]   cycle_ctr;
+  time           cycle_ctr;
   reg [31 : 0]   error_ctr;
   reg [31 : 0]   tc_ctr;
 
   reg            tb_clk;
   reg            tb_reset_n;
 
+  reg            tb_init;
   reg            tb_next;
   reg            tb_keylen;
+  reg [255 : 0]  tb_key;
   wire           tb_ready;
-  wire [3 : 0]   tb_round;
   wire [127 : 0] tb_round_key;
-
+  wire           tb_init_key;
+  wire           tb_next_key;
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_new_block;
 
   reg [127 : 0] key_mem [0 : 14];
+  integer key_ptr;
 
 
   //----------------------------------------------------------------
   // Assignments.
   //----------------------------------------------------------------
-  assign tb_round_key = key_mem[tb_round];
+  assign tb_round_key = key_mem[key_ptr];
 
 
   //----------------------------------------------------------------
@@ -92,11 +97,14 @@ module tb_aes_encipher_block();
                          .clk(tb_clk),
                          .reset_n(tb_reset_n),
 
+                         .init(tb_init),
                          .next(tb_next),
 
                          .keylen(tb_keylen),
-                         .round(tb_round),
                          .round_key(tb_round_key),
+                         .init_key(tb_init_key),
+                         .next_key(tb_next_key),
+
 
                          .block(tb_block),
                          .new_block(tb_new_block),
@@ -124,8 +132,13 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   always
     begin : sys_monitor
-      cycle_ctr = cycle_ctr + 1;
       #(CLK_PERIOD);
+      cycle_ctr = cycle_ctr + 1;
+      if (cycle_ctr == TIMEOUT_CYCLES) begin
+        $display("*** TIMOUT reached - simulation stopped");
+        $finish;
+      end
+
       if (DEBUG)
         begin
           dump_dut_state();
@@ -142,21 +155,23 @@ module tb_aes_encipher_block();
     begin
       $display("State of DUT");
       $display("------------");
+      $display("Cycle: %08d", cycle_ctr);
+
       $display("Interfaces");
-      $display("ready = 0x%01x, next = 0x%01x, keylen = 0x%01x",
-               dut.ready, dut.next, dut.keylen);
+      $display("ready = 0x%01x, init = 0x%01x, , next = 0x%01x, keylen = 0x%01x",
+               dut.ready, dut.init, dut.next, dut.keylen);
       $display("block     = 0x%032x", dut.block);
       $display("new_block = 0x%032x", dut.new_block);
       $display("");
 
       $display("Control states");
-      $display("round = 0x%01x", dut.round);
       $display("enc_ctrl = 0x%01x, update_type = 0x%01x, sword_ctr = 0x%01x, round_ctr = 0x%01x",
                dut.enc_ctrl_reg, dut.update_type, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
 
       $display("Internal data values");
-      $display("round_key = 0x%016x", dut.round_key);
+      $display("init_key = 0x%1x, next_key = 0x%1x, round_key = 0x%016x",
+               dut.init_key, dut.next_key, dut.round_key);
       $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.muxed_sboxw, dut.new_sboxw);
       $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
                dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
@@ -205,10 +220,14 @@ module tb_aes_encipher_block();
       tb_clk       = 0;
       tb_reset_n   = 1;
 
+      tb_init      = 0;
       tb_next      = 0;
       tb_keylen    = 0;
+      tb_keylen    = 256'h0;
 
       tb_block     = {4{32'h00000000}};
+
+      key_ptr      = 0;
     end
   endtask // init_sim
 
@@ -257,6 +276,32 @@ module tb_aes_encipher_block();
 
 
   //----------------------------------------------------------------
+  // key_ptr_logic
+  //----------------------------------------------------------------
+  always @*
+    begin : key_ptr_logic
+      if (tb_init_key) begin
+        $display("*** tb_init_key asserted.");
+        key_ptr = 0;
+        while (tb_init_key) begin
+          #(CLK_PERIOD);
+        end
+          $display("*** tb_init_key deasserted.");
+          #(CLK_PERIOD);
+      end
+
+      if (tb_next_key) begin
+        $display("*** tb_next_key asserted.");
+        key_ptr = key_ptr + 1;
+        while (tb_next_key) begin
+          #(CLK_PERIOD);
+        end
+        $display("*** tb_next_key deasserted.");
+      end
+    end
+
+
+  //----------------------------------------------------------------
   // test_ecb_enc()
   //
   // Perform ECB mode encryption test.
@@ -271,7 +316,16 @@ module tb_aes_encipher_block();
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
 
+     // Initialize the cipher.
+     $display("*** TC %0d initializing cipher.", tc_ctr);
+     tb_init = 1;
+     #(CLK_PERIOD);
+     tb_init = 0;
+     #(CLK_PERIOD);
+
+
      // Perform encipher operation on the block.
+     $display("*** TC %0d starting block processing.", tc_ctr);
      tb_block = block;
      tb_next = 1;
      #(2 * CLK_PERIOD);
@@ -279,6 +333,8 @@ module tb_aes_encipher_block();
      #(2 * CLK_PERIOD);
 
      wait_ready();
+     $display("*** TC %0d block processing completed.", tc_ctr);
+     #(CLK_PERIOD);
 
      if (tb_new_block == expected)
        begin
@@ -396,10 +452,11 @@ module tb_aes_encipher_block();
 
 
       display_test_result();
+      $display("   -= Testbench for aes encipher block completed =-");
+      $display("     =============================================");
       $display("");
-      $display("*** AES encipher block module simulation done. ***");
       $finish;
-    end // aes_core_test
+    end // tb_aes_encipher_block
 endmodule // tb_aes_encipher_block
 
 //======================================================================

@@ -44,11 +44,14 @@ module aes_encipher_block(
                           input wire            clk,
                           input wire            reset_n,
 
+                          input wire            init,
                           input wire            next,
 
                           input wire            keylen,
                           output wire [3 : 0]   round,
                           input wire [127 : 0]  round_key,
+                          output wire           init_key,
+                          output wire           next_key,
 
                           input wire [127 : 0]  block,
                           output wire [127 : 0] new_block,
@@ -198,6 +201,9 @@ module aes_encipher_block(
   wire [31 : 0] new_sboxw;
 /* verilator lint_on UNOPTFLAT */
 
+  reg tmp_init_key;
+  reg tmp_next_key;
+
 
   //----------------------------------------------------------------
   // Instatiations.
@@ -208,6 +214,8 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   // Concurrent connectivity for ports etc.
   //----------------------------------------------------------------
+  assign init_key  = tmp_init_key;
+  assign next_key  = tmp_next_key;
   assign round     = round_ctr_reg;
   assign new_block = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
   assign ready     = ready_reg;
@@ -415,6 +423,8 @@ module aes_encipher_block(
       ready_new     = 1'b0;
       ready_we      = 1'b0;
       update_type   = NO_UPDATE;
+      tmp_init_key  = 1'h0;
+      tmp_next_key  = 1'h0;
       enc_ctrl_new  = CTRL_IDLE;
       enc_ctrl_we   = 1'b0;
 
@@ -430,6 +440,10 @@ module aes_encipher_block(
       case(enc_ctrl_reg)
         CTRL_IDLE:
           begin
+            if (init) begin
+              tmp_init_key = 1'h1;
+            end
+
             if (next)
               begin
                 round_ctr_rst = 1'b1;
@@ -440,6 +454,7 @@ module aes_encipher_block(
               end
           end
 
+
         CTRL_INIT:
           begin
             round_ctr_inc = 1'b1;
@@ -448,6 +463,7 @@ module aes_encipher_block(
             enc_ctrl_new  = CTRL_SBOX;
             enc_ctrl_we   = 1'b1;
           end
+
 
         CTRL_SBOX:
           begin
@@ -460,10 +476,12 @@ module aes_encipher_block(
               end
           end
 
+
         CTRL_MAIN:
           begin
             sword_ctr_rst = 1'b1;
             round_ctr_inc = 1'b1;
+            tmp_next_key  = 1'h1;
             if (round_ctr_reg < num_rounds)
               begin
                 update_type   = MAIN_UPDATE;
