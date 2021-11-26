@@ -41,7 +41,7 @@ INV_SBOX_SRC=../src/rtl/aes_inv_sbox.v
 KEYMEM_SRC=../src/rtl/aes_key_mem.v
 ENCIPHER_SRC=../src/rtl/aes_encipher_block.v
 DECIPHER_SRC=../src/rtl/aes_decipher_block.v
-CORE_SRC=../src/rtl/aes_core.v $(KEYMEM_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC) $(DECIPHER_SRC)
+CORE_SRC=../src/rtl/aes_core.v $(KEYMEM_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC)
 TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
 TB_TOP_SRC =../src/tb/tb_aes.v
@@ -60,23 +60,23 @@ LINT_FLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 all: top.sim core.sim keymem.sim encipher.sim decipher.sim
 
 top.sim: $(TB_TOP_SRC) $(TOP_SRC)
-	$(CC) $(CC_FLAGS) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
+	$(CC) $(CC_FLAGS) -o top.sim $^
 
 
 core.sim: $(TB_CORE_SRC) $(CORE_SRC)
-	$(CC) $(CC_FLAGS) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
+	$(CC) $(CC_FLAGS) -o core.sim $^
 
 
 keymem.sim:  $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o keymem.sim $^
 
 
-encipher.sim:  $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o encipher.sim $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
+encipher.sim:  $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC) $(KEYMEM_SRC)
+	$(CC) $(CC_FLAGS) -o encipher.sim $^
 
 
 decipher.sim:  $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o decipher.sim $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o decipher.sim  $^
 
 
 sim-keymem: keymem.sim

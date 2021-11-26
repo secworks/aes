@@ -78,15 +78,10 @@ module tb_aes_encipher_block();
   wire           tb_next_key;
   reg [127 : 0]  tb_block;
   wire [127 : 0] tb_new_block;
+  wire           tb_key_ready;
 
   reg [127 : 0] key_mem [0 : 14];
-  integer key_ptr;
 
-
-  //----------------------------------------------------------------
-  // Assignments.
-  //----------------------------------------------------------------
-  assign tb_round_key = key_mem[key_ptr];
 
 
   //----------------------------------------------------------------
@@ -110,6 +105,20 @@ module tb_aes_encipher_block();
                          .new_block(tb_new_block),
                          .ready(tb_ready)
                         );
+
+  // Instantiating the key_mem module to get real key expansion.
+  aes_key_mem keymem(
+                     .clk(tb_clk),
+                     .reset_n(tb_reset_n),
+
+                     .key(tb_key),
+                     .keylen(tb_keylen),
+                     .init(tb_init_key),
+                     .next(tb_next_key),
+                     .round_key(tb_round_key),
+
+                     .ready(tb_key_ready)
+                    );
 
 
   //----------------------------------------------------------------
@@ -135,7 +144,7 @@ module tb_aes_encipher_block();
       #(CLK_PERIOD);
       cycle_ctr = cycle_ctr + 1;
       if (cycle_ctr == TIMEOUT_CYCLES) begin
-        $display("*** TIMOUT reached - simulation stopped");
+        $display("*** TIMEOUT reached - simulation stopped");
         $finish;
       end
 
@@ -169,9 +178,13 @@ module tb_aes_encipher_block();
                dut.enc_ctrl_reg, dut.update_type, dut.sword_ctr_reg, dut.round_ctr_reg);
       $display("");
 
-      $display("Internal data values");
+      $display("Keys");
+      $display("key = 0x%032x", tb_key);
       $display("init_key = 0x%1x, next_key = 0x%1x, round_key = 0x%016x",
                dut.init_key, dut.next_key, dut.round_key);
+      $display("");
+
+      $display("Internal data values");
       $display("sboxw = 0x%08x, new_sboxw = 0x%08x", dut.muxed_sboxw, dut.new_sboxw);
       $display("block_w0_reg = 0x%08x, block_w1_reg = 0x%08x, block_w2_reg = 0x%08x, block_w3_reg = 0x%08x",
                dut.block_w0_reg, dut.block_w1_reg, dut.block_w2_reg, dut.block_w3_reg);
@@ -213,21 +226,19 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   task init_sim;
     begin
-      cycle_ctr    = 0;
-      error_ctr    = 0;
-      tc_ctr       = 0;
+      cycle_ctr  = 0;
+      error_ctr  = 0;
+      tc_ctr     = 0;
 
-      tb_clk       = 0;
-      tb_reset_n   = 1;
+      tb_clk     = 0;
+      tb_reset_n = 1;
 
-      tb_init      = 0;
-      tb_next      = 0;
-      tb_keylen    = 0;
-      tb_keylen    = 256'h0;
+      tb_init    = 0;
+      tb_next    = 0;
+      tb_keylen  = 0;
+      tb_key     = 256'h0;
 
-      tb_block     = {4{32'h00000000}};
-
-      key_ptr      = 0;
+      tb_block   = 128'h0;
     end
   endtask // init_sim
 
@@ -282,7 +293,6 @@ module tb_aes_encipher_block();
     begin : key_ptr_logic
       if (tb_init_key) begin
         $display("*** tb_init_key asserted.");
-        key_ptr = 0;
         while (tb_init_key) begin
           #(CLK_PERIOD);
         end
@@ -292,7 +302,6 @@ module tb_aes_encipher_block();
 
       if (tb_next_key) begin
         $display("*** tb_next_key asserted.");
-        key_ptr = key_ptr + 1;
         while (tb_next_key) begin
           #(CLK_PERIOD);
         end
@@ -308,6 +317,7 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   task test_ecb_enc(
                     input           key_length,
+                    input [255 : 0] key,
                     input [127 : 0] block,
                     input [127 : 0] expected);
    begin
@@ -315,6 +325,7 @@ module tb_aes_encipher_block();
 
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
+     tb_key    = key;
 
      // Initialize the cipher.
      $display("*** TC %0d initializing cipher.", tc_ctr);
@@ -364,6 +375,9 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   initial
     begin : tb_aes_encipher_block
+      reg [255 : 0] nist_aes128_key;
+      reg [255 : 0] nist_aes256_key;
+
       reg [127 : 0] nist_plaintext0;
       reg [127 : 0] nist_plaintext1;
       reg [127 : 0] nist_plaintext2;
@@ -378,6 +392,9 @@ module tb_aes_encipher_block();
       reg [127 : 0] nist_ecb_256_enc_expected1;
       reg [127 : 0] nist_ecb_256_enc_expected2;
       reg [127 : 0] nist_ecb_256_enc_expected3;
+
+      nist_aes128_key = 256'h2b7e151628aed2a6abf7158809cf4f3c00000000000000000000000000000000;
+      nist_aes256_key = 256'h603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4;
 
       nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
       nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
@@ -422,10 +439,10 @@ module tb_aes_encipher_block();
       key_mem[13] = 128'h00000000000000000000000000000000;
       key_mem[14] = 128'h00000000000000000000000000000000;
 
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext0, nist_ecb_128_enc_expected0);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext1, nist_ecb_128_enc_expected1);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext2, nist_ecb_128_enc_expected2);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext3, nist_ecb_128_enc_expected3);
+      test_ecb_enc(AES_128_BIT_KEY, nist_aes128_key, nist_plaintext0, nist_ecb_128_enc_expected0);
+      test_ecb_enc(AES_128_BIT_KEY, nist_aes128_key, nist_plaintext1, nist_ecb_128_enc_expected1);
+      test_ecb_enc(AES_128_BIT_KEY, nist_aes128_key, nist_plaintext2, nist_ecb_128_enc_expected2);
+      test_ecb_enc(AES_128_BIT_KEY, nist_aes128_key, nist_plaintext3, nist_ecb_128_enc_expected3);
 
 
       // NIST 256 bit ECB tests.
@@ -445,10 +462,10 @@ module tb_aes_encipher_block();
       key_mem[13] = 128'hcafaaae3e4d59b349adf6acebd10190d;
       key_mem[14] = 128'hfe4890d1e6188d0b046df344706c631e;
 
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext0, nist_ecb_256_enc_expected0);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
+      test_ecb_enc(AES_256_BIT_KEY, nist_aes256_key, nist_plaintext0, nist_ecb_256_enc_expected0);
+      test_ecb_enc(AES_256_BIT_KEY, nist_aes256_key, nist_plaintext1, nist_ecb_256_enc_expected1);
+      test_ecb_enc(AES_256_BIT_KEY, nist_aes256_key, nist_plaintext2, nist_ecb_256_enc_expected2);
+      test_ecb_enc(AES_256_BIT_KEY, nist_aes256_key, nist_plaintext3, nist_ecb_256_enc_expected3);
 
 
       display_test_result();

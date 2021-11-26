@@ -446,6 +446,7 @@ module aes_encipher_block(
 
             if (next)
               begin
+                tmp_next_key  = 1'h1;
                 round_ctr_rst = 1'b1;
                 ready_new     = 1'b0;
                 ready_we      = 1'b1;
@@ -457,6 +458,7 @@ module aes_encipher_block(
 
         CTRL_INIT:
           begin
+            tmp_next_key  = 1'h1;
             round_ctr_inc = 1'b1;
             sword_ctr_rst = 1'b1;
             update_type   = INIT_UPDATE;
@@ -471,6 +473,7 @@ module aes_encipher_block(
             update_type   = SBOX_UPDATE;
             if (sword_ctr_reg == 2'h3)
               begin
+                tmp_next_key  = 1'h1;
                 enc_ctrl_new  = CTRL_MAIN;
                 enc_ctrl_we   = 1'b1;
               end
@@ -481,7 +484,6 @@ module aes_encipher_block(
           begin
             sword_ctr_rst = 1'b1;
             round_ctr_inc = 1'b1;
-            tmp_next_key  = 1'h1;
             if (round_ctr_reg < num_rounds)
               begin
                 update_type   = MAIN_UPDATE;
