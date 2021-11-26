@@ -62,9 +62,7 @@ module aes_key_mem(
   localparam AES_256_NUM_ROUNDS = 14;
 
   localparam CTRL_IDLE = 2'h0;
-  localparam CTRL_INIT = 2'h1;
-  localparam CTRL_NEXT = 2'h2;
-  localparam CTRL_DONE = 2'h3;
+  localparam CTRL_DONE = 2'h1;
 
 
   //----------------------------------------------------------------
@@ -387,7 +385,9 @@ module aes_key_mem(
               begin
                 ready_new        = 1'b0;
                 ready_we         = 1'b1;
-                key_mem_ctrl_new = CTRL_INIT;
+                round_key_init   = 1'b1;
+                round_ctr_rst    = 1'b1;
+                key_mem_ctrl_new = CTRL_DONE;
                 key_mem_ctrl_we  = 1'b1;
               end
 
@@ -395,27 +395,11 @@ module aes_key_mem(
               begin
                 ready_new        = 1'b0;
                 ready_we         = 1'b1;
-                key_mem_ctrl_new = CTRL_NEXT;
+                round_ctr_inc    = 1'b1;
+                round_key_update = 1'b1;
+                key_mem_ctrl_new = CTRL_DONE;
                 key_mem_ctrl_we  = 1'b1;
               end
-          end
-
-
-        CTRL_INIT:
-          begin
-            round_key_init   = 1'b1;
-            round_ctr_rst    = 1'b1;
-            key_mem_ctrl_new = CTRL_DONE;
-            key_mem_ctrl_we  = 1'b1;
-          end
-
-
-        CTRL_NEXT:
-          begin
-            round_ctr_inc    = 1'b1;
-            round_key_update = 1'b1;
-            key_mem_ctrl_new = CTRL_DONE;
-            key_mem_ctrl_we  = 1'b1;
           end
 
 
