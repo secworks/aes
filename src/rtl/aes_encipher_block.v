@@ -48,10 +48,9 @@ module aes_encipher_block(
                           input wire            next,
 
                           input wire            keylen,
-                          output wire [3 : 0]   round,
-                          input wire [127 : 0]  round_key,
                           output wire           init_key,
                           output wire           next_key,
+                          input wire [127 : 0]  round_key,
 
                           input wire [127 : 0]  block,
                           output wire [127 : 0] new_block,
@@ -78,7 +77,6 @@ module aes_encipher_block(
   localparam CTRL_INIT  = 3'h1;
   localparam CTRL_SBOX  = 3'h2;
   localparam CTRL_MAIN  = 3'h3;
-  localparam CTRL_FINAL = 3'h4;
 
 
   //----------------------------------------------------------------
@@ -216,7 +214,6 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   assign init_key  = tmp_init_key;
   assign next_key  = tmp_next_key;
-  assign round     = round_ctr_reg;
   assign new_block = {block_w0_reg, block_w1_reg, block_w2_reg, block_w3_reg};
   assign ready     = ready_reg;
 
@@ -501,9 +498,7 @@ module aes_encipher_block(
           end
 
         default:
-          begin
-            // Empty. Just here to make the synthesis tool happy.
-          end
+          begin end
       endcase // case (enc_ctrl_reg)
     end // encipher_ctrl
 

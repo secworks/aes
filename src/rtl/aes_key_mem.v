@@ -58,9 +58,6 @@ module aes_key_mem(
   localparam AES_128_BIT_KEY = 1'h0;
   localparam AES_256_BIT_KEY = 1'h1;
 
-  localparam AES_128_NUM_ROUNDS = 10;
-  localparam AES_256_NUM_ROUNDS = 14;
-
   localparam CTRL_IDLE = 2'h0;
   localparam CTRL_DONE = 2'h1;
 
@@ -134,8 +131,6 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @ (posedge clk or negedge reset_n)
     begin: reg_update
-      integer i;
-
       if (!reset_n)
         begin
           round_key_reg    <= 128'h0;
@@ -361,9 +356,6 @@ module aes_key_mem(
   //----------------------------------------------------------------
   always @*
     begin: key_mem_ctrl
-      reg [3 : 0] num_rounds;
-
-      // Default assignments.
       ready_new        = 1'b0;
       ready_we         = 1'b0;
       round_key_init   = 1'b0;
@@ -372,11 +364,6 @@ module aes_key_mem(
       round_ctr_inc    = 1'b0;
       key_mem_ctrl_new = CTRL_IDLE;
       key_mem_ctrl_we  = 1'b0;
-
-      if (keylen == AES_128_BIT_KEY)
-        num_rounds = AES_128_NUM_ROUNDS;
-      else
-        num_rounds = AES_256_NUM_ROUNDS;
 
       case(key_mem_ctrl_reg)
         CTRL_IDLE:

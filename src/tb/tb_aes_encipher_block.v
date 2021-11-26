@@ -96,10 +96,9 @@ module tb_aes_encipher_block();
                          .next(tb_next),
 
                          .keylen(tb_keylen),
-                         .round_key(tb_round_key),
                          .init_key(tb_init_key),
                          .next_key(tb_next_key),
-
+                         .round_key(tb_round_key),
 
                          .block(tb_block),
                          .new_block(tb_new_block),

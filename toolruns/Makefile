@@ -37,10 +37,8 @@
 #===================================================================
 
 SBOX_SRC=../src/rtl/aes_sbox.v
-INV_SBOX_SRC=../src/rtl/aes_inv_sbox.v
 KEYMEM_SRC=../src/rtl/aes_key_mem.v
 ENCIPHER_SRC=../src/rtl/aes_encipher_block.v
-DECIPHER_SRC=../src/rtl/aes_decipher_block.v
 CORE_SRC=../src/rtl/aes_core.v $(KEYMEM_SRC) $(SBOX_SRC) $(INV_SBOX_SRC) $(ENCIPHER_SRC)
 TOP_SRC=../src/rtl/aes.v $(CORE_SRC)
 
@@ -48,7 +46,6 @@ TB_TOP_SRC =../src/tb/tb_aes.v
 TB_CORE_SRC =../src/tb/tb_aes_core.v
 TB_KEYMEM_SRC =../src/tb/tb_aes_key_mem.v
 TB_ENCIPHER_SRC =../src/tb/tb_aes_encipher_block.v
-TB_DECIPHER_SRC =../src/tb/tb_aes_decipher_block.v
 
 CC = iverilog
 CC_FLAGS = -Wall
@@ -57,7 +54,7 @@ LINT = verilator
 LINT_FLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 
 
-all: top.sim core.sim keymem.sim encipher.sim decipher.sim
+all: top.sim core.sim keymem.sim encipher.sim
 
 top.sim: $(TB_TOP_SRC) $(TOP_SRC)
 	$(CC) $(CC_FLAGS) -o top.sim $^
@@ -75,20 +72,12 @@ encipher.sim:  $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC) $(KEYMEM_SRC)
 	$(CC) $(CC_FLAGS) -o encipher.sim $^
 
 
-decipher.sim:  $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o decipher.sim  $^
-
-
 sim-keymem: keymem.sim
 	./keymem.sim
 
 
 sim-encipher: encipher.sim
 	./encipher.sim
-
-
-sim-decipher: decipher.sim
-	./decipher.sim
 
 
 sim-core: core.sim
@@ -121,12 +110,10 @@ help:
 	@echo "core.sim:     Build core level simulation target."
 	@echo "keymem.sim:   Build key memory simulation target."
 	@echo "encipher.sim: Build encipher block simulation target."
-	@echo "decipher.sim: Build decipher block simulation target."
 	@echo "sim-top:      Run top level simulation."
 	@echo "sim-core:     Run core level simulation."
 	@echo "sim-keymem    Run keymem simulation."
 	@echo "sim-encipher  Run encipher block simulation."
-	@echo "sim-decipher  Run decipher block simulation."
 	@echo "lint:         Lint all rtl source files."
 	@echo "clean:        Delete all built files."
 
