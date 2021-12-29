@@ -60,23 +60,23 @@ LINT_FLAGS = +1364-2001ext+ --lint-only  -Wall -Wno-fatal -Wno-DECLFILENAME
 all: top.sim core.sim keymem.sim encipher.sim decipher.sim
 
 top.sim: $(TB_TOP_SRC) $(TOP_SRC)
-	$(CC) $(CC_FLAGS) -o top.sim $(TB_TOP_SRC) $(TOP_SRC)
+	$(CC) $(CC_FLAGS) -o $@ $^
 
 
 core.sim: $(TB_CORE_SRC) $(CORE_SRC)
-	$(CC) $(CC_FLAGS) -o core.sim $(TB_CORE_SRC) $(CORE_SRC)
+	$(CC) $(CC_FLAGS) -o $@ $^
 
 
 keymem.sim:  $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o keymem.sim $(TB_KEYMEM_SRC) $(KEYMEM_SRC) $(SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o $@ $^
 
 
 encipher.sim:  $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o encipher.sim $(TB_ENCIPHER_SRC) $(ENCIPHER_SRC) $(SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o $@ $^
 
 
 decipher.sim:  $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
-	$(CC) $(CC_FLAGS) -o decipher.sim $(TB_DECIPHER_SRC) $(DECIPHER_SRC) $(INV_SBOX_SRC)
+	$(CC) $(CC_FLAGS) -o $@ $^
 
 
 sim-keymem: keymem.sim
@@ -100,7 +100,7 @@ sim-top: top.sim
 
 
 lint:  $(TOP_SRC)
-	$(LINT) $(LINT_FLAGS) $(TOP_SRC)
+	$(LINT) $(LINT_FLAGS) $^
 
 
 clean:
