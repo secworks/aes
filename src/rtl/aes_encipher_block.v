@@ -74,11 +74,10 @@ module aes_encipher_block(
   localparam MAIN_UPDATE  = 3'h3;
   localparam FINAL_UPDATE = 3'h4;
 
-  localparam CTRL_IDLE  = 3'h0;
-  localparam CTRL_INIT  = 3'h1;
-  localparam CTRL_SBOX  = 3'h2;
-  localparam CTRL_MAIN  = 3'h3;
-  localparam CTRL_FINAL = 3'h4;
+  localparam CTRL_IDLE  = 2'h0;
+  localparam CTRL_INIT  = 2'h1;
+  localparam CTRL_SBOX  = 2'h2;
+  localparam CTRL_MAIN  = 2'h3;
 
 
   //----------------------------------------------------------------
@@ -186,8 +185,8 @@ module aes_encipher_block(
   reg           ready_new;
   reg           ready_we;
 
-  reg [2 : 0]   enc_ctrl_reg;
-  reg [2 : 0]   enc_ctrl_new;
+  reg [1 : 0]   enc_ctrl_reg;
+  reg [1 : 0]   enc_ctrl_new;
   reg           enc_ctrl_we;
 
 
