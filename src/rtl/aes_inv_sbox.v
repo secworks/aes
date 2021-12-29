@@ -38,8 +38,8 @@
 `default_nettype none
 
 module aes_inv_sbox(
-                    input wire  [31 : 0] sword,
-                    output wire [31 : 0] new_sword
+                    input wire  [31 : 0] sboxw,
+                    output wire [31 : 0] new_sboxw
                    );
 
 
@@ -52,10 +52,10 @@ module aes_inv_sbox(
   //----------------------------------------------------------------
   // Four parallel muxes.
   //----------------------------------------------------------------
-  assign new_sword[31 : 24] = inv_sbox[sword[31 : 24]];
-  assign new_sword[23 : 16] = inv_sbox[sword[23 : 16]];
-  assign new_sword[15 : 08] = inv_sbox[sword[15 : 08]];
-  assign new_sword[07 : 00] = inv_sbox[sword[07 : 00]];
+  assign new_sboxw[31 : 24] = inv_sbox[sboxw[31 : 24]];
+  assign new_sboxw[23 : 16] = inv_sbox[sboxw[23 : 16]];
+  assign new_sboxw[15 : 08] = inv_sbox[sboxw[15 : 08]];
+  assign new_sboxw[07 : 00] = inv_sbox[sboxw[07 : 00]];
 
 
   //----------------------------------------------------------------
