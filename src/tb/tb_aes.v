@@ -408,6 +408,13 @@ module tb_aes();
   // aes_test()
   //
   // Main test task will perform complete NIST test of AES.
+  // Test vectors copied from the follwing NIST documents.
+  //
+  // NIST SP 800-38A:
+  // http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
+  //
+  // NIST FIPS-197, Appendix C:
+  // https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
   //----------------------------------------------------------------
   task aes_test;
     reg [255 : 0] nist_aes128_key1;
