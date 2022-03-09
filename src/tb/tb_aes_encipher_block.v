@@ -43,7 +43,7 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
-  parameter DEBUG     = 1;
+  parameter DEBUG     = 0;
   parameter DUMP_WAIT = 0;
 
   parameter CLK_HALF_PERIOD = 1;
@@ -195,10 +195,11 @@ module tb_aes_encipher_block();
   //----------------------------------------------------------------
   task reset_dut;
     begin
-      $display("*** Toggle reset.");
+      $display("--- Toggle reset.");
       tb_reset_n = 0;
       #(2 * CLK_PERIOD);
       tb_reset_n = 1;
+      $display("");
     end
   endtask // reset_dut
 
@@ -235,11 +236,11 @@ module tb_aes_encipher_block();
     begin
       if (error_ctr == 0)
         begin
-          $display("*** All %02d test cases completed successfully", tc_ctr);
+          $display("--- All %02d test cases completed successfully", tc_ctr);
         end
       else
         begin
-          $display("*** %02d tests completed - %02d test cases did not complete successfully.",
+          $display("--- %02d tests completed - %02d test cases did not complete successfully.",
                    tc_ctr, error_ctr);
         end
     end
@@ -279,7 +280,9 @@ module tb_aes_encipher_block();
                     input [127 : 0] block,
                     input [127 : 0] expected);
    begin
-     $display("*** TC %0d ECB mode test started.", tc_ctr);
+     tc_ctr = tc_ctr + 1;
+
+     $display("--- TC %02d ECB mode test started.", tc_ctr);
 
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
@@ -295,21 +298,87 @@ module tb_aes_encipher_block();
 
      if (tb_new_block == expected)
        begin
-         $display("*** TC %0d successful.", tc_ctr);
-         $display("");
+         $display("--- TC %02d successful.", tc_ctr);
+         $display("--- Got: 0x%032x", tb_new_block);
        end
      else
        begin
-         $display("*** ERROR: TC %0d NOT successful.", tc_ctr);
-         $display("Expected: 0x%032x", expected);
-         $display("Got:      0x%032x", tb_new_block);
-         $display("");
-
+         $display("--- ERROR: TC %02d NOT successful.", tc_ctr);
+         $display("--- Expected: 0x%032x", expected);
+         $display("--- Got:      0x%032x", tb_new_block);
          error_ctr = error_ctr + 1;
        end
-     tc_ctr = tc_ctr + 1;
+     $display("--- TC %02d ECB mode test completed.", tc_ctr);
    end
   endtask // ecb_mode_single_block_test
+
+
+  //----------------------------------------------------------------
+  // load_nist128_key
+  //----------------------------------------------------------------
+  task load_nist128_key;
+    begin : load_nist128_key
+      key_mem[00] = 128'h2b7e151628aed2a6abf7158809cf4f3c;
+      key_mem[01] = 128'ha0fafe1788542cb123a339392a6c7605;
+      key_mem[02] = 128'hf2c295f27a96b9435935807a7359f67f;
+      key_mem[03] = 128'h3d80477d4716fe3e1e237e446d7a883b;
+      key_mem[04] = 128'hef44a541a8525b7fb671253bdb0bad00;
+      key_mem[05] = 128'hd4d1c6f87c839d87caf2b8bc11f915bc;
+      key_mem[06] = 128'h6d88a37a110b3efddbf98641ca0093fd;
+      key_mem[07] = 128'h4e54f70e5f5fc9f384a64fb24ea6dc4f;
+      key_mem[08] = 128'head27321b58dbad2312bf5607f8d292f;
+      key_mem[09] = 128'hac7766f319fadc2128d12941575c006e;
+      key_mem[10] = 128'hd014f9a8c9ee2589e13f0cc8b6630ca6;
+      key_mem[11] = 128'h00000000000000000000000000000000;
+      key_mem[12] = 128'h00000000000000000000000000000000;
+      key_mem[13] = 128'h00000000000000000000000000000000;
+      key_mem[14] = 128'h00000000000000000000000000000000;
+    end
+  endtask // load_nist128_key
+
+
+  //----------------------------------------------------------------
+  // load_nist256_key
+  //----------------------------------------------------------------
+  task load_nist256_key;
+    begin : load_nist128_key
+      key_mem[00] = 128'h2b7e151628aed2a6abf7158809cf4f3c;
+      key_mem[01] = 128'ha0fafe1788542cb123a339392a6c7605;
+      key_mem[02] = 128'hf2c295f27a96b9435935807a7359f67f;
+      key_mem[03] = 128'h3d80477d4716fe3e1e237e446d7a883b;
+      key_mem[04] = 128'hef44a541a8525b7fb671253bdb0bad00;
+      key_mem[05] = 128'hd4d1c6f87c839d87caf2b8bc11f915bc;
+      key_mem[06] = 128'h6d88a37a110b3efddbf98641ca0093fd;
+      key_mem[07] = 128'h4e54f70e5f5fc9f384a64fb24ea6dc4f;
+      key_mem[08] = 128'head27321b58dbad2312bf5607f8d292f;
+      key_mem[09] = 128'hac7766f319fadc2128d12941575c006e;
+      key_mem[10] = 128'hd014f9a8c9ee2589e13f0cc8b6630ca6;
+      key_mem[11] = 128'h00000000000000000000000000000000;
+      key_mem[12] = 128'h00000000000000000000000000000000;
+      key_mem[13] = 128'h00000000000000000000000000000000;
+      key_mem[14] = 128'h00000000000000000000000000000000;
+    end
+  endtask // load_nist256_key
+
+
+  //----------------------------------------------------------------
+  // test_nist_enc_128_1
+  //----------------------------------------------------------------
+  task test_nist_enc_128_1;
+    begin : nist_enc_128_1
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'h6bc1bee22e409f96e93d7e117393172a;
+      ciphertext = 128'h3ad77bb40d7a3660a89ecaf32466ef97;
+
+      $display("--- test_nist_enc_128_1: Started.");
+
+      test_ecb_enc(AES_128_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_128_1: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_128_1
 
 
   //----------------------------------------------------------------
@@ -336,12 +405,10 @@ module tb_aes_encipher_block();
       reg [127 : 0] nist_ecb_256_enc_expected2;
       reg [127 : 0] nist_ecb_256_enc_expected3;
 
-      nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
       nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
       nist_plaintext2 = 128'h30c81c46a35ce411e5fbc1191a0a52ef;
       nist_plaintext3 = 128'hf69f2445df4f9b17ad2b417be66c3710;
 
-      nist_ecb_128_enc_expected0 = 128'h3ad77bb40d7a3660a89ecaf32466ef97;
       nist_ecb_128_enc_expected1 = 128'hf5d3d58503b9699de785895a96fdbaaf;
       nist_ecb_128_enc_expected2 = 128'h43b1cd7f598ece23881b00e3ed030688;
       nist_ecb_128_enc_expected3 = 128'h7b0c785e27e8ad3f8223207104725dd4;
@@ -357,32 +424,14 @@ module tb_aes_encipher_block();
       $display("");
 
       init_sim();
-      dump_dut_state();
       reset_dut();
-      dump_dut_state();
 
+      load_nist128_key();
+      test_nist_enc_128_1();
 
-      // NIST 128 bit ECB tests.
-      key_mem[00] = 128'h2b7e151628aed2a6abf7158809cf4f3c;
-      key_mem[01] = 128'ha0fafe1788542cb123a339392a6c7605;
-      key_mem[02] = 128'hf2c295f27a96b9435935807a7359f67f;
-      key_mem[03] = 128'h3d80477d4716fe3e1e237e446d7a883b;
-      key_mem[04] = 128'hef44a541a8525b7fb671253bdb0bad00;
-      key_mem[05] = 128'hd4d1c6f87c839d87caf2b8bc11f915bc;
-      key_mem[06] = 128'h6d88a37a110b3efddbf98641ca0093fd;
-      key_mem[07] = 128'h4e54f70e5f5fc9f384a64fb24ea6dc4f;
-      key_mem[08] = 128'head27321b58dbad2312bf5607f8d292f;
-      key_mem[09] = 128'hac7766f319fadc2128d12941575c006e;
-      key_mem[10] = 128'hd014f9a8c9ee2589e13f0cc8b6630ca6;
-      key_mem[11] = 128'h00000000000000000000000000000000;
-      key_mem[12] = 128'h00000000000000000000000000000000;
-      key_mem[13] = 128'h00000000000000000000000000000000;
-      key_mem[14] = 128'h00000000000000000000000000000000;
-
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext0, nist_ecb_128_enc_expected0);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext1, nist_ecb_128_enc_expected1);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext2, nist_ecb_128_enc_expected2);
-      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext3, nist_ecb_128_enc_expected3);
+//      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext1, nist_ecb_128_enc_expected1);
+//      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext2, nist_ecb_128_enc_expected2);
+//      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext3, nist_ecb_128_enc_expected3);
 
 
       // NIST 256 bit ECB tests.
@@ -402,17 +451,18 @@ module tb_aes_encipher_block();
       key_mem[13] = 128'hcafaaae3e4d59b349adf6acebd10190d;
       key_mem[14] = 128'hfe4890d1e6188d0b046df344706c631e;
 
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext0, nist_ecb_256_enc_expected0);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
-      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
+//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext0, nist_ecb_256_enc_expected0);
+//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
+//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
+//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
 
 
       display_test_result();
       $display("");
-      $display("*** AES encipher block module simulation done. ***");
+      $display("   -= Testbench for aes encipher block completed =-");
+      $display("     ============================================");
       $finish;
-    end // aes_core_test
+    end // tb_aes_encipher_block
 endmodule // tb_aes_encipher_block
 
 //======================================================================
