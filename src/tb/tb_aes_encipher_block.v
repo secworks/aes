@@ -341,22 +341,22 @@ module tb_aes_encipher_block();
   // load_nist256_key
   //----------------------------------------------------------------
   task load_nist256_key;
-    begin : load_nist128_key
-      key_mem[00] = 128'h2b7e151628aed2a6abf7158809cf4f3c;
-      key_mem[01] = 128'ha0fafe1788542cb123a339392a6c7605;
-      key_mem[02] = 128'hf2c295f27a96b9435935807a7359f67f;
-      key_mem[03] = 128'h3d80477d4716fe3e1e237e446d7a883b;
-      key_mem[04] = 128'hef44a541a8525b7fb671253bdb0bad00;
-      key_mem[05] = 128'hd4d1c6f87c839d87caf2b8bc11f915bc;
-      key_mem[06] = 128'h6d88a37a110b3efddbf98641ca0093fd;
-      key_mem[07] = 128'h4e54f70e5f5fc9f384a64fb24ea6dc4f;
-      key_mem[08] = 128'head27321b58dbad2312bf5607f8d292f;
-      key_mem[09] = 128'hac7766f319fadc2128d12941575c006e;
-      key_mem[10] = 128'hd014f9a8c9ee2589e13f0cc8b6630ca6;
-      key_mem[11] = 128'h00000000000000000000000000000000;
-      key_mem[12] = 128'h00000000000000000000000000000000;
-      key_mem[13] = 128'h00000000000000000000000000000000;
-      key_mem[14] = 128'h00000000000000000000000000000000;
+    begin : load_nist256_key
+      key_mem[00] = 128'h603deb1015ca71be2b73aef0857d7781;
+      key_mem[01] = 128'h1f352c073b6108d72d9810a30914dff4;
+      key_mem[02] = 128'h9ba354118e6925afa51a8b5f2067fcde;
+      key_mem[03] = 128'ha8b09c1a93d194cdbe49846eb75d5b9a;
+      key_mem[04] = 128'hd59aecb85bf3c917fee94248de8ebe96;
+      key_mem[05] = 128'hb5a9328a2678a647983122292f6c79b3;
+      key_mem[06] = 128'h812c81addadf48ba24360af2fab8b464;
+      key_mem[07] = 128'h98c5bfc9bebd198e268c3ba709e04214;
+      key_mem[08] = 128'h68007bacb2df331696e939e46c518d80;
+      key_mem[09] = 128'hc814e20476a9fb8a5025c02d59c58239;
+      key_mem[10] = 128'hde1369676ccc5a71fa2563959674ee15;
+      key_mem[11] = 128'h5886ca5d2e2f31d77e0af1fa27cf73c3;
+      key_mem[12] = 128'h749c47ab18501ddae2757e4f7401905a;
+      key_mem[13] = 128'hcafaaae3e4d59b349adf6acebd10190d;
+      key_mem[14] = 128'hfe4890d1e6188d0b046df344706c631e;
     end
   endtask // load_nist256_key
 
@@ -382,6 +382,85 @@ module tb_aes_encipher_block();
 
 
   //----------------------------------------------------------------
+  // test_nist_enc_128_2
+  //----------------------------------------------------------------
+  task test_nist_enc_128_2;
+    begin : nist_enc_128_2
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
+      ciphertext = 128'hf5d3d58503b9699de785895a96fdbaaf;
+
+      $display("--- test_nist_enc_128_2: Started.");
+
+      test_ecb_enc(AES_128_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_128_2: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_128_2
+
+
+  //----------------------------------------------------------------
+  // test_nist_enc_128_3
+  //----------------------------------------------------------------
+  task test_nist_enc_128_3;
+    begin : nist_enc_128_3
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'h30c81c46a35ce411e5fbc1191a0a52ef;
+      ciphertext = 128'h43b1cd7f598ece23881b00e3ed030688;
+
+      $display("--- test_nist_enc_128_3: Started.");
+
+      test_ecb_enc(AES_128_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_128_3: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_128_3
+
+
+  //----------------------------------------------------------------
+  // test_nist_enc_128_4
+  //----------------------------------------------------------------
+  task test_nist_enc_128_4;
+    begin : nist_enc_128_4
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'hf69f2445df4f9b17ad2b417be66c3710;
+      ciphertext = 128'h7b0c785e27e8ad3f8223207104725dd4;
+
+      $display("--- test_nist_enc_128_4: Started.");
+
+      test_ecb_enc(AES_128_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_128_4: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_128_4
+
+  //----------------------------------------------------------------
+  // test_nist_enc_256_1
+  //----------------------------------------------------------------
+  task test_nist_enc_256_1;
+    begin : nist_enc_256_1
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'h6bc1bee22e409f96e93d7e117393172a;
+      ciphertext = 128'hf3eed1bdb5d2a03c064b5a7e3db181f8;
+
+      $display("--- test_nist_enc_256_1: Started.");
+
+      test_ecb_enc(AES_256_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_256_1: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_256_1
+
+
+  //----------------------------------------------------------------
   // tb_aes_encipher_block
   // The main test functionality.
   //
@@ -395,23 +474,15 @@ module tb_aes_encipher_block();
       reg [127 : 0] nist_plaintext2;
       reg [127 : 0] nist_plaintext3;
 
-      reg [127 : 0] nist_ecb_128_enc_expected0;
-      reg [127 : 0] nist_ecb_128_enc_expected1;
-      reg [127 : 0] nist_ecb_128_enc_expected2;
-      reg [127 : 0] nist_ecb_128_enc_expected3;
-
       reg [127 : 0] nist_ecb_256_enc_expected0;
       reg [127 : 0] nist_ecb_256_enc_expected1;
       reg [127 : 0] nist_ecb_256_enc_expected2;
       reg [127 : 0] nist_ecb_256_enc_expected3;
 
+      nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
       nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
       nist_plaintext2 = 128'h30c81c46a35ce411e5fbc1191a0a52ef;
       nist_plaintext3 = 128'hf69f2445df4f9b17ad2b417be66c3710;
-
-      nist_ecb_128_enc_expected1 = 128'hf5d3d58503b9699de785895a96fdbaaf;
-      nist_ecb_128_enc_expected2 = 128'h43b1cd7f598ece23881b00e3ed030688;
-      nist_ecb_128_enc_expected3 = 128'h7b0c785e27e8ad3f8223207104725dd4;
 
       nist_ecb_256_enc_expected0 = 255'hf3eed1bdb5d2a03c064b5a7e3db181f8;
       nist_ecb_256_enc_expected1 = 255'h591ccb10d410ed26dc5ba74a31362870;
@@ -428,30 +499,13 @@ module tb_aes_encipher_block();
 
       load_nist128_key();
       test_nist_enc_128_1();
+      test_nist_enc_128_2();
+      test_nist_enc_128_3();
+      test_nist_enc_128_4();
 
-//      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext1, nist_ecb_128_enc_expected1);
-//      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext2, nist_ecb_128_enc_expected2);
-//      test_ecb_enc(AES_128_BIT_KEY, nist_plaintext3, nist_ecb_128_enc_expected3);
+      load_nist256_key();
+      test_nist_enc_256_1();
 
-
-      // NIST 256 bit ECB tests.
-      key_mem[00] = 128'h603deb1015ca71be2b73aef0857d7781;
-      key_mem[01] = 128'h1f352c073b6108d72d9810a30914dff4;
-      key_mem[02] = 128'h9ba354118e6925afa51a8b5f2067fcde;
-      key_mem[03] = 128'ha8b09c1a93d194cdbe49846eb75d5b9a;
-      key_mem[04] = 128'hd59aecb85bf3c917fee94248de8ebe96;
-      key_mem[05] = 128'hb5a9328a2678a647983122292f6c79b3;
-      key_mem[06] = 128'h812c81addadf48ba24360af2fab8b464;
-      key_mem[07] = 128'h98c5bfc9bebd198e268c3ba709e04214;
-      key_mem[08] = 128'h68007bacb2df331696e939e46c518d80;
-      key_mem[09] = 128'hc814e20476a9fb8a5025c02d59c58239;
-      key_mem[10] = 128'hde1369676ccc5a71fa2563959674ee15;
-      key_mem[11] = 128'h5886ca5d2e2f31d77e0af1fa27cf73c3;
-      key_mem[12] = 128'h749c47ab18501ddae2757e4f7401905a;
-      key_mem[13] = 128'hcafaaae3e4d59b349adf6acebd10190d;
-      key_mem[14] = 128'hfe4890d1e6188d0b046df344706c631e;
-
-//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext0, nist_ecb_256_enc_expected0);
 //      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
 //      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
 //      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
