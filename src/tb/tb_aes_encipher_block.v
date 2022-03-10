@@ -4,6 +4,9 @@
 // -----------------------
 // Testbench for the AES encipher block module.
 //
+// Test cases from NIST SP 800-38A:
+// http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
+//
 //
 // Author: Joachim Strombergson
 // Copyright (c) 2014, Secworks Sweden AB
@@ -282,7 +285,7 @@ module tb_aes_encipher_block();
    begin
      tc_ctr = tc_ctr + 1;
 
-     $display("--- TC %02d ECB mode test started.", tc_ctr);
+     $display("--- ECB mode test started.");
 
      // Init the cipher with the given key and length.
      tb_keylen = key_length;
@@ -298,17 +301,17 @@ module tb_aes_encipher_block();
 
      if (tb_new_block == expected)
        begin
-         $display("--- TC %02d successful.", tc_ctr);
+         $display("--- Testcase successful.");
          $display("--- Got: 0x%032x", tb_new_block);
        end
      else
        begin
-         $display("--- ERROR: TC %02d NOT successful.", tc_ctr);
+         $display("--- ERROR: Testcase NOT successful.");
          $display("--- Expected: 0x%032x", expected);
          $display("--- Got:      0x%032x", tb_new_block);
          error_ctr = error_ctr + 1;
        end
-     $display("--- TC %02d ECB mode test completed.", tc_ctr);
+     $display("--- ECB mode test completed.");
    end
   endtask // ecb_mode_single_block_test
 
@@ -440,6 +443,7 @@ module tb_aes_encipher_block();
     end
   endtask // test_nist_enc_128_4
 
+
   //----------------------------------------------------------------
   // test_nist_enc_256_1
   //----------------------------------------------------------------
@@ -461,35 +465,71 @@ module tb_aes_encipher_block();
 
 
   //----------------------------------------------------------------
+  // test_nist_enc_256_2
+  //----------------------------------------------------------------
+  task test_nist_enc_256_2;
+    begin : nist_enc_256_2
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
+      ciphertext = 128'h591ccb10d410ed26dc5ba74a31362870;
+
+      $display("--- test_nist_enc_256_2: Started.");
+
+      test_ecb_enc(AES_256_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_256_2: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_256_2
+
+
+  //----------------------------------------------------------------
+  // test_nist_enc_256_3
+  //----------------------------------------------------------------
+  task test_nist_enc_256_3;
+    begin : nist_enc_256_3
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'h30c81c46a35ce411e5fbc1191a0a52ef;
+      ciphertext = 128'hb6ed21b99ca6f4f9f153e7b1beafed1d;
+
+      $display("--- test_nist_enc_256_3: Started.");
+
+      test_ecb_enc(AES_256_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_256_3: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_256_3
+
+
+  //----------------------------------------------------------------
+  // test_nist_enc_256_4
+  //----------------------------------------------------------------
+  task test_nist_enc_256_4;
+    begin : nist_enc_256_4
+      reg [127 : 0] plaintext;
+      reg [127 : 0] ciphertext;
+
+      plaintext  = 128'hf69f2445df4f9b17ad2b417be66c3710;
+      ciphertext = 128'h23304b7a39f9f3ff067d8d8f9e24ecc7;
+
+      $display("--- test_nist_enc_256_4: Started.");
+
+      test_ecb_enc(AES_256_BIT_KEY, plaintext, ciphertext);
+      $display("--- test_nist_enc_256_4: Completed.");
+      $display("");
+    end
+  endtask // test_nist_enc_256_4
+
+
+  //----------------------------------------------------------------
   // tb_aes_encipher_block
   // The main test functionality.
-  //
-  // Test cases taken from NIST SP 800-38A:
-  // http://csrc.nist.gov/publications/nistpubs/800-38a/sp800-38a.pdf
   //----------------------------------------------------------------
   initial
     begin : tb_aes_encipher_block
-      reg [127 : 0] nist_plaintext0;
-      reg [127 : 0] nist_plaintext1;
-      reg [127 : 0] nist_plaintext2;
-      reg [127 : 0] nist_plaintext3;
-
-      reg [127 : 0] nist_ecb_256_enc_expected0;
-      reg [127 : 0] nist_ecb_256_enc_expected1;
-      reg [127 : 0] nist_ecb_256_enc_expected2;
-      reg [127 : 0] nist_ecb_256_enc_expected3;
-
-      nist_plaintext0 = 128'h6bc1bee22e409f96e93d7e117393172a;
-      nist_plaintext1 = 128'hae2d8a571e03ac9c9eb76fac45af8e51;
-      nist_plaintext2 = 128'h30c81c46a35ce411e5fbc1191a0a52ef;
-      nist_plaintext3 = 128'hf69f2445df4f9b17ad2b417be66c3710;
-
-      nist_ecb_256_enc_expected0 = 255'hf3eed1bdb5d2a03c064b5a7e3db181f8;
-      nist_ecb_256_enc_expected1 = 255'h591ccb10d410ed26dc5ba74a31362870;
-      nist_ecb_256_enc_expected2 = 255'hb6ed21b99ca6f4f9f153e7b1beafed1d;
-      nist_ecb_256_enc_expected3 = 255'h23304b7a39f9f3ff067d8d8f9e24ecc7;
-
-
       $display("   -= Testbench for aes encipher block started =-");
       $display("     ============================================");
       $display("");
@@ -505,11 +545,9 @@ module tb_aes_encipher_block();
 
       load_nist256_key();
       test_nist_enc_256_1();
-
-//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext1, nist_ecb_256_enc_expected1);
-//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext2, nist_ecb_256_enc_expected2);
-//      test_ecb_enc(AES_256_BIT_KEY, nist_plaintext3, nist_ecb_256_enc_expected3);
-
+      test_nist_enc_256_2();
+      test_nist_enc_256_3();
+      test_nist_enc_256_4();
 
       display_test_result();
       $display("");
