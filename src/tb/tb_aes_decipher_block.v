@@ -330,10 +330,10 @@ module tb_aes_decipher_block();
       nist_ecb_128_dec_ciphertext2 = 128'h43b1cd7f598ece23881b00e3ed030688;
       nist_ecb_128_dec_ciphertext3 = 128'h7b0c785e27e8ad3f8223207104725dd4;
 
-      nist_ecb_256_dec_ciphertext0 = 255'hf3eed1bdb5d2a03c064b5a7e3db181f8;
-      nist_ecb_256_dec_ciphertext1 = 255'h591ccb10d410ed26dc5ba74a31362870;
-      nist_ecb_256_dec_ciphertext2 = 255'hb6ed21b99ca6f4f9f153e7b1beafed1d;
-      nist_ecb_256_dec_ciphertext3 = 255'h23304b7a39f9f3ff067d8d8f9e24ecc7;
+      nist_ecb_256_dec_ciphertext0 = 128'hf3eed1bdb5d2a03c064b5a7e3db181f8;
+      nist_ecb_256_dec_ciphertext1 = 128'h591ccb10d410ed26dc5ba74a31362870;
+      nist_ecb_256_dec_ciphertext2 = 128'hb6ed21b99ca6f4f9f153e7b1beafed1d;
+      nist_ecb_256_dec_ciphertext3 = 128'h23304b7a39f9f3ff067d8d8f9e24ecc7;
 
 
       $display("   -= Testbench for aes decipher block started =-");
