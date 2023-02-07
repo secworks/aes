@@ -1,3 +1,5 @@
+[![build-openlane-sky130](https://github.com/secworks/aes/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/secworks/aes/actions/workflows/ci.yml)
+
 aes
 ===
 
