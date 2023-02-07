@@ -149,13 +149,16 @@ module tb_aes_key_mem();
       $display("");
 
       $display("Internal states:");
-      $display("key_mem_ctrl = 0x%01x, round_key_update = 0x%01x, round_ctr_reg = 0x%01x, rcon_reg = 0x%01x",
-               dut.key_mem_ctrl_reg, dut.round_key_update, dut.round_ctr_reg, dut.rcon_reg);
+      $display("key_mem_ctrl = 0x%01x, round_key_update = 0x%01x, round_ctr_reg = 0x%01x",
+               dut.key_mem_ctrl_reg, dut.round_key_update, dut.round_ctr_reg);
 
       $display("prev_key0_reg = 0x%016x, prev_key0_new = 0x%016x, prev_key0_we = 0x%01x",
                dut.prev_key0_reg, dut.prev_key0_new, dut.prev_key0_we);
       $display("prev_key1_reg = 0x%016x, prev_key1_new = 0x%016x, prev_key1_we = 0x%01x",
                dut.prev_key1_reg, dut.prev_key1_new, dut.prev_key1_we);
+
+      $display("rcon_reg = 0x%01x, rcon_new = 0x%01x,  rcon_set = 0x%01x,  rcon_next = 0x%01x, rcon_we = 0x%01x",
+               dut.rcon_reg, dut.rcon_new, dut.rcon_set, dut.rcon_next, dut.rcon_we);
 
       $display("w0 = 0x%04x, w1 = 0x%04x, w2 = 0x%04x, w3 = 0x%04x",
                dut.round_key_gen.w0, dut.round_key_gen.w1,
