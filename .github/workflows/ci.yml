@@ -9,7 +9,7 @@ jobs:
       VLNV : secworks:crypto:aes
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: aes
       - run: echo "EDALIZE_LAUNCHER=el_docker" >> $GITHUB_ENV
@@ -24,7 +24,7 @@ jobs:
       VLNV : secworks:crypto:aes
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: aes
       - run: sudo apt install iverilog
@@ -39,7 +39,7 @@ jobs:
       VLNV : secworks:crypto:aes
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           path: aes
       - run: sudo apt install verilator
