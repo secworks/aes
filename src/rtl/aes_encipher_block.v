@@ -83,19 +83,19 @@ module aes_encipher_block(
   //----------------------------------------------------------------
   // Round functions with sub functions.
   //----------------------------------------------------------------
-  function [7 : 0] gm2(input [7 : 0] op);
+  function automatic [7 : 0] gm2(input [7 : 0] op);
     begin
       gm2 = {op[6 : 0], 1'b0} ^ (8'h1b & {8{op[7]}});
     end
   endfunction // gm2
 
-  function [7 : 0] gm3(input [7 : 0] op);
+  function automatic [7 : 0] gm3(input [7 : 0] op);
     begin
       gm3 = gm2(op) ^ op;
     end
   endfunction // gm3
 
-  function [31 : 0] mixw(input [31 : 0] w);
+  function automatic [31 : 0] mixw(input [31 : 0] w);
     reg [7 : 0] b0, b1, b2, b3;
     reg [7 : 0] mb0, mb1, mb2, mb3;
     begin
@@ -113,7 +113,7 @@ module aes_encipher_block(
     end
   endfunction // mixw
 
-  function [127 : 0] mixcolumns(input [127 : 0] data);
+  function automatic [127 : 0] mixcolumns(input [127 : 0] data);
     reg [31 : 0] w0, w1, w2, w3;
     reg [31 : 0] ws0, ws1, ws2, ws3;
     begin
@@ -131,7 +131,7 @@ module aes_encipher_block(
     end
   endfunction // mixcolumns
 
-  function [127 : 0] shiftrows(input [127 : 0] data);
+  function automatic [127 : 0] shiftrows(input [127 : 0] data);
     reg [31 : 0] w0, w1, w2, w3;
     reg [31 : 0] ws0, ws1, ws2, ws3;
     begin
@@ -149,7 +149,7 @@ module aes_encipher_block(
     end
   endfunction // shiftrows
 
-  function [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] rkey);
+  function automatic [127 : 0] addroundkey(input [127 : 0] data, input [127 : 0] rkey);
     begin
       addroundkey = data ^ rkey;
     end
