@@ -36,6 +36,10 @@ achived by just having a single S-box. Similarly the performane can be
 increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
+## Contact information ##
+
+For customization and integration work, please contact [Assured Security Consultants](https://www.assured.se/contact).
+
 
 ## Branches ##
 
@@ -70,7 +74,7 @@ table used is
 [the 113 gate circuit](http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/SLP_AES_113.txt) by the [CMT team at Yale](http://cs-www.cs.yale.edu/homes/peralta/CircuitStuff/CMT.html).
 
 Some area and performance results using the cmt_sbox compared to
-master.
+master:
 
 #### Altera
 - Tool: Quartus Prime 19.1.0
