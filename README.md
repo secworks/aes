@@ -36,13 +36,9 @@ achived by just having a single S-box. Similarly the performane can be
 increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
+## Contact information ##
 
-### Contact information ##
-
-Assured provides customer support including customization, integration
-and system development related to the core. For more informantion,
-please contact [Assured Security
-Consultants](https://www.assured.se/contact).
+For customization and integration work, please contact [Assured Security Consultants](https://www.assured.se/contact).
 
 
 ## Branches ##
