@@ -40,7 +40,7 @@ of cycles to two cycles for each round.
 ### Contact information ##
 
 Assured provides customer support including customization, integration
-and system development related to the core. For more information,
+and system development related to the core. For more informantion,
 please contact [Assured Security
 Consultants](https://www.assured.se/contact).
 
