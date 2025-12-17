@@ -1,6 +1,8 @@
 CAPI=2:
 
-name : secworks:crypto:aes:0
+name : secworks:crypto:aes:1.0.0
+description: Verilog implementation of the symmetric block cipher AES (Advanced Encryption Standard) as specified in NIST FIPS 197. This implementation supports 128 and 256 bit keys.
+license: BSD-2-Clause
 
 filesets:
   rtl:
