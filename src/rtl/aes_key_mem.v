@@ -139,7 +139,7 @@ module aes_key_mem(
           for (i = 0 ; i <= AES_256_NUM_ROUNDS ; i = i + 1)
             key_mem [i] <= 128'h0;
 
-          ready_reg        <= 1'b0;
+          ready_reg        <= 1'b1;
           rcon_reg         <= 8'h0;
           round_ctr_reg    <= 4'h0;
           prev_key0_reg    <= 128'h0;
