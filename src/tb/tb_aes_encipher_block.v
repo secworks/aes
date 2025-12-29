@@ -534,6 +534,10 @@ module tb_aes_encipher_block();
       $display("     ============================================");
       $display("");
 
+      $display("Dumping all variables to tb_aes_encipher_block vcd file.");
+      $dumpfile("tb_aes_encipher_block.vcd");
+      $dumpvars(0, tb_aes_encipher_block);
+
       init_sim();
       reset_dut();
 

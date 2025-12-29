@@ -109,7 +109,7 @@ clean:
 	rm -f keymem.sim
 	rm -f core.sim
 	rm -f top.sim
-
+	rm -f *.vcd
 
 help:
 	@echo "Build system for simulation of AES Verilog core"

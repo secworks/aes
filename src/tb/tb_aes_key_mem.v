@@ -428,6 +428,10 @@ module tb_aes_key_mem();
       $display("    =====================================");
       $display("");
 
+      $display("Dumping all variables to tb_aes_key_mem vcd file.");
+      $dumpfile("tb_aes_key_mem.vcd");
+      $dumpvars(0, tb_aes_key_mem);
+
       init_sim();
       dump_dut_state();
       reset_dut();
@@ -639,8 +643,10 @@ module tb_aes_key_mem();
 
 
       display_test_result();
+
       $display("");
-      $display("*** AES core simulation done. ***");
+      $display("   -= Testbench for aes key mem completed =-");
+      $display("    =======================================");
       $finish;
     end // aes_key_mem_test
 endmodule // tb_aes_key_mem

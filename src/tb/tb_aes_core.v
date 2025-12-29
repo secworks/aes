@@ -404,6 +404,10 @@ module tb_aes_core();
       $display("     ================================");
       $display("");
 
+      $display("tb: Dumping all variables to tb_aes_core vcd file.");
+      $dumpfile("tb_aes_core.vcd");
+      $dumpvars(0, tb_aes_core);
+
       init_sim();
       dump_dut_state();
       reset_dut();
@@ -482,7 +486,10 @@ module tb_aes_core();
 
       display_test_result();
       $display("");
-      $display("*** AES core simulation done. ***");
+
+      $display("   -= Testbench for aes core cmpleted =-");
+      $display("     =================================");
+      $display("");
       $finish;
     end // aes_core_test
 endmodule // tb_aes_core

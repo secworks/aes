@@ -549,6 +549,10 @@ module tb_aes();
       $display("    ==============================");
       $display("");
 
+      $display("Dumping all variables to tb_aes vcd file.");
+      $dumpfile("tb_aes.vcd");
+      $dumpvars(0, tb_aes);
+
       init_sim();
       dump_dut_state();
       reset_dut();
@@ -559,7 +563,9 @@ module tb_aes();
       display_test_results();
 
       $display("");
-      $display("*** AES simulation done. ***");
+      $display("   -= Testbench for AES completed =-");
+      $display("    ===============================");
+      $display("");
       $finish;
     end // main
 endmodule // tb_aes

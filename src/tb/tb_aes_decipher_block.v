@@ -340,6 +340,10 @@ module tb_aes_decipher_block();
       $display("     ============================================");
       $display("");
 
+      $display("Dumping all variables to tb_aes_decipher_block vcd file.");
+      $dumpfile("tb_aes_decipher_block.vcd");
+      $dumpvars(0, tb_aes_decipher_block);
+
       init_sim();
       dump_dut_state();
       reset_dut();
@@ -394,7 +398,9 @@ module tb_aes_decipher_block();
 
       display_test_result();
       $display("");
-      $display("*** AES decipher block module simulation done. ***");
+      $display("   -= Testbench for aes decipher block completed =-");
+      $display("     ============================================");
+      $display("");
       $finish;
     end // aes_core_test
 endmodule // tb_aes_decipher_block
