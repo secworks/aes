@@ -318,8 +318,6 @@ module aes_core(
 
         CTRL_NEXT:
           begin
-            init_state = 1'b0;
-
             if (muxed_ready)
               begin
                 ready_new         = 1'b1;
