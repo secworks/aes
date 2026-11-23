@@ -87,6 +87,7 @@ module aes_core(
   // Wires.
   //----------------------------------------------------------------
   reg            init_state;
+  reg            init_key;
 
   wire [127 : 0] round_key;
   wire           key_ready;
@@ -158,7 +159,7 @@ module aes_core(
 
                      .key(key),
                      .keylen(keylen),
-                     .init(init),
+                     .init(init_key),
 
                      .round(muxed_round_nr),
                      .round_key(round_key),
@@ -268,6 +269,7 @@ module aes_core(
   always @*
     begin : aes_core_ctrl
       init_state        = 1'b0;
+      init_key          = 1'b0;
       ready_new         = 1'b0;
       ready_we          = 1'b0;
       result_valid_new  = 1'b0;
@@ -281,6 +283,7 @@ module aes_core(
             if (init)
               begin
                 init_state        = 1'b1;
+                init_key          = 1'b1;
                 ready_new         = 1'b0;
                 ready_we          = 1'b1;
                 result_valid_new  = 1'b0;
