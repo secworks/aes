@@ -36,6 +36,15 @@ achived by just having a single S-box. Similarly the performane can be
 increased by having 8 or even 16 S-boxes which would reduce the number
 of cycles to two cycles for each round.
 
+## Usage
+
+The user (SW, driver) is responsilble for only change controls and
+data inputs when the core is idle, indicated by the ready bit is
+set. Failing to do so may generate incorrect results.
+
+The user is also expected to read out any results before setting up
+the core for processing a new blocl. Failing to do so may lead to
+reading out incorrect results.
 
 ### Contact information ##
 
