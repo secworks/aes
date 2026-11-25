@@ -38,12 +38,12 @@ of cycles to two cycles for each round.
 
 ## Usage
 
-The user (SW, driver) is responsilble for only change controls and
+The user (SW, driver) is responsible for only change controls and
 data inputs when the core is idle, indicated by the ready bit is
 set. Failing to do so may generate incorrect results.
 
 The user is also expected to read out any results before setting up
-the core for processing a new blocl. Failing to do so may lead to
+the core for processing a new block. Failing to do so may lead to
 reading out incorrect results.
 
 ### Contact information ##
