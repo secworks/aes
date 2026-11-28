@@ -1,4 +1,4 @@
-[![build-openlane-sky130](https://github.com/secworks/aes/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/secworks/aes/actions/workflows/ci.yml)
+[![build-librelane-sky130](https://github.com/secworks/aes/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/secworks/aes/actions/workflows/ci.yml)
 
 aes
 ===
@@ -139,7 +139,7 @@ build system. Some quick  FuseSoC instructions:
 
 install FuseSoC
 ~~~
-pip install fusesoc
+pip install fusesoc==2.4.7 edalize==0.6.8
 ~~~
 
 Create and enter a new workspace
@@ -168,11 +168,6 @@ Run tb_aes testbench
 fusesoc run --target=tb_aes secworks:crypto:aes
 ~~~
 
-Run with modelsim instead of default tool (icarus)
-~~~
-fusesoc run --target=tb_aes --tool=modelsim secworks:crypto:aes
-~~~
-
 List all targets
 ~~~
 fusesoc core show secworks:crypto:aes
@@ -182,6 +177,15 @@ fusesoc core show secworks:crypto:aes
 ## Implementation results - ASIC ##
 
 The core has been implemented in standard cell ASIC processes.
+
+To build the AES core for Sky130 with the same LibreLane release and PDK
+revision as CI, run the following from the repository root with Docker running.
+LibreLane downloads the PDK revision pinned by the release.
+
+~~~
+pip install librelane==3.0.6
+librelane --dockerized --flow Classic data/sky130.yaml
+~~~
 
 ### TSMC 180 nm ###
 Target frequency: 20 MHz

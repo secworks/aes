@@ -25,27 +25,21 @@ filesets:
       - src/tb/tb_aes_encipher_block.v
     file_type : verilogSource
 
-  openlane: {files : [data/sky130.tcl : {file_type : tclSource}]}
-
 targets:
   default:
     filesets: [rtl]
 
   lint:
-    default_tool : verilator
+    flow: lint
+    flow_options:
+      tool: verilator
     filesets : [rtl]
-    tools:
-      verilator:
-        mode : lint-only
     toplevel : aes
 
-  sky130:
-    default_tool: openlane
-    filesets: [rtl, openlane]
-    toplevel: aes
-
   tb_aes: &tb
-    default_tool: icarus
+    flow: sim
+    flow_options:
+      tool: icarus
     filesets: [rtl, tb]
     toplevel : tb_aes
 
