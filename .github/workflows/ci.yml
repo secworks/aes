@@ -1,5 +1,7 @@
 name: build-librelane-sky130
-on: [push]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   build-aes:
