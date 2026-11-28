@@ -12,7 +12,7 @@ jobs:
           python-version: '3.12'
       # LibreLane selects the Sky130 PDK revision pinned in this release.
       - run: pip install librelane==3.0.6
-      - run: librelane --dockerized --flow Classic data/sky130.yaml
+      - run: librelane --docker-no-tty --dockerized --flow Classic data/sky130.yaml
 
   sim-icarus:
     runs-on: ubuntu-latest
